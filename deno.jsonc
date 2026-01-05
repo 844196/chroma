@@ -1,0 +1,16 @@
+{
+  "lock": {
+    "frozen": true
+  },
+  "compilerOptions": {
+    "strict": true,
+    "erasableSyntaxOnly": true
+  },
+  "fmt": {
+    "lineWidth": 120,
+    "useTabs": false,
+    "indentWidth": 2,
+    "singleQuote": true,
+    "semiColons": false
+  }
+}
