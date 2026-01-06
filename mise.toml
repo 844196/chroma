@@ -1,0 +1,23 @@
+[tools]
+deno = "2.6.3"
+
+[tasks.check]
+run = { tasks = ["check:format", "check:type", "check:lint"] }
+
+[tasks."check:format"]
+run = "deno fmt --check"
+
+[tasks."check:type"]
+run = "deno check"
+
+[tasks."check:lint"]
+run = "deno lint"
+
+[tasks.fix]
+run = [{ task = "fix:format" }, { task = "fix:lint" }]
+
+[tasks."fix:format"]
+run = "deno fmt"
+
+[tasks."fix:lint"]
+run = "deno lint --fix"
