@@ -2,7 +2,7 @@
 deno = "2.6.3"
 
 [tasks.check]
-run = { tasks = ["check:format", "check:type", "check:lint"] }
+run = { tasks = ["check:format", "check:type", "check:lint", "check:workflow"] }
 
 [tasks."check:format"]
 run = "deno fmt --check"
@@ -12,6 +12,11 @@ run = "deno check"
 
 [tasks."check:lint"]
 run = "deno lint"
+
+[tasks."check:workflow"]
+tools.actionlint = "1.7.10"
+tools.ghalint = "1.5.4"
+run = ["actionlint", "ghalint act"]
 
 [tasks.fix]
 run = [{ task = "fix:format" }, { task = "fix:lint" }]

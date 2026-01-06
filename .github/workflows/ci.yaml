@@ -1,0 +1,43 @@
+name: CI
+run-name: 'CI (#${{ github.event.pull_request.number }})'
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Setup mise
+        uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
+        with:
+          version: 2025.12.13
+
+      - name: Install dependencies
+        run: deno install
+
+      - name: Check format
+        run: mise run check:format
+
+      - name: Check type
+        run: mise run check:type
+
+      - name: Check lint
+        run: mise run check:lint
+
+      - name: Check workflow
+        run: mise run check:workflow
