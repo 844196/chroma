@@ -12,5 +12,9 @@
     "indentWidth": 2,
     "singleQuote": true,
     "semiColons": false
+  },
+  "imports": {
+    "@cliffy/command": "jsr:@cliffy/command@1.0.0-rc.8",
+    "@david/dax": "jsr:@david/dax@0.44.2"
   }
 }
