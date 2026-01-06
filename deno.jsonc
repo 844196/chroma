@@ -12,5 +12,8 @@
     "indentWidth": 2,
     "singleQuote": true,
     "semiColons": false
+  },
+  "imports": {
+    "@cliffy/command": "jsr:@cliffy/command@1.0.0-rc.8"
   }
 }
