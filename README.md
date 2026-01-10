@@ -6,13 +6,16 @@ chroma is a CLI tool that opens URL in specific Google Chrome profiles.
 
 ### Setup daemon
 
-```yaml
-# ${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.yaml
+```json
+// ${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.json
 
-aliases:
-  personal: 'Profile 2'
-  project-a: 'Profile 3'
-  project-b: 'Profile 5'
+{
+  "aliases": {
+    "Profile 2": ["personal"],
+    "Profile 3": ["project-a"],
+    "Profile 5": ["project-b"]
+  }
+}
 ```
 
 ```ini
@@ -26,7 +29,7 @@ Type=simple
 RuntimeDirectory=chroma
 RuntimeDirectoryPreserve=yes
 Environment=CHROMA_RUNTIME_DIR=%t/chroma
-Environment=CHROMA_CONFIG=%E/chroma/config.yaml
+Environment=CHROMA_CONFIG=%E/chroma/config.json
 ExecStartPre=rm -f %t/chroma/chroma.sock
 ExecStart=/path/to/chromad
 ExecStopPost=rm -f %t/chroma/chroma.sock
@@ -132,7 +135,7 @@ chromad [options]
 
 | Option                 | Description                     | Default                                                  |
 | ---------------------- | ------------------------------- | -------------------------------------------------------- |
-| `--config <PATH>`      | Path to the configuration file. | `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.yaml`   |
+| `--config <PATH>`      | Path to the configuration file. | `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.json`   |
 | `--runtime-dir <PATH>` | Path to the runtime directory.  | `${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}/chroma-$UID}/chroma` |
 
 #### Environment Variables
@@ -142,6 +145,42 @@ chromad [options]
 - `CHROMA_RUNTIME_DIR`: Path to the runtime directory.
   - If `--runtime-dir` is not specified, and this is set, this value will be used.
 
-## Configuration File (`$XDG_CONFIG_HOME/chroma/config.yaml`)
+## Configuration File
 
-- `aliases`: A mapping of alias names to Chrome profile directory names.
+Location: `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.json`
+
+### Format
+
+The configuration file must be in JSON format.
+
+### Schema
+
+```json
+{
+  "aliases": {
+    "<PROFILE_DIRECTORY_NAME>": ["alias1", "alias2", ...]
+  }
+}
+```
+
+- **Key**: Chrome profile directory name (e.g., `"Default"`, `"Profile 2"`)
+- **Value**: Array of alias names for that profile
+
+### Example
+
+```json
+{
+  "aliases": {
+    "Default": ["default", "main"],
+    "Profile 2": ["personal", "p"],
+    "Profile 3": ["work", "w"]
+  }
+}
+```
+
+### Error Handling
+
+- If the configuration file does not exist, the daemon will start with default settings (no aliases).
+- If the configuration file contains invalid JSON or fails validation, it will be ignored and default settings will be
+  used.
+- Error messages will be logged for troubleshooting.
