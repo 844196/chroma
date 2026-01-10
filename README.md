@@ -130,16 +130,16 @@ chromad [options]
 
 #### Options
 
-| Option                 | Description                                                       | Default                                                  |
-| ---------------------- | ----------------------------------------------------------------- | -------------------------------------------------------- |
-| `--config <PATH>`      | Path to the configuration file.                                   | `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.yaml`   |
-| `--runtime-dir <PATH>` | Path to the runtime directory where the daemon socket is located. | `${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}/chroma-$UID}/chroma` |
+| Option                 | Description                     | Default                                                  |
+| ---------------------- | ------------------------------- | -------------------------------------------------------- |
+| `--config <PATH>`      | Path to the configuration file. | `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.yaml`   |
+| `--runtime-dir <PATH>` | Path to the runtime directory.  | `${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}/chroma-$UID}/chroma` |
 
 #### Environment Variables
 
 - `CHROMA_CONFIG`: Path to the configuration file.
   - If `--config` is not specified, and this is set, this value will be used.
-- `CHROMA_RUNTIME_DIR`: Path to the runtime directory where the daemon socket is located.
+- `CHROMA_RUNTIME_DIR`: Path to the runtime directory.
   - If `--runtime-dir` is not specified, and this is set, this value will be used.
 
 ## Configuration File (`$XDG_CONFIG_HOME/chroma/config.yaml`)
