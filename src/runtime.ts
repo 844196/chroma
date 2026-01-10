@@ -5,14 +5,14 @@ function defaultConfigPath() {
   const HOME = Deno.env.get('HOME')
 
   if (XDG_CONFIG_HOME !== undefined) {
-    return joinPath(XDG_CONFIG_HOME, 'chroma', 'config.yaml')
+    return joinPath(XDG_CONFIG_HOME, 'chroma', 'config.json')
   }
 
   if (HOME === undefined) {
     throw new Error('Cannot determine HOME directory for config file path.')
   }
 
-  return joinPath(HOME, '.config', 'chroma', 'config.yaml')
+  return joinPath(HOME, '.config', 'chroma', 'config.json')
 }
 
 function defaultRuntimeDir() {
