@@ -1,5 +1,20 @@
 import { join as joinPath } from 'node:path'
 
+function defaultConfigPath() {
+  const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME')
+  const HOME = Deno.env.get('HOME')
+
+  if (XDG_CONFIG_HOME !== undefined) {
+    return joinPath(XDG_CONFIG_HOME, 'chroma', 'config.yaml')
+  }
+
+  if (HOME === undefined) {
+    throw new Error('Cannot determine HOME directory for config file path.')
+  }
+
+  return joinPath(HOME, '.config', 'chroma', 'config.yaml')
+}
+
 function defaultRuntimeDir() {
   const XDG_RUNTIME_DIR = Deno.env.get('XDG_RUNTIME_DIR')
   if (XDG_RUNTIME_DIR !== undefined) {
@@ -13,6 +28,8 @@ function defaultRuntimeDir() {
 
   return joinPath(Deno.env.get('TMPDIR') ?? '/tmp', `chroma-${UID}`)
 }
+
+export const DEFAULT_CONFIG_PATH = defaultConfigPath()
 
 export const DEFAULT_RUNTIME_DIR = defaultRuntimeDir()
 
