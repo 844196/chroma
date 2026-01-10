@@ -11,7 +11,14 @@
     "useTabs": false,
     "indentWidth": 2,
     "singleQuote": true,
-    "semiColons": false
+    "semiColons": false,
+    "exclude": [
+      ".github/prompts/openspec-*",
+      "openspec/changes/**/*.md",
+      "openspec/specs/**/*.md",
+      "openspec/AGENTS.md",
+      "AGENTS.md"
+    ]
   },
   "imports": {
     "@cliffy/command": "jsr:@cliffy/command@1.0.0-rc.8",
