@@ -1,0 +1,24 @@
+#!/usr/bin/env -S deno run -A
+// vim: set ft=typescript
+//USAGE arg "<VERSION>" env="BUILD_VERSION"
+//USAGE arg "<PLATFORM>" env="BUILD_PLATFORM"
+
+import $ from '@david/dax'
+
+const distName = `chroma-${Deno.env.get('usage_version')!}-${Deno.env.get('usage_platform')!}`
+const buildDir = $.path('build')
+const distBaseDir = $.path('dist')
+const distDir = distBaseDir.join(distName)
+
+if (distBaseDir.existsSync()) {
+  await distBaseDir.remove({ recursive: true })
+}
+
+await distDir.mkdir({ recursive: true })
+
+await $`cp README.md LICENSE ${distDir}`
+await $`cp -r ${buildDir} ${distDir.join('bin')}`
+
+await $`tar czvf ${distName}.tar.gz ${distName}`.cwd(distBaseDir)
+
+await distDir.remove({ recursive: true })

@@ -83,9 +83,9 @@ services:
     volumes:
       - $XDG_RUNTIME_DIR/chroma:/tmp/chroma
     environment:
-      - BROWSER: chroma
-      - CHROMA_PROFILE: project-b
-      - CHROMA_HOST: unix:///tmp/chroma/chroma.sock
+      BROWSER: chroma
+      CHROMA_PROFILE: project-b
+      CHROMA_HOST: unix:///tmp/chroma/chroma.sock
 ```
 
 ```console
