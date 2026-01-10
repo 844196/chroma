@@ -74,9 +74,15 @@ flowchart LR
 ## Development Commands
 
 - `mise run build` : プロジェクトをビルドし `build/` ディレクトリに出力します。
-- `mise run check` : 型チェック・フォーマッター・リンターを実行します。
-- `mise run fix` : フォーマッター・リンターの自動修正を実行します。
-- `mise run test` : テストを実行します。
+- `mise run check` : プロジェクト全体の型チェック・フォーマッター・リンターを実行します。
+  - 特定のファイルの型チェックを行う場合は `mise run check:type -- <FILES>...` を実行します。
+  - 特定のファイルのフォーマットチェックを行う場合は `mise run check:format -- <FILES>...` を実行します。
+  - 特定のファイルのリントチェックを行う場合は `mise run check:lint -- <FILES>...` を実行します。
+- `mise run fix` : プロジェクト全体のフォーマッター・リンターの自動修正を実行します。
+  - 特定のファイルに対して自動修正を行う場合は `mise run fix -- <FILES>...` を実行します。
+- `mise run test` : プロジェクト全体のテストを実行します。
+  - 特定のファイルのテストを実行する場合は `mise run test -- <FILES>...` を実行します。
+- `mise run gha:lint` : GitHub Actions関連ファイルのリントチェックを実行します。
 
 ## Project Conventions
 
@@ -91,7 +97,7 @@ flowchart LR
 
 [Document your architectural decisions and patterns]
 
-TPD
+TBD
 
 ### Testing Strategy
 

@@ -3,30 +3,31 @@ deno = "2.6.3"
 "npm:@fission-ai/openspec" = "0.18.0"
 
 [tasks.check]
-run = { tasks = ["check:format", "check:type", "check:lint", "check:workflow"] }
+run = [
+  { task = "check:format" },
+  { task = "check:type" },
+  { task = "check:lint" },
+]
 
 [tasks."check:format"]
-run = "deno fmt --check"
+usage = 'arg "[FILES]"'
+run = "deno fmt --check ${usage_files}"
 
 [tasks."check:type"]
-run = "deno check"
+usage = 'arg "[FILES]"'
+run = "deno check ${usage_files}"
 
 [tasks."check:lint"]
-run = "deno lint"
-
-[tasks."check:workflow"]
-tools.actionlint = "1.7.10"
-tools.ghalint = "1.5.4"
-run = ["actionlint", "ghalint act"]
+usage = 'arg "[FILES]"'
+run = "deno lint ${usage_files}"
 
 [tasks.fix]
-run = [{ task = "fix:format" }, { task = "fix:lint" }]
+usage = 'arg "[FILES]"'
+run = ["deno fmt ${usage_files}", "deno lint --fix ${usage_files}"]
 
-[tasks."fix:format"]
-run = "deno fmt"
-
-[tasks."fix:lint"]
-run = "deno lint --fix"
+[tasks.test]
+usage = 'arg "[FILES]"'
+run = "deno test ${usage_files}"
 
 [tasks.build]
 usage = '''
@@ -37,3 +38,8 @@ run = [
   "mise run internal:build -- ${usage_version:?} ${usage_platform:?} src/cli/chroma.ts",
   "mise run internal:build -- ${usage_version:?} ${usage_platform:?} src/cli/chromad.ts",
 ]
+
+[tasks."gha:lint"]
+tools.actionlint = "1.7.10"
+tools.ghalint = "1.5.4"
+run = ["actionlint", "ghalint act"]

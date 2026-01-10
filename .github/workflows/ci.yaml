@@ -27,6 +27,9 @@ jobs:
         with:
           version: 2025.12.13
 
+      - name: Check GitHub Actions files
+        run: mise run gha:lint
+
       - name: Install dependencies
         run: deno install
 
@@ -38,6 +41,3 @@ jobs:
 
       - name: Check lint
         run: mise run check:lint
-
-      - name: Check workflow
-        run: mise run check:workflow
