@@ -7,28 +7,21 @@ const [VERSION, ...args] = Deno.args
 
 await new Command()
   .name('chroma')
-  .description('Start Chrome with a specified profile.')
+  .description('Open URL in specific Google Chrome profile.')
   .version(VERSION)
-  .helpOption('-h, --help', 'Show this help.', function (this: Command) {
-    console.log(this.getHelp({ long: true })) // Always show full description
-  })
   .env(
-    'CHROMA_PROFILE=<CHROME_PROFILE_DIRECTORY_NAME:string>',
-    'If -p/--profile is not specified, and this is set, use this.',
+    'CHROMA_PROFILE=<PROFILE:string>',
+    'Specifies the Chrome profile directory to use.\nIf -p/--profile is not specified, and this is set, this value will be used.',
     { prefix: 'CHROMA_' },
   )
   .env(
     'CHROMA_HOST=<HOST:string>',
-    'If -H/--host is not specified, and this is set, use this.',
+    'Daemon socket to connect to.\nIf -H/--host is not specified, and this is set, this value will be used.',
     { prefix: 'CHROMA_' },
   )
   .option(
-    '-p, --profile <CHROME_PROFILE_DIRECTORY_NAME:string>',
-    `
-      Chrome profile to use.
-      This value is the same as the option argument for the Chrome CLI option "--profile-directory". (e.g. "Profile 3")
-      Check the "Profile Path" in chrome://version to see what value to set.
-    `,
+    '-p, --profile <PROFILE:string>',
+    'Specify the profile to use.\nIf given value is an alias defined in the configuration file, it will be resolved to the corresponding profile directory name.',
   )
   .option(
     '-H, --host <HOST:string>',
