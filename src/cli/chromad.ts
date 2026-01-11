@@ -9,16 +9,6 @@ await new Command()
   .name('chromad')
   .description('Chroma daemon that listens for requests from chroma client.')
   .version(VERSION)
-  .env(
-    'CHROMA_CONFIG=<PATH:string>',
-    'Path to the configuration file.\nIf --config is not specified, and this is set, this value will be used.',
-    { prefix: 'CHROMA_' },
-  )
-  .env(
-    'CHROMA_RUNTIME_DIR=<PATH:string>',
-    'Path to the runtime directory.\nIf --runtime-dir is not specified, and this is set, this value will be used.',
-    { prefix: 'CHROMA_' },
-  )
   .option(
     '--config <PATH:string>',
     'Path to the configuration file.',

@@ -23,7 +23,7 @@ describe('defaultConfigPath', () => {
         }
       })
 
-      assertEquals(defaultConfigPath(), '/path/to/config-home/chroma/config.json')
+      assertEquals(defaultConfigPath(), '/path/to/config-home/chroma/daemon.json')
     })
   })
 
@@ -41,7 +41,7 @@ describe('defaultConfigPath', () => {
       })
 
       // stub() cannot mock os.homedir(), so just use assertMatch()
-      assertMatch(defaultConfigPath(), /^.+\/\.config\/chroma\/config\.json$/)
+      assertMatch(defaultConfigPath(), /^.+\/\.config\/chroma\/daemon\.json$/)
     })
   })
 })
