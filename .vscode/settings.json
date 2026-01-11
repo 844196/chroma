@@ -18,5 +18,6 @@
   },
   "[markdown]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+  },
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["node:test"]
 }
