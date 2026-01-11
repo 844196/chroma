@@ -48,6 +48,10 @@ flowchart LR
 - サーバー/クライアントアーキテクチャを採用します。
   - サーバー : Hono
     - バリデーションにはZodを使用します。
+      - **重要**: Zodは `/mini` サブパスエクスポートを使用します (`@zod/zod/mini`)。
+        - これはZod 4で公式にサポートされている機能です ([公式ドキュメント](https://zod.dev/packages/mini))。
+        - Tree-shakingが可能で、バンドルサイズを削減できます。
+        - `deno.jsonc` では `@zod/zod` のみを定義し、コード内では `@zod/zod/mini` をインポートします。
     - DIにはInversifyJSを使用します。
   - クライアント : Hono RPC クライアント (サーバー実装から生成)
 - コマンドライン引数のパースにはCliffyを使用します。
@@ -67,6 +71,7 @@ flowchart LR
     ├── cli/                # ビルドターゲット
     │   ├── chroma.ts       # chroma エントリーポイント
     │   └── chromad.ts      # chromad エントリーポイント
+    ├── types/              # プロジェクト全体で使用するZodスキーマや型定義
     ├── server.ts           # サーバー
     └── client.ts           # クライアント
 ```
@@ -91,6 +96,7 @@ flowchart LR
 - ディレクトリ・ファイル名には kebab-case を使用します。
 - 型エイリアス・インターフェイス・クラス名には PascalCase を使用します。
 - 変数・関数・メソッド名には camelCase を使用します。
+  - ただし、Zodスキーマは PascalCase とし `～Schema` のサフィックスを付けます。
 - 定数名には ALL_UPPER_SNAKE_CASE を使用します。
 
 ### Architecture Patterns
@@ -101,9 +107,36 @@ TBD
 
 ### Testing Strategy
 
-[Explain your testing approach and requirements]
+- テストには `@std/testing/bdd` を使用してBDDスタイルで記述します。
+  - `describe` でテスト対象をグループ化します。
+  - `it` で個別のテストケースを記述します。
+  - ネストした `describe` を使用して、より詳細な条件やコンテキストを表現します。
+- テストファイル名は `*.test.ts` とします。
+- アサーションには `@std/assert` を使用します。
+- モックには `@std/testing/mock` を使用します。
+- テスト後のクリーンアップには `afterEach` を使用します。
 
-TBD
+**参考**: [src/runtime.test.ts](src/runtime.test.ts) のテストコードがBDDスタイルの記述例となっています。
+
+```typescript
+// 例: BDDスタイルのテスト記述
+import { assertEquals } from '@std/assert'
+import { afterEach, describe, it } from '@std/testing/bdd'
+import { restore, stub } from '@std/testing/mock'
+
+describe('関数名やクラス名', () => {
+  afterEach(() => {
+    restore()
+  })
+
+  describe('特定の条件やコンテキスト', () => {
+    it('期待される動作の説明', () => {
+      // テストコード
+      assertEquals(actual, expected)
+    })
+  })
+})
+```
 
 ### Git Workflow
 

@@ -1,7 +1,7 @@
 import { homedir } from 'node:os'
 import { join as joinPath } from 'node:path'
 
-export function defaultConfigPath() {
+export function defaultDaemonConfigPath() {
   const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME')
   if (XDG_CONFIG_HOME !== undefined) {
     return joinPath(XDG_CONFIG_HOME, 'chroma', 'daemon.json')
@@ -24,7 +24,7 @@ export function defaultRuntimeDir() {
   return joinPath(Deno.env.get('TMPDIR') ?? '/tmp', `chroma-${UID}`)
 }
 
-export const DEFAULT_CONFIG_PATH = defaultConfigPath()
+export const DEFAULT_DAEMON_CONFIG_PATH = defaultDaemonConfigPath()
 
 export const DEFAULT_RUNTIME_DIR = defaultRuntimeDir()
 
