@@ -4,10 +4,10 @@ import { join as joinPath } from 'node:path'
 export function defaultConfigPath() {
   const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME')
   if (XDG_CONFIG_HOME !== undefined) {
-    return joinPath(XDG_CONFIG_HOME, 'chroma', 'config.json')
+    return joinPath(XDG_CONFIG_HOME, 'chroma', 'daemon.json')
   }
 
-  return joinPath(homedir(), '.config', 'chroma', 'config.json')
+  return joinPath(homedir(), '.config', 'chroma', 'daemon.json')
 }
 
 export function defaultRuntimeDir() {

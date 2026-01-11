@@ -1,8 +1,9 @@
-# config-file Specification
+# config-file Specification Delta
 
-## Purpose
-TBD - created by archiving change define-config-file-format. Update Purpose after archive.
-## Requirements
+この変更は `config-file` 仕様に以下の修正を適用します。
+
+## MODIFIED Requirements
+
 ### Requirement: File Format
 
 設定ファイルは JSON フォーマットでなければならない (SHALL)。
@@ -146,57 +147,3 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
 ```
 **When** chromad が設定ファイルを読み込む  
 **Then** エイリアス `main` の解決結果は保証されない
-
-### Requirement: Error Handling
-
-設定ファイルの読み込みやパースで発生したエラーは、デーモンの起動を妨げてはならない (SHALL NOT)。
-
-- ファイルが存在しない: デフォルト値(空のエイリアステーブル)で動作する
-- JSONパースエラー: デフォルト値で動作する
-- バリデーションエラー: デフォルト値で動作する
-- エラーメッセージはログに記録されるべきである (SHOULD)
-
-#### Scenario: JSONパースエラーが発生してもデーモンが起動する
-
-**Given** 設定ファイルが不正なJSON `{"aliases": }` を含む  
-**When** chromad が起動する  
-**Then** デーモンは正常に起動する  
-**And** 空のエイリアステーブルで動作する  
-**And** エラーメッセージがログに記録される
-
-#### Scenario: ファイル読み込みエラーが発生してもデーモンが起動する
-
-**Given** 設定ファイルパスが読み取り不可(パーミッションエラー)  
-**When** chromad が起動する  
-**Then** デーモンは正常に起動する  
-**And** 空のエイリアステーブルで動作する  
-**And** エラーメッセージがログに記録される
-
----
-
-### Requirement: Alias Resolution
-
-エイリアスは対応するChromeプロファイルディレクトリ名に解決されなければならない (SHALL)。
-
-- エイリアスが設定ファイルに定義されている場合、対応するプロファイルディレクトリ名を返さなければならない (SHALL)
-- エイリアスが設定ファイルに定義されていない場合、入力値をそのまま返さなければならない (SHALL)
-- エイリアス解決は大文字小文字を区別しなければならない (SHALL)
-
-#### Scenario: 定義されたエイリアスを解決する
-
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
-**When** エイリアス `personal` が解決される  
-**Then** `Profile 2` が返される
-
-#### Scenario: 定義されていないエイリアスを解決する
-
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
-**When** エイリアス `work` が解決される  
-**Then** `work` がそのまま返される(プロファイルディレクトリ名として扱われる)
-
-#### Scenario: エイリアス解決は大文字小文字を区別する
-
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
-**When** エイリアス `Personal` が解決される  
-**Then** `Personal` がそのまま返される(エイリアスとして認識されない)
-

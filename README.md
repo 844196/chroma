@@ -7,10 +7,10 @@ chroma is a CLI tool that opens URL in specific Google Chrome profiles.
 ### Setup daemon
 
 ```json
-// ${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.json
+// ${XDG_CONFIG_HOME:-$HOME/.config}/chroma/daemon.json
 
 {
-  "aliases": {
+  "profileAliases": {
     "Profile 2": ["personal"],
     "Profile 3": ["project-a"],
     "Profile 5": ["project-b"]
@@ -28,10 +28,8 @@ Description=Chroma Daemon
 Type=simple
 RuntimeDirectory=chroma
 RuntimeDirectoryPreserve=yes
-Environment=CHROMA_RUNTIME_DIR=%t/chroma
-Environment=CHROMA_CONFIG=%E/chroma/config.json
 ExecStartPre=rm -f %t/chroma/chroma.sock
-ExecStart=/path/to/chromad
+ExecStart=/path/to/chromad --runtime-dir %t/chroma
 ExecStopPost=rm -f %t/chroma/chroma.sock
 
 [Install]
@@ -135,19 +133,12 @@ chromad [options]
 
 | Option                 | Description                     | Default                                                  |
 | ---------------------- | ------------------------------- | -------------------------------------------------------- |
-| `--config <PATH>`      | Path to the configuration file. | `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.json`   |
+| `--config <PATH>`      | Path to the configuration file. | `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/daemon.json`   |
 | `--runtime-dir <PATH>` | Path to the runtime directory.  | `${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}/chroma-$UID}/chroma` |
-
-#### Environment Variables
-
-- `CHROMA_CONFIG`: Path to the configuration file.
-  - If `--config` is not specified, and this is set, this value will be used.
-- `CHROMA_RUNTIME_DIR`: Path to the runtime directory.
-  - If `--runtime-dir` is not specified, and this is set, this value will be used.
 
 ## Configuration File
 
-Location: `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/config.json`
+Location: `${XDG_CONFIG_HOME:-$HOME/.config}/chroma/daemon.json`
 
 ### Format
 
@@ -157,7 +148,7 @@ The configuration file must be in JSON format.
 
 ```json
 {
-  "aliases": {
+  "profileAliases": {
     "<PROFILE_DIRECTORY_NAME>": ["alias1", "alias2", ...]
   }
 }
@@ -170,7 +161,7 @@ The configuration file must be in JSON format.
 
 ```json
 {
-  "aliases": {
+  "profileAliases": {
     "Default": ["default", "main"],
     "Profile 2": ["personal", "p"],
     "Profile 3": ["work", "w"]
