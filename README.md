@@ -11,9 +11,9 @@ chroma is a CLI tool that opens URL in specific Google Chrome profiles.
 
 {
   "profileAliases": {
-    "Profile 2": ["personal"],
-    "Profile 3": ["project-a"],
-    "Profile 5": ["project-b"]
+    "Profile 1": ["personal"],
+    "Profile 2": ["project-a"],
+    "Profile 3": ["project-b"]
   }
 }
 ```
@@ -154,7 +154,9 @@ The configuration file must be in JSON format.
 }
 ```
 
-- **Key**: Chrome profile directory name (e.g., `"Default"`, `"Profile 2"`)
+- **Key**: Chrome profile directory name
+  - Must be `"Default"` or match the pattern `/^Profile [1-9]\d*$/` (e.g., `"Profile 1"`, `"Profile 2"`, `"Profile 10"`)
+  - Invalid formats: `"Profile"` (missing number), `"Profile 0"` (zero is not allowed), `"profile 1"` (lowercase)
 - **Value**: Array of alias names for that profile
 
 ### Example
@@ -163,8 +165,8 @@ The configuration file must be in JSON format.
 {
   "profileAliases": {
     "Default": ["default", "main"],
-    "Profile 2": ["personal", "p"],
-    "Profile 3": ["work", "w"]
+    "Profile 1": ["personal", "p"],
+    "Profile 2": ["work", "w"]
   }
 }
 ```

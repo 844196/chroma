@@ -90,9 +90,13 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
 
 `profileAliases` フィールドは、Chromeプロファイルディレクトリ名をキー、エイリアスの配列を値とするオブジェクトでなければならない (SHALL)。
 
-- キー: Chromeプロファイルディレクトリ名(例: `"Default"`, `"Profile 2"`)
+- キー: Chromeプロファイルディレクトリ名
+  - `Default` または `/^Profile [1-9]\d*$/` のパターンに一致しなければならない (SHALL)
+  - 例: `"Default"`, `"Profile 1"`, `"Profile 2"`, `"Profile 10"`
+  - `"Profile 0"`, `"Profile"`, `"profile 1"` などは不正なフォーマット
 - 値: 文字列の配列(エイリアスのリスト)
 - 同じエイリアスが複数のプロファイルに定義されている場合、動作は未定義である (undefined behavior)
+- キーが不正なフォーマットの場合、バリデーションエラーとして扱われなければならない (SHALL)
 
 スキーマ例:
 ```json
@@ -105,47 +109,80 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
 }
 ```
 
-#### Scenario: 有効なprofileAliasesスキーマを読み込む
+#### Scenario: 有効なプロファイルキーフォーマット
 
 **Given** 設定ファイルが以下の内容である:
 ```json
 {
   "profileAliases": {
-    "Profile 2": ["personal", "p"],
-    "Profile 3": ["work"]
+    "Default": ["main"],
+    "Profile 1": ["one"],
+    "Profile 2": ["two"],
+    "Profile 10": ["ten"]
   }
 }
 ```
 **When** chromad が設定ファイルを読み込む  
-**Then** エイリアス `personal` と `p` が `Profile 2` に解決される  
-**And** エイリアス `work` が `Profile 3` に解決される
+**Then** すべてのキーが有効なフォーマットとして認識される  
+**And** エイリアス解決が正常に動作する
 
-#### Scenario: 1つのプロファイルに複数のエイリアスを定義
+#### Scenario: 不正なプロファイルキーフォーマット(Profile 0)
 
 **Given** 設定ファイルが以下の内容である:
 ```json
 {
   "profileAliases": {
-    "Profile 2": ["personal", "p", "priv", "private"]
+    "Profile 0": ["zero"]
   }
 }
 ```
-**When** chromad が設定ファイルを読み込む  
-**Then** すべてのエイリアス(`personal`, `p`, `priv`, `private`)が `Profile 2` に解決される
+**When** chromad が設定ファイルを読み込もうとする  
+**Then** バリデーションエラーが発生する  
+**And** デフォルト値(空のエイリアステーブル)で動作する
 
-#### Scenario: 複数のプロファイルで同じエイリアスを定義(未定義動作)
+#### Scenario: 不正なプロファイルキーフォーマット(小文字のprofile)
 
 **Given** 設定ファイルが以下の内容である:
 ```json
 {
   "profileAliases": {
-    "Profile 2": ["main"],
-    "Profile 3": ["main"]
+    "profile 1": ["lowercase"]
   }
 }
 ```
-**When** chromad が設定ファイルを読み込む  
-**Then** エイリアス `main` の解決結果は保証されない
+**When** chromad が設定ファイルを読み込もうとする  
+**Then** バリデーションエラーが発生する  
+**And** デフォルト値(空のエイリアステーブル)で動作する
+
+#### Scenario: 不正なプロファイルキーフォーマット(数字なしのProfile)
+
+**Given** 設定ファイルが以下の内容である:
+```json
+{
+  "profileAliases": {
+    "Profile": ["nonum"]
+  }
+}
+```
+**When** chromad が設定ファイルを読み込もうとする  
+**Then** バリデーションエラーが発生する  
+**And** デフォルト値(空のエイリアステーブル)で動作する
+
+#### Scenario: 混在した有効・無効なキー
+
+**Given** 設定ファイルが以下の内容である:
+```json
+{
+  "profileAliases": {
+    "Default": ["main"],
+    "Profile 1": ["one"],
+    "InvalidProfile": ["invalid"]
+  }
+}
+```
+**When** chromad が設定ファイルを読み込もうとする  
+**Then** バリデーションエラーが発生する(無効なキーが1つでも含まれている)  
+**And** デフォルト値(空のエイリアステーブル)で動作する
 
 ### Requirement: Error Handling
 
