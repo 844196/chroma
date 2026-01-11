@@ -27,7 +27,7 @@ run = ["deno fmt ${usage_files}", "deno lint --fix ${usage_files}"]
 
 [tasks.test]
 usage = 'arg "[FILES]"'
-run = "deno test ${usage_files}"
+run = "deno test -A ${usage_files}"
 
 [tasks.build]
 usage = '''
