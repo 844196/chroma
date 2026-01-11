@@ -58,7 +58,7 @@ chroma [options] [URL]
 
 #### Scenario: エイリアスを使用してプロファイルを指定
 
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
+**Given** 設定ファイルに `{"profileAliases": {"Profile 2": ["personal"]}}` が定義されている  
 **When** ユーザーが `chroma -p personal http://localhost:5173` を実行  
 **Then** chromad がエイリアス `personal` を `Profile 2` に解決する  
 **And** `Profile 2` プロファイルで指定されたURLが開かれる
@@ -79,7 +79,7 @@ chroma [options] [URL]
 
 #### Scenario: 未定義のエイリアスを指定
 
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
+**Given** 設定ファイルに `{"profileAliases": {"Profile 2": ["personal"]}}` が定義されている  
 **When** ユーザーが `chroma -p unknown http://localhost:5173` を実行  
 **Then** `unknown` がそのままプロファイルディレクトリ名として扱われる  
 **And** `unknown` プロファイルで指定されたURLが開かれる
@@ -117,7 +117,7 @@ chroma [options] [URL]
 #### Scenario: 環境変数でプロファイルエイリアスを指定
 
 **Given** `CHROMA_PROFILE=project-a` が設定されている  
-**And** 設定ファイルに `{"aliases": {"Profile 3": ["project-a"]}}` が定義されている  
+**And** 設定ファイルに `{"profileAliases": {"Profile 3": ["project-a"]}}` が定義されている  
 **When** ユーザーが `chroma http://localhost:5173` を実行  
 **Then** chromad がエイリアス `project-a` を `Profile 3` に解決する  
 **And** `Profile 3` プロファイルで指定されたURLが開かれる
@@ -209,4 +209,3 @@ chroma [options] [URL]
 **And** `CHROMA_HOST` 環境変数が設定されていない  
 **When** ユーザーが `chroma http://localhost:5173` を実行  
 **Then** `unix:///tmp/chroma-1000/chroma/chroma.sock` が使用される
-

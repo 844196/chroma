@@ -111,7 +111,7 @@ chromad は起動時に設定ファイルを読み込まなければならない
 **Given** 設定ファイル `config.json` が以下の内容である:
 ```json
 {
-  "aliases": {
+  "profileAliases": {
     "Profile 2": ["personal", "p"],
     "Profile 3": ["work", "w"]
   }
@@ -126,4 +126,3 @@ chromad は起動時に設定ファイルを読み込まなければならない
 **When** chromad が起動する  
 **Then** 空のエイリアステーブルが作成される  
 **And** すべてのプロファイル指定は入力値がそのまま使用される
-
