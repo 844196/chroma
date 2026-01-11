@@ -1,21 +1,16 @@
+import { homedir } from 'node:os'
 import { join as joinPath } from 'node:path'
 
-function defaultConfigPath() {
+export function defaultConfigPath() {
   const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME')
-  const HOME = Deno.env.get('HOME')
-
   if (XDG_CONFIG_HOME !== undefined) {
     return joinPath(XDG_CONFIG_HOME, 'chroma', 'config.json')
   }
 
-  if (HOME === undefined) {
-    throw new Error('Cannot determine HOME directory for config file path.')
-  }
-
-  return joinPath(HOME, '.config', 'chroma', 'config.json')
+  return joinPath(homedir(), '.config', 'chroma', 'config.json')
 }
 
-function defaultRuntimeDir() {
+export function defaultRuntimeDir() {
   const XDG_RUNTIME_DIR = Deno.env.get('XDG_RUNTIME_DIR')
   if (XDG_RUNTIME_DIR !== undefined) {
     return joinPath(XDG_RUNTIME_DIR, 'chroma')
