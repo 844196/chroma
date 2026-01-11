@@ -195,7 +195,7 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
 
 #### Scenario: JSONパースエラーが発生してもデーモンが起動する
 
-**Given** 設定ファイルが不正なJSON `{"aliases": }` を含む  
+**Given** 設定ファイルが不正なJSON `{"profileAliases": }` を含む  
 **When** chromad が起動する  
 **Then** デーモンは正常に起動する  
 **And** 空のエイリアステーブルで動作する  
@@ -221,19 +221,18 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
 
 #### Scenario: 定義されたエイリアスを解決する
 
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
+**Given** 設定ファイルに `{"profileAliases": {"Profile 2": ["personal"]}}` が定義されている  
 **When** エイリアス `personal` が解決される  
 **Then** `Profile 2` が返される
 
 #### Scenario: 定義されていないエイリアスを解決する
 
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
+**Given** 設定ファイルに `{"profileAliases": {"Profile 2": ["personal"]}}` が定義されている  
 **When** エイリアス `work` が解決される  
 **Then** `work` がそのまま返される(プロファイルディレクトリ名として扱われる)
 
 #### Scenario: エイリアス解決は大文字小文字を区別する
 
-**Given** 設定ファイルに `{"aliases": {"Profile 2": ["personal"]}}` が定義されている  
+**Given** 設定ファイルに `{"profileAliases": {"Profile 2": ["personal"]}}` が定義されている  
 **When** エイリアス `Personal` が解決される  
 **Then** `Personal` がそのまま返される(エイリアスとして認識されない)
-
