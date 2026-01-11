@@ -1,5 +1,5 @@
 import { Command } from '@cliffy/command'
-import { DEFAULT_CONFIG_PATH, DEFAULT_RUNTIME_DIR } from '../runtime.ts'
+import { DEFAULT_DAEMON_CONFIG_PATH, DEFAULT_RUNTIME_DIR } from '../runtime.ts'
 
 // VERSION is injected at compile time
 // See mise-tasks/internal/build
@@ -12,7 +12,7 @@ await new Command()
   .option(
     '--config <PATH:string>',
     'Path to the configuration file.',
-    { default: DEFAULT_CONFIG_PATH },
+    { default: DEFAULT_DAEMON_CONFIG_PATH },
   )
   .option(
     '--runtime-dir <PATH:string>',

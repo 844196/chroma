@@ -1,11 +1,11 @@
 import { assertEquals, assertMatch, assertThrows } from '@std/assert'
 import { afterEach, describe, it } from '@std/testing/bdd'
 import { restore, stub } from '@std/testing/mock'
-import { defaultConfigPath, defaultRuntimeDir } from './runtime.ts'
+import { defaultDaemonConfigPath, defaultRuntimeDir } from './runtime.ts'
 
 const ORIGINAL_DENO_ENV_GET = Deno.env.get
 
-describe('defaultConfigPath', () => {
+describe('defaultDaemonConfigPath', () => {
   afterEach(() => {
     restore()
   })
@@ -23,7 +23,7 @@ describe('defaultConfigPath', () => {
         }
       })
 
-      assertEquals(defaultConfigPath(), '/path/to/config-home/chroma/daemon.json')
+      assertEquals(defaultDaemonConfigPath(), '/path/to/config-home/chroma/daemon.json')
     })
   })
 
@@ -41,7 +41,7 @@ describe('defaultConfigPath', () => {
       })
 
       // stub() cannot mock os.homedir(), so just use assertMatch()
-      assertMatch(defaultConfigPath(), /^.+\/\.config\/chroma\/daemon\.json$/)
+      assertMatch(defaultDaemonConfigPath(), /^.+\/\.config\/chroma\/daemon\.json$/)
     })
   })
 })
