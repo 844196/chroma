@@ -236,6 +236,45 @@ Minimal `design.md` skeleton:
 
 ## Spec File Format
 
+### Critical: Natural Language Specification
+
+**Specifications MUST describe behavior in natural language, NOT implementation code.**
+
+**CORRECT** (natural language):
+```markdown
+### Requirement: Profile Resolution
+The system SHALL resolve profile aliases to directory names.
+
+#### Scenario: Resolve defined alias
+- **GIVEN** alias "personal" maps to "Profile 2"
+- **WHEN** client requests profile "personal"
+- **THEN** system returns "Profile 2"
+```
+
+**WRONG** (implementation code):
+````markdown
+### Requirement: Schema Definition
+The schema SHALL be defined as:
+```typescript
+export const ProfileSchema = z.object({
+  name: z.string()
+})
+```
+````
+
+**Why**: Specifications define WHAT the system does, not HOW. Implementation details:
+- Couple specs to code structure
+- Require spec changes for refactoring
+- Create false "inconsistency" review comments
+- Obscure actual behavioral requirements
+
+**When code examples are appropriate**:
+- API contracts (REST endpoints, RPC signatures)
+- Configuration file structure (JSON/YAML schemas)
+- CLI command syntax
+
+Even then, focus on the contract, not the implementation.
+
 ### Critical: Scenario Formatting
 
 **CORRECT** (use #### headers):
@@ -256,6 +295,8 @@ Every requirement MUST have at least one scenario.
 
 ### Requirement Wording
 - Use SHALL/MUST for normative requirements (avoid should/may unless intentionally non-normative)
+- Describe behavior, not implementation
+- Focus on inputs, outputs, and observable effects
 
 ### Delta Operations
 
