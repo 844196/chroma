@@ -108,17 +108,9 @@ chromad は起動時に設定ファイルを読み込まなければならない
 
 #### Scenario: 設定ファイルからエイリアステーブルを構築する
 
-**Given** 設定ファイル `config.json` が以下の内容である:
-```json
-{
-  "profileAliases": {
-    "Profile 2": ["personal", "p"],
-    "Profile 3": ["work", "w"]
-  }
-}
-```
+**Given** 設定ファイルに `{"profileAliases": {"Profile 2": ["personal", "p"], "Profile 3": ["work", "w"]}}` が定義されている  
 **When** chromad が起動する  
-**Then** エイリアステーブルに `personal` → `Profile 2`, `p` → `Profile 2`, `work` → `Profile 3`, `w` → `Profile 3` のマッピングが作成される
+**Then** エイリアステーブルに personal → Profile 2, p → Profile 2, work → Profile 3, w → Profile 3 のマッピングが作成される
 
 #### Scenario: 設定ファイルが存在しない場合は空のエイリアステーブルを使用
 

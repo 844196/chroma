@@ -95,91 +95,42 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
   - 例: `"Default"`, `"Profile 1"`, `"Profile 2"`, `"Profile 10"`
   - `"Profile 0"`, `"Profile"`, `"profile 1"` などは不正なフォーマット
 - 値: 文字列の配列(エイリアスのリスト)
+  - 配列は空であってはならない (SHALL NOT)
+  - 配列内の各文字列は空文字列であってはならない (SHALL NOT)
 - 同じエイリアスが複数のプロファイルに定義されている場合、動作は未定義である (undefined behavior)
 - キーが不正なフォーマットの場合、バリデーションエラーとして扱われなければならない (SHALL)
 
-スキーマ例:
-```json
-{
-  "profileAliases": {
-    "Default": ["default", "main"],
-    "Profile 2": ["personal", "p"],
-    "Profile 3": ["work", "w"]
-  }
-}
-```
-
 #### Scenario: 有効なプロファイルキーフォーマット
 
-**Given** 設定ファイルが以下の内容である:
-```json
-{
-  "profileAliases": {
-    "Default": ["main"],
-    "Profile 1": ["one"],
-    "Profile 2": ["two"],
-    "Profile 10": ["ten"]
-  }
-}
-```
+**Given** 設定ファイルに `Default`, `Profile 1`, `Profile 2`, `Profile 10` をキーとするエイリアスが定義されている  
 **When** chromad が設定ファイルを読み込む  
 **Then** すべてのキーが有効なフォーマットとして認識される  
 **And** エイリアス解決が正常に動作する
 
 #### Scenario: 不正なプロファイルキーフォーマット(Profile 0)
 
-**Given** 設定ファイルが以下の内容である:
-```json
-{
-  "profileAliases": {
-    "Profile 0": ["zero"]
-  }
-}
-```
+**Given** 設定ファイルに "Profile 0" をキーとするエイリアスが定義されている  
 **When** chromad が設定ファイルを読み込もうとする  
 **Then** バリデーションエラーが発生する  
 **And** デフォルト値(空のエイリアステーブル)で動作する
 
 #### Scenario: 不正なプロファイルキーフォーマット(小文字のprofile)
 
-**Given** 設定ファイルが以下の内容である:
-```json
-{
-  "profileAliases": {
-    "profile 1": ["lowercase"]
-  }
-}
-```
+**Given** 設定ファイルに "profile 1" をキーとするエイリアスが定義されている  
 **When** chromad が設定ファイルを読み込もうとする  
 **Then** バリデーションエラーが発生する  
 **And** デフォルト値(空のエイリアステーブル)で動作する
 
 #### Scenario: 不正なプロファイルキーフォーマット(数字なしのProfile)
 
-**Given** 設定ファイルが以下の内容である:
-```json
-{
-  "profileAliases": {
-    "Profile": ["nonum"]
-  }
-}
-```
+**Given** 設定ファイルに "Profile" をキーとするエイリアスが定義されている  
 **When** chromad が設定ファイルを読み込もうとする  
 **Then** バリデーションエラーが発生する  
 **And** デフォルト値(空のエイリアステーブル)で動作する
 
 #### Scenario: 混在した有効・無効なキー
 
-**Given** 設定ファイルが以下の内容である:
-```json
-{
-  "profileAliases": {
-    "Default": ["main"],
-    "Profile 1": ["one"],
-    "InvalidProfile": ["invalid"]
-  }
-}
-```
+**Given** 設定ファイルに有効なキー(Default, Profile 1)と無効なキー(InvalidProfile)が混在している  
 **When** chromad が設定ファイルを読み込もうとする  
 **Then** バリデーションエラーが発生する(無効なキーが1つでも含まれている)  
 **And** デフォルト値(空のエイリアステーブル)で動作する
@@ -195,7 +146,7 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
 
 #### Scenario: JSONパースエラーが発生してもデーモンが起動する
 
-**Given** 設定ファイルが不正なJSON `{"profileAliases": }` を含む  
+**Given** 設定ファイルが不正なJSONを含む  
 **When** chromad が起動する  
 **Then** デーモンは正常に起動する  
 **And** 空のエイリアステーブルで動作する  
@@ -237,252 +188,40 @@ TBD - created by archiving change define-config-file-format. Update Purpose afte
 **When** エイリアス `Personal` が解決される  
 **Then** `Personal` がそのまま返される(エイリアスとして認識されない)
 
-### Requirement: Zod Schema Definition
+### Requirement: Configuration Validation
 
-`daemon.json` 設定ファイルのZodスキーマを `src/types/daemon-config.ts` に定義しなければならない (SHALL)。
+設定ファイルは読み込み時にバリデーションされなければならない (SHALL)。
 
-- ファイル名は `daemon-config.ts` でなければならない (SHALL)
-- ファイルは `src/types/` ディレクトリに配置されなければならない (SHALL)
-- Zodのインポートは `@zod/zod/mini` サブパスエクスポートを使用しなければならない (SHALL)
-- スキーマ名は `DaemonConfigSchema` でなければならない (SHALL) (プロジェクト規約: PascalCase + `Schema` サフィックス)
-- エクスポートされた型名は `DaemonConfig` でなければならない (SHALL)
+- `profileAliases` フィールドが存在する場合、バリデーションの対象となる
+- すべてのプロファイルディレクトリキーが有効なフォーマットでなければならない (SHALL)
+- すべてのエイリアス配列が空でなく、空文字列を含んでいてはならない (SHALL NOT)
+- 追加の未知なプロパティは無視され、結果から除外されなければならない (SHALL)
+- バリデーションが失敗した場合、デフォルト値で動作しなければならない (SHALL)
 
-#### Scenario: Zodスキーマファイルが正しい場所に作成される
+#### Scenario: 有効な設定ファイルをバリデーション
 
-**Given** プロジェクトのsrcディレクトリ構造が存在する  
-**When** スキーマファイルを作成する  
-**Then** `src/types/daemon-config.ts` にファイルが配置される  
-**And** ファイルは `import { z } from '@zod/zod/mini'` を含む
-
-#### Scenario: スキーマ名がプロジェクト規約に従う
-
-**Given** Zodスキーマが定義されている  
-**When** スキーマをインポートする  
-**Then** `DaemonConfigSchema` という名前でエクスポートされている  
-**And** 型は `DaemonConfig` という名前でエクスポートされている
-
----
-
-### Requirement: Zod Schema Structure
-
-`DaemonConfigSchema` はルートオブジェクトのスキーマとして以下の構造を持たなければならない (SHALL)。
-
-- ルートオブジェクトは `z.object()` でなければならない (SHALL)
-- `profileAliases` フィールドは `.optional()` でなければならない (SHALL)
-- `profileAliases` フィールドが存在する場合、`z.partialRecord()` を使用して**部分的なマップ構造**(partial record)を定義しなければならない (SHALL)
-  - キーの型: `ChromeProfileDirectorySchema` (from `src/types/chrome-profile-directory.ts`)
-  - 値の型: `z.array(z.string().check(z.minLength(1))).check(z.minLength(1))`
-    - 配列内の各文字列は最小長1でなければならない (SHALL) - 空文字列は拒否される
-    - 配列自体の最小長は1でなければならない (SHALL) - 空の配列は拒否される
-  - Zod v4 では `z.record()` はすべてのキーが必須となるため、partial recordには `z.partialRecord()` 関数を使用しなければならない (SHALL)
-  - すべての可能なプロファイルディレクトリをキーとして含む必要はない (partial record)
-  - 空のオブジェクト `{}` は有効である (SHALL)
-
-スキーマ構造例:
-```typescript
-import { z } from '@zod/zod/mini'
-import { ChromeProfileDirectorySchema } from './chrome-profile-directory.ts'
-
-export const DaemonConfigSchema = z.object({
-  profileAliases: z.optional(
-    z.partialRecord(ChromeProfileDirectorySchema, z.array(z.string().check(z.minLength(1))).check(z.minLength(1))),
-  ),
-})
-
-export type DaemonConfig = z.infer<typeof DaemonConfigSchema>
-```
-
-#### Scenario: profileAliasesフィールドがオプショナルである
-
-**Given** `DaemonConfigSchema` が定義されている  
-**When** 空のオブジェクト `{}` をバリデーションする  
+**Given** 設定ファイルに有効なprofileAliasesが定義されている  
+**When** chromad が設定ファイルを読み込む  
 **Then** バリデーションが成功する  
-**And** `profileAliases` は `undefined` となる
-
-#### Scenario: profileAliasesが正しい型構造を持つ
-
-**Given** `DaemonConfigSchema` が定義されている  
-**When** 以下のオブジェクトをバリデーションする:
-```json
-{
-  "profileAliases": {
-    "Default": ["main", "default"],
-    "Profile 2": ["work"]
-  }
-}
-```
-**Then** バリデーションが成功する  
-**And** 型推論により `profileAliases` は `Partial<Record<ChromeProfileDirectory, string[]>> | undefined` 型となる
-
-#### Scenario: profileAliasesが空のオブジェクトである
-
-**Given** `DaemonConfigSchema` が定義されている  
-**When** 以下のオブジェクトをバリデーションする:
-```json
-{
-  "profileAliases": {}
-}
-```
-**Then** バリデーションが成功する  
-**And** `profileAliases` は空のオブジェクトとして扱われる
-
-#### Scenario: 不正なキーフォーマットを拒否する
-
-**Given** `DaemonConfigSchema` が定義されている  
-**When** 以下のオブジェクトをバリデーションする:
-```json
-{
-  "profileAliases": {
-    "Profile 0": ["invalid"]
-  }
-}
-```
-**Then** バリデーションが失敗する  
-**And** エラーメッセージが `ChromeProfileDirectorySchema` のバリデーションエラーを含む
-
-#### Scenario: 不正な値の型を拒否する
-
-**Given** `DaemonConfigSchema` が定義されている  
-**When** 以下のオブジェクトをバリデーションする:
-```json
-{
-  "profileAliases": {
-    "Default": "not-an-array"
-  }
-}
-```
-**Then** バリデーションが失敗する  
-**And** エラーメッセージが配列型の期待を示す
+**And** 設定ファイルの内容が使用される
 
 #### Scenario: 空の配列を拒否する
 
-**Given** `DaemonConfigSchema` が定義されている  
-**When** 以下のオブジェクトをバリデーションする:
-```json
-{
-  "profileAliases": {
-    "Default": []
-  }
-}
-```
+**Given** 設定ファイルのprofileAliasesに空の配列が含まれている  
+**When** chromad が設定ファイルを読み込もうとする  
 **Then** バリデーションが失敗する  
-**And** エラーメッセージが配列の最小長要件を示す
+**And** デフォルト値(空のエイリアステーブル)で動作する
 
 #### Scenario: 空文字列を含む配列を拒否する
 
-**Given** `DaemonConfigSchema` が定義されている  
-**When** 以下のオブジェクトをバリデーションする:
-```json
-{
-  "profileAliases": {
-    "Default": ["valid", "", "another"]
-  }
-}
-```
+**Given** 設定ファイルのprofileAliasesに空文字列を含む配列がある  
+**When** chromad が設定ファイルを読み込もうとする  
 **Then** バリデーションが失敗する  
-**And** エラーメッセージが文字列の最小長要件を示す
+**And** デフォルト値(空のエイリアステーブル)で動作する
 
----
+#### Scenario: 追加の未知なプロパティを無視する
 
-### Requirement: Type Export
-
-`DaemonConfig` 型を `DaemonConfigSchema` から推論して明示的にエクスポートしなければならない (SHALL)。
-
-- `z.infer<typeof DaemonConfigSchema>` を使用して型を推論しなければならない (SHALL)
-- 型名は `DaemonConfig` でなければならない (SHALL)
-- 型は `export type` を使用してエクスポートしなければならない (SHALL)
-
-#### Scenario: スキーマから型が正しく推論される
-
-**Given** `DaemonConfigSchema` が定義されている  
-**When** `z.infer<typeof DaemonConfigSchema>` を使用して型を推論する  
-**Then** 以下の型構造が得られる:
-```typescript
-{
-  profileAliases?: Partial<Record<ChromeProfileDirectory, string[]>>
-}
-```
-
-#### Scenario: 型をインポートして使用できる
-
-**Given** `src/types/daemon-config.ts` が存在する  
-**When** 別のファイルで `import type { DaemonConfig } from './types/daemon-config.ts'` を実行する  
-**Then** TypeScriptの型チェックが正しく動作する  
-**And** `DaemonConfig` 型の変数を宣言できる
-
----
-
-### Requirement: Test Coverage
-
-`DaemonConfigSchema` のユニットテストを `src/types/daemon-config.test.ts` に作成しなければならない (SHALL)。
-
-- ファイル名は `daemon-config.test.ts` でなければならない (SHALL)
-- テストは Deno の標準テストフレームワークを使用しなければならない (SHALL)
-- 以下のケースをテストしなければならない (SHALL):
-  - 空のオブジェクト `{}` が有効
-  - `profileAliases` フィールドがオプショナル
-  - `profileAliases` が空のオブジェクト `{}` を許可する (partial record)
-  - 有効な `profileAliases` 構造をパースできる
-  - 不正なプロファイルキー (`Profile 0`, `profile 1`, `Profile` など) を拒否する
-  - 不正な値の型 (文字列、数値など) を拒否する
-  - 空の配列 `[]` を拒否する
-  - 空文字列を含む配列を拒否する
-  - 追加の未知なプロパティが存在してもバリデーションが失敗せず、結果から除外される (strip)
-
-#### Scenario: 空のオブジェクトが有効
-
-**Given** テストファイルが存在する  
-**When** `DaemonConfigSchema.parse({})` を実行する  
-**Then** エラーが発生しない  
-**And** 結果は `{ profileAliases: undefined }` または `{}` となる
-
-#### Scenario: 有効なprofileAliases構造をパースできる
-
-**Given** テストファイルが存在する  
-**When** 以下のデータをパースする:
-```typescript
-{
-  profileAliases: {
-    "Default": ["main"],
-    "Profile 2": ["work"]
-  }
-}
-```
-**Then** エラーが発生しない  
-**And** 結果のオブジェクトが入力と一致する
-
-#### Scenario: 不正なプロファイルキーを拒否する
-
-**Given** テストファイルが存在する  
-**When** `profileAliases` に `"Profile 0"`, `"profile 1"`, `"Profile"` をキーとして含むデータをパースする  
-**Then** ZodErrorが発生する  
-**And** エラーメッセージが不正なキーフォーマットを示す
-
-#### Scenario: 不正な値の型を拒否する
-
-**Given** テストファイルが存在する  
-**When** `profileAliases` の値が文字列や数値のデータをパースする  
-**Then** ZodErrorが発生する  
-**And** エラーメッセージが配列型の期待を示す
-
-#### Scenario: 空の配列を拒否する
-
-**Given** テストファイルが存在する  
-**When** `profileAliases` に空の配列 `[]` を含むデータをパースする  
-**Then** ZodErrorが発生する  
-**And** エラーメッセージが配列の最小長要件を示す
-
-#### Scenario: 空文字列を含む配列を拒否する
-
-**Given** テストファイルが存在する  
-**When** `profileAliases` に空文字列を含む配列を持つデータをパースする  
-**Then** ZodErrorが発生する  
-**And** エラーメッセージが文字列の最小長要件を示す
-
-#### Scenario: 追加の未知なプロパティが無視される
-
-**Given** テストファイルが存在する  
-**When** `{ profileAliases: {}, unknownField: "value", anotherField: 123 }` をパースする  
+**Given** 設定ファイルに未知なプロパティが含まれている  
+**When** chromad が設定ファイルを読み込む  
 **Then** バリデーションが成功する  
-**And** 結果は `{ profileAliases: {} }` となる（未知なプロパティは除外される）
-
+**And** 未知なプロパティは無視され、有効なプロパティのみが使用される
