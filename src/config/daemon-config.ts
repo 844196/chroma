@@ -1,27 +1,15 @@
 import { z } from '@zod/zod/mini'
-import { ChromeProfileDirectorySchema } from '../types/chrome-profile-directory.ts'
+import { ProfileAliasMapSchema } from '../features/chrome/profile.ts'
 
-/**
- * 設定ファイルのZodスキーマ
- */
 export const DaemonConfigSchema = z.object({
-  profileAliases: z._default(
-    z.partialRecord(
-      ChromeProfileDirectorySchema,
-      z.array(z.string().check(z.minLength(1))).check(z.minLength(1)),
-    ),
-    {},
-  ),
+  profileAliases: z._default(ProfileAliasMapSchema, new Map()),
 })
 
-/**
- * 設定ファイルの型
- */
 export type DaemonConfig = z.infer<typeof DaemonConfigSchema>
 
 /**
  * 設定ファイルが存在しない、またはパース失敗時のデフォルト
  */
 export const DEFAULT_DAEMON_CONFIG = {
-  profileAliases: {},
+  profileAliases: new Map(),
 } as const satisfies DaemonConfig
