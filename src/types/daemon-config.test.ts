@@ -1,5 +1,6 @@
 import { assertEquals, assertThrows } from '@std/assert'
 import { describe, it } from '@std/testing/bdd'
+import { z } from '@zod/zod/mini'
 import { DaemonConfigSchema } from './daemon-config.ts'
 
 describe('DaemonConfigSchema', () => {
@@ -59,8 +60,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
-        'Invalid Chrome profile directory name',
+        z.core.$ZodError,
       )
     })
 
@@ -72,8 +72,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
-        'Invalid Chrome profile directory name',
+        z.core.$ZodError,
       )
     })
 
@@ -85,8 +84,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
-        'Invalid Chrome profile directory name',
+        z.core.$ZodError,
       )
     })
 
@@ -98,7 +96,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
+        z.core.$ZodError,
       )
     })
 
@@ -110,7 +108,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
+        z.core.$ZodError,
       )
     })
 
@@ -122,7 +120,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
+        z.core.$ZodError,
       )
     })
 
@@ -134,7 +132,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
+        z.core.$ZodError,
       )
     })
 
@@ -146,7 +144,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
+        z.core.$ZodError,
       )
     })
 
@@ -158,7 +156,7 @@ describe('DaemonConfigSchema', () => {
       }
       assertThrows(
         () => DaemonConfigSchema.parse(input),
-        Error,
+        z.core.$ZodError,
       )
     })
   })
