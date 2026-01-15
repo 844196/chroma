@@ -1,18 +1,18 @@
 import { assertEquals, assertThrows } from '@std/assert'
 import { describe, it } from '@std/testing/bdd'
 import { z } from '@zod/zod/mini'
-import { DaemonConfigSchema } from './daemon-config.ts'
+import { ConfigSchema } from './config.ts'
 
-describe('DaemonConfigSchema', () => {
+describe('ConfigSchema', () => {
   describe('valid inputs', () => {
     it('should accept empty object', () => {
-      const result = DaemonConfigSchema.parse({})
+      const result = ConfigSchema.parse({})
       assertEquals(result, { profileAliases: {} })
     })
 
     it('should accept object with empty profileAliases', () => {
       const input = { profileAliases: {} }
-      const result = DaemonConfigSchema.parse(input)
+      const result = ConfigSchema.parse(input)
       assertEquals(result, { profileAliases: {} })
     })
 
@@ -23,7 +23,7 @@ describe('DaemonConfigSchema', () => {
           'Profile 2': ['work'],
         },
       }
-      const result = DaemonConfigSchema.parse(input)
+      const result = ConfigSchema.parse(input)
       assertEquals(result, input)
     })
 
@@ -33,7 +33,7 @@ describe('DaemonConfigSchema', () => {
         unknownField: 'value',
         anotherField: 123,
       }
-      const result = DaemonConfigSchema.parse(input)
+      const result = ConfigSchema.parse(input)
       assertEquals(result, { profileAliases: {} })
     })
   })
@@ -44,7 +44,7 @@ describe('DaemonConfigSchema', () => {
         profileAliases: 'foobar',
       }
       assertThrows(
-        () => DaemonConfigSchema.parse(input),
+        () => ConfigSchema.parse(input),
         z.core.$ZodError,
       )
     })
