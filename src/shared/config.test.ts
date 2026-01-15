@@ -7,13 +7,13 @@ describe('ConfigSchema', () => {
   describe('valid inputs', () => {
     it('should accept empty object', () => {
       const result = ConfigSchema.parse({})
-      assertEquals(result, { profileAliases: {} })
+      assertEquals(result, { profileAliases: new Map() })
     })
 
     it('should accept object with empty profileAliases', () => {
       const input = { profileAliases: {} }
       const result = ConfigSchema.parse(input)
-      assertEquals(result, { profileAliases: {} })
+      assertEquals(result, { profileAliases: new Map() })
     })
 
     it('should accept object with valid profileAliases', () => {
@@ -24,7 +24,14 @@ describe('ConfigSchema', () => {
         },
       }
       const result = ConfigSchema.parse(input)
-      assertEquals(result, input)
+      const expected = {
+        profileAliases: new Map([
+          ['main', 'Default'],
+          ['default', 'Default'],
+          ['work', 'Profile 2'],
+        ]),
+      }
+      assertEquals(result, expected)
     })
 
     it('should ignore unknown additional properties (strip)', () => {
@@ -34,7 +41,7 @@ describe('ConfigSchema', () => {
         anotherField: 123,
       }
       const result = ConfigSchema.parse(input)
-      assertEquals(result, { profileAliases: {} })
+      assertEquals(result, { profileAliases: new Map() })
     })
   })
 
