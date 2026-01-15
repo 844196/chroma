@@ -80,7 +80,7 @@ describe('ProfileAliasMapSchema', () => {
   describe('valid inputs', () => {
     it('should accept empty object (partial record)', () => {
       const result = ProfileAliasMapSchema.parse({})
-      assertEquals(result, {})
+      assertEquals(result, new Map())
     })
 
     it('should accept object with valid entries', () => {
@@ -89,7 +89,12 @@ describe('ProfileAliasMapSchema', () => {
         'Profile 2': ['work'],
       }
       const result = ProfileAliasMapSchema.parse(input)
-      assertEquals(result, input)
+      const expected = new Map([
+        ['main', 'Default'],
+        ['default', 'Default'],
+        ['work', 'Profile 2'],
+      ])
+      assertEquals(result, expected)
     })
 
     it('should accept entries with Default and Profile N keys', () => {
@@ -100,7 +105,13 @@ describe('ProfileAliasMapSchema', () => {
         'Profile 999': ['p999'],
       }
       const result = ProfileAliasMapSchema.parse(input)
-      assertEquals(result, input)
+      const expected = new Map([
+        ['d', 'Default'],
+        ['p1', 'Profile 1'],
+        ['p10', 'Profile 10'],
+        ['p999', 'Profile 999'],
+      ])
+      assertEquals(result, expected)
     })
   })
 
