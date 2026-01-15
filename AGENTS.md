@@ -1,5 +1,85 @@
+# chroma
+
+## Project Overview
+
+chromaはURLを指定のChromeプロファイルで開くためのツールです。デーモンプロセスとCLIクライアントから構成され、UNIXドメインソケットを介して通信します。
+
+#### `chromad`
+
+バックグラウンドで動作するデーモンプロセスです。UNIXドメインソケットでクライアントからのリクエストを待ち受けてChromeを起動します。
+
+ユーザーによってlaunchdやsystemdでデーモン化されて動くことが前提です。
+
+#### `chroma`
+
+ユーザーが直接実行するCLIツールです。
+
+`BROWSER` 環境変数経由で他のツールから呼び出されることも想定します。
+
+## Tech Stack
+
+- Denoを使用します。
+  - ビルド時に `deno compile` でシングルバイナリにすることで、実行環境にDenoがなくても動くようにします。
+- TypeScriptを使用します。
+- サーバーフレームワークにはHonoを使用します。
+- バリデーションにはZodを使用します。
+  - Zodは `/mini` サブパスエクスポートを使用します (`@zod/zod/mini`)。
+    - これはZod 4で公式にサポートされている機能です ([公式ドキュメント](https://zod.dev/packages/mini))。
+    - Tree-shakingが可能で、バンドルサイズを削減できます。
+    - `deno.jsonc` では `@zod/zod` のみを定義し、コード内では `@zod/zod/mini` をインポートします。
+- コマンドライン引数のパースにはCliffyを使用します。
+- フォーマッターにはDeno組み込みの `deno fmt` を使用します。
+- リンターにはDeno組み込みの `deno lint` を使用します。
+- テストにはDeno組み込みの `deno test` を使用します。
+- Deno自体のバージョン管理・タスクランナーにはmiseを使用します。
+- CI/CDにはGitHub Actionsを使用します。
+
+## Project Structure
+
+```
+<project-root>/
+├── build/                  # ビルド出力ディレクトリ
+├── mise-tasks/             # 複雑なmiseタスクスクリプトを格納するディレクトリ
+└── src/                    # ソースコード
+    ├── cli/                # ビルドターゲット
+    │   ├── chroma.ts       # chroma エントリーポイント
+    │   └── chromad.ts      # chromad エントリーポイント
+    ├── types/              # プロジェクト全体で使用するZodスキーマや型定義
+    ├── server.ts           # サーバー
+    └── client.ts           # クライアント
+```
+
+## Development Commands
+
+- `mise run check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
+- `mise run fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
+- `mise run test -- [files...]` : テストを実行します。
+- `mise run build` : プロジェクトをビルドし `build/` ディレクトリに出力します。
+
+## Project Conventions
+
+### Naming
+
+- ディレクトリ・ファイル名には kebab-case を使用します。
+  - テストファイル名は、テスト対象のファイル名に `.test` を挟んで命名します (例: `example.test.ts`)。
+- 型エイリアス・インターフェイス・クラス名には PascalCase を使用します。
+- 変数・関数・メソッド名には camelCase を使用します。
+  - ただし、Zodスキーマは PascalCase とし `Schema` のサフィックスを付けます。
+- 定数名には ALL_UPPER_SNAKE_CASE を使用します。
+
+### Testing Strategy
+
+- テストには `@std/testing/bdd` を使用してBDDスタイルで記述します。
+  - `describe` でテスト対象をグループ化します。
+  - `it` で個別のテストケースを記述します。
+  - ネストした `describe` を使用して、より詳細な条件やコンテキストを表現します。
+- アサーションには `@std/assert` を使用します。
+- モックには `@std/testing/mock` を使用します。
+
+[src/runtime.test.ts](src/runtime.test.ts) のテストコードがBDDスタイルの記述例となっています。
+
 <!-- OPENSPEC:START -->
-# OpenSpec Instructions
+## OpenSpec Instructions
 
 These instructions are for AI assistants working in this project.
 
@@ -14,5 +94,4 @@ Use `@/openspec/AGENTS.md` to learn:
 - Project structure and guidelines
 
 Keep this managed block so 'openspec update' can refresh the instructions.
-
 <!-- OPENSPEC:END -->
