@@ -22,11 +22,7 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
   - ビルド時に `deno compile` でシングルバイナリにすることで、実行環境にDenoがなくても動くようにします。
 - TypeScriptを使用します。
 - サーバーフレームワークにはHonoを使用します。
-- バリデーションにはZodを使用します。
-  - Zodは `/mini` サブパスエクスポートを使用します (`@zod/zod/mini`)。
-    - これはZod 4で公式にサポートされている機能です ([公式ドキュメント](https://zod.dev/packages/mini))。
-    - Tree-shakingが可能で、バンドルサイズを削減できます。
-    - `deno.jsonc` では `@zod/zod` のみを定義し、コード内では `@zod/zod/mini` をインポートします。
+- バリデーションにはZodを使用します（詳細は `define-zod-schema` スキルを参照）。
 - コマンドライン引数のパースにはCliffyを使用します。
 - フォーマッターにはDeno組み込みの `deno fmt` を使用します。
 - リンターにはDeno組み込みの `deno lint` を使用します。
@@ -69,7 +65,6 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
   - テストファイル名は、テスト対象のファイル名に `.test` を挟んで命名します (例: `example.test.ts`)。
 - 型エイリアス・インターフェイス・クラス名には PascalCase を使用します。
 - 変数・関数・メソッド名には camelCase を使用します。
-  - ただし、Zodスキーマは PascalCase とし `Schema` のサフィックスを付けます。
 - 定数名には ALL_UPPER_SNAKE_CASE を使用します。
 
 ### Testing Strategy
