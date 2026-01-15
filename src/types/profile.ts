@@ -7,3 +7,9 @@ export const ProfileSchema = z.union([
 ])
 
 export type Profile = z.infer<typeof ProfileSchema>
+
+export const ProfileAliasSchema = z.string().check(z.minLength(1))
+
+export type ProfileAlias = z.infer<typeof ProfileAliasSchema>
+
+export const ProfileAliasMapSchema = z.partialRecord(ProfileSchema, z.array(ProfileAliasSchema).check(z.minLength(1)))

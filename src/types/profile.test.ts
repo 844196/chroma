@@ -1,6 +1,7 @@
-import { assertEquals } from '@std/assert'
+import { assertEquals, assertThrows } from '@std/assert'
 import { describe, it } from '@std/testing/bdd'
-import { ProfileSchema } from './profile.ts'
+import { z } from '@zod/zod/mini'
+import { ProfileAliasMapSchema, ProfileSchema } from './profile.ts'
 
 describe('ProfileSchema', () => {
   describe('valid formats', () => {
@@ -71,6 +72,127 @@ describe('ProfileSchema', () => {
     it('should reject uppercase "PROFILE 1"', () => {
       const result = ProfileSchema.safeParse('PROFILE 1')
       assertEquals(result.success, false)
+    })
+  })
+})
+
+describe('ProfileAliasMapSchema', () => {
+  describe('valid inputs', () => {
+    it('should accept empty object (partial record)', () => {
+      const result = ProfileAliasMapSchema.parse({})
+      assertEquals(result, {})
+    })
+
+    it('should accept object with valid entries', () => {
+      const input = {
+        'Default': ['main', 'default'],
+        'Profile 2': ['work'],
+      }
+      const result = ProfileAliasMapSchema.parse(input)
+      assertEquals(result, input)
+    })
+
+    it('should accept entries with Default and Profile N keys', () => {
+      const input = {
+        'Default': ['d'],
+        'Profile 1': ['p1'],
+        'Profile 10': ['p10'],
+        'Profile 999': ['p999'],
+      }
+      const result = ProfileAliasMapSchema.parse(input)
+      assertEquals(result, input)
+    })
+  })
+
+  describe('invalid inputs', () => {
+    it('should reject invalid profile key: Profile 0', () => {
+      const input = {
+        'Profile 0': ['zero'],
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject invalid profile key: lowercase profile', () => {
+      const input = {
+        'profile 1': ['lowercase'],
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject invalid profile key: Profile without number', () => {
+      const input = {
+        'Profile': ['nonum'],
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject invalid value type: string instead of array', () => {
+      const input = {
+        'Default': 'not-an-array',
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject invalid value type: number instead of array', () => {
+      const input = {
+        'Default': 123,
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject invalid value type: array of non-strings', () => {
+      const input = {
+        'Default': [1, 2, 3],
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject empty array', () => {
+      const input = {
+        'Default': [],
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject array containing empty string', () => {
+      const input = {
+        'Default': ['valid', '', 'another'],
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
+    })
+
+    it('should reject array with only empty string', () => {
+      const input = {
+        'Default': [''],
+      }
+      assertThrows(
+        () => ProfileAliasMapSchema.parse(input),
+        z.core.$ZodError,
+      )
     })
   })
 })
