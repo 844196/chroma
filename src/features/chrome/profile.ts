@@ -36,3 +36,5 @@ export const ProfileAliasMapSchema = z.codec(
     },
   },
 )
+
+export type ProfileAliasMap = z.infer<typeof ProfileAliasMapSchema>
