@@ -1,5 +1,5 @@
 import { Command } from '@cliffy/command'
-import { DEFAULT_DAEMON_CONFIG_PATH, DEFAULT_RUNTIME_DIR } from '../runtime.ts'
+import { DEFAULT_DAEMON_CONFIG_PATH, DEFAULT_RUNTIME_DIR } from '../src/runtime.ts'
 
 // VERSION is injected at compile time
 // See mise-tasks/internal/build
