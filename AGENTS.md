@@ -39,11 +39,10 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 ```
 <project-root>/
 ├── build/                  # ビルド出力ディレクトリ
-├── mise-tasks/             # 複雑なmiseタスクスクリプトを格納するディレクトリ
+├── cli/                    # ビルドターゲット
+│   ├── chroma.ts           # chroma エントリーポイント
+│   └── chromad.ts          # chromad エントリーポイント
 └── src/                    # ソースコード
-    ├── cli/                # ビルドターゲット
-    │   ├── chroma.ts       # chroma エントリーポイント
-    │   └── chromad.ts      # chromad エントリーポイント
     ├── types/              # プロジェクト全体で使用するZodスキーマや型定義
     ├── server.ts           # サーバー
     └── client.ts           # クライアント
