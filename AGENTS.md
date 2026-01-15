@@ -36,6 +36,8 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 
 ## Project Structure
 
+[Feature-Sliced Design](https://feature-sliced.design/ja/docs/reference/layers)に基づいてファイルを配置しています。
+
 ```
 <project-root>/
 ├── build/                  # ビルド出力ディレクトリ
@@ -43,9 +45,13 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 │   ├── chroma.ts           # chroma エントリーポイント
 │   └── chromad.ts          # chromad エントリーポイント
 └── src/                    # ソースコード
-    ├── types/              # プロジェクト全体で使用するZodスキーマや型定義
-    ├── server.ts           # サーバー
-    └── client.ts           # クライアント
+    ├── app/                # アプリケーション層: 初期化・ルーティング
+    │   ├── client.ts       # クライアントアプリケーション
+    │   └── server.ts       # サーバーアプリケーション
+    ├── features/           # 機能層: ビジネス機能
+    │   └── chrome/         # Chrome関連機能
+    └── shared/             # 共有層: 共通ライブラリ・ユーティリティ
+        └── config.ts       # 設定ファイル処理
 ```
 
 ## Development Commands
@@ -75,4 +81,4 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 - アサーションには `@std/assert` を使用します。
 - モックには `@std/testing/mock` を使用します。
 
-[src/runtime.test.ts](src/runtime.test.ts) のテストコードがBDDスタイルの記述例となっています。
+[src/app/runtime.test.ts](src/app/runtime.test.ts) のテストコードがBDDスタイルの記述例となっています。

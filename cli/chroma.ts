@@ -1,5 +1,5 @@
 import { Command } from '@cliffy/command'
-import { DEFAULT_HOST } from '../src/runtime.ts'
+import { DEFAULT_HOST } from '../src/app/runtime.ts'
 
 // VERSION is injected at compile time
 // See mise-tasks/internal/build
