@@ -1,11 +1,11 @@
 import { assertEquals } from '@std/assert'
 import { describe, it } from '@std/testing/bdd'
-import { ChromeProfileDirectorySchema } from './chrome-profile-directory.ts'
+import { ProfileSchema } from './profile.ts'
 
-describe('ChromeProfileDirectorySchema', () => {
+describe('ProfileSchema', () => {
   describe('valid formats', () => {
     it('should accept "Default"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('Default')
+      const result = ProfileSchema.safeParse('Default')
       assertEquals(result.success, true)
       if (result.success) {
         assertEquals(result.data, 'Default')
@@ -13,7 +13,7 @@ describe('ChromeProfileDirectorySchema', () => {
     })
 
     it('should accept "Profile 1"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('Profile 1')
+      const result = ProfileSchema.safeParse('Profile 1')
       assertEquals(result.success, true)
       if (result.success) {
         assertEquals(result.data, 'Profile 1')
@@ -21,7 +21,7 @@ describe('ChromeProfileDirectorySchema', () => {
     })
 
     it('should accept "Profile 2"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('Profile 2')
+      const result = ProfileSchema.safeParse('Profile 2')
       assertEquals(result.success, true)
       if (result.success) {
         assertEquals(result.data, 'Profile 2')
@@ -29,7 +29,7 @@ describe('ChromeProfileDirectorySchema', () => {
     })
 
     it('should accept "Profile 10"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('Profile 10')
+      const result = ProfileSchema.safeParse('Profile 10')
       assertEquals(result.success, true)
       if (result.success) {
         assertEquals(result.data, 'Profile 10')
@@ -39,37 +39,37 @@ describe('ChromeProfileDirectorySchema', () => {
 
   describe('invalid formats', () => {
     it('should reject "Profile 0"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('Profile 0')
+      const result = ProfileSchema.safeParse('Profile 0')
       assertEquals(result.success, false)
     })
 
     it('should reject lowercase "profile 1"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('profile 1')
+      const result = ProfileSchema.safeParse('profile 1')
       assertEquals(result.success, false)
     })
 
     it('should reject "Profile" without number', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('Profile')
+      const result = ProfileSchema.safeParse('Profile')
       assertEquals(result.success, false)
     })
 
     it('should reject "InvalidProfile"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('InvalidProfile')
+      const result = ProfileSchema.safeParse('InvalidProfile')
       assertEquals(result.success, false)
     })
 
     it('should reject empty string', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('')
+      const result = ProfileSchema.safeParse('')
       assertEquals(result.success, false)
     })
 
     it('should reject lowercase "default"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('default')
+      const result = ProfileSchema.safeParse('default')
       assertEquals(result.success, false)
     })
 
     it('should reject uppercase "PROFILE 1"', () => {
-      const result = ChromeProfileDirectorySchema.safeParse('PROFILE 1')
+      const result = ProfileSchema.safeParse('PROFILE 1')
       assertEquals(result.success, false)
     })
   })
