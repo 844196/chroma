@@ -24,6 +24,7 @@
     "@std/testing": "jsr:@std/testing@1.0.16",
     "@zod/zod": "jsr:@zod/zod@4.3.5",
     "inversify": "npm:inversify@7.11.0",
-    "reflect-metadata": "npm:reflect-metadata@0.2.2"
+    "reflect-metadata": "npm:reflect-metadata@0.2.2",
+    "serialize-error": "npm:serialize-error@12.0.0"
   }
 }

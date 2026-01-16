@@ -6,3 +6,7 @@ export const ConfigSchema = z.object({
 })
 
 export type Config = z.infer<typeof ConfigSchema>
+
+export const DEFAULT_CONFIG: Config = {
+  profileAliases: new Map(),
+}

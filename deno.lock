@@ -33,6 +33,7 @@
     "npm:@inversifyjs/strongly-typed@2.2.0": "2.2.0_inversify@7.11.0_reflect-metadata@0.2.2",
     "npm:inversify@7.11.0": "7.11.0",
     "npm:reflect-metadata@0.2.2": "0.2.2",
+    "npm:serialize-error@12.0.0": "12.0.0",
     "npm:zod@^4.1.13": "4.3.4"
   },
   "jsr": {
@@ -224,6 +225,15 @@
     "reflect-metadata@0.2.2": {
       "integrity": "sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q=="
     },
+    "serialize-error@12.0.0": {
+      "integrity": "sha512-ZYkZLAvKTKQXWuh5XpBw7CdbSzagarX39WyZ2H07CDLC5/KfsRGlIXV8d4+tfqX1M7916mRqR1QfNHSij+c9Pw==",
+      "dependencies": [
+        "type-fest"
+      ]
+    },
+    "type-fest@4.41.0": {
+      "integrity": "sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA=="
+    },
     "zod@4.3.4": {
       "integrity": "sha512-Zw/uYiiyF6pUT1qmKbZziChgNPRu+ZRneAsMUDU6IwmXdWt5JwcUfy2bvLOCUtz5UniaN/Zx5aFttZYbYc7O/A=="
     }
@@ -239,7 +249,8 @@
       "jsr:@zod/zod@4.3.5",
       "npm:@inversifyjs/strongly-typed@2.2.0",
       "npm:inversify@7.11.0",
-      "npm:reflect-metadata@0.2.2"
+      "npm:reflect-metadata@0.2.2",
+      "npm:serialize-error@12.0.0"
     ]
   }
 }

@@ -1,4 +1,6 @@
 import { Command } from '@cliffy/command'
+import { DetailedError, parseResponse } from '@hono/hono/client'
+import { createClient } from '../src/app/client.ts'
 import { DEFAULT_HOST } from '../src/app/runtime.ts'
 
 // VERSION is injected at compile time
@@ -44,7 +46,22 @@ await new Command()
       gh issue list --web
     `,
   )
-  .action(() => {
-    // TODO
+  .action(async ({ host, profile }, ...args) => {
+    const client = createClient(host)
+
+    const res = await client.chrome.open.$post({
+      json: {
+        args: args.filter((v) => v !== undefined),
+        profile,
+      },
+    })
+
+    if (!res.ok) {
+      const { error } = await res.json()
+      console.error(error)
+    }
+
+    await parseResponse(client.chrome.open.$post({ json: { args: [] } })).catch((e: DetailedError) => {
+    })
   })
   .parse(args)

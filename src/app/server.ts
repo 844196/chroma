@@ -12,6 +12,10 @@ export function createServer(container: Container) {
     // https://github.com/orgs/honojs/discussions/4145#discussioncomment-13181621
     getPath: (req) => new URL(req.url).pathname,
   })
+    .onError((err, c) => {
+      console.error(err)
+      return c.json({ error: 'Internal Server Error' }, 500)
+    })
     .use(async (c, next) => {
       c.env.container = container
       await next()
