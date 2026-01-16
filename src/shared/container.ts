@@ -6,3 +6,5 @@ type BindingMap = {
 }
 
 export const container = new TypedContainer<BindingMap>()
+
+export type Container = typeof container
