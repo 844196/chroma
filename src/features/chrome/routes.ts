@@ -14,7 +14,7 @@ export const chromeRoutes = new Hono<ServerEnv>()
     '/open',
     zValidator('json', OpenRequestSchema, (result, c) => {
       if (!result.success) {
-        return c.json({ errors: result.error }, 400)
+        return c.json({ error: result.error }, 400)
       }
     }),
     async (c) => {
