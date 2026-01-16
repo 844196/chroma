@@ -62,6 +62,22 @@ describe('chromeRoutes', () => {
       })
     })
 
+    describe('with profile alias', () => {
+      it('should respond with 200', async () => {
+        const res = await client.open.$post({
+          json: {
+            args: ['https://example.com'],
+            profile: 'home',
+          },
+        })
+
+        assertEquals(res.status, 200)
+        assertSpyCalls(openSpy, 1)
+        assertEquals(openSpy.calls[0].args[0], 'home')
+        assertEquals(openSpy.calls[0].args[1], 'https://example.com')
+      })
+    })
+
     describe('with extra args', () => {
       it('should respond with 200', async () => {
         const res = await client.open.$post({
