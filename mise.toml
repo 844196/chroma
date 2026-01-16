@@ -34,8 +34,8 @@ arg "<VERSION>" env="BUILD_VERSION"
 arg "<PLATFORM>" env="BUILD_PLATFORM"
 '''
 run = [
-  "mise run internal:build -- ${usage_version:?} ${usage_platform:?} src/cli/chroma.ts",
-  "mise run internal:build -- ${usage_version:?} ${usage_platform:?} src/cli/chromad.ts",
+  "mise run internal:build -- ${usage_version:?} ${usage_platform:?} cli/chroma.ts",
+  "mise run internal:build -- ${usage_version:?} ${usage_platform:?} cli/chromad.ts",
 ]
 
 [tasks."gha:lint"]
