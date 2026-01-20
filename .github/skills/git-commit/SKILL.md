@@ -7,17 +7,7 @@ description: このプロジェクトにおけるGitコミットの手順とコ�
 
 ## Workflow
 
-### 1. Pre-commit Checks
-
-コミット前に、コードのフォーマット、静的解析、テストを実行してコードの品質を確保します。
-
-```bash
-mise run fix
-mise run check
-mise run test
-```
-
-### 2. Check Staged Changes
+### 1. Check Staged Changes
 
 コミット可能かどうかを確認するため、まずステージされた変更を確認します。
 
@@ -27,7 +17,7 @@ git diff --cached --stat
 
 もし変更がない場合は、ユーザーに `git add` した上で続行するかを確認します。
 
-### 3. Analyze Diff
+### 2. Analyze Diff
 
 変更内容を詳細に確認します。
 
@@ -35,14 +25,14 @@ git diff --cached --stat
 git diff --cached
 ```
 
-### 4. Generate Commit Message
+### 3. Generate Commit Message
 
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってコミットメッセージを生成します。
 
 #### Format
 
 ```
-<type>[(scope)]: <subject>
+<type>(<scope>): <subject>
 
 [body]
 ```
@@ -57,8 +47,9 @@ git diff --cached
 - `perf:` - パフォーマンス改善
 - `test:` - テストコードの追加・修正
 - `chore:` - メンテナンス作業
+  - `chore(deps):` - 依存関係の更新
 
-**Common Scopes**: `server`, `config`, `chroma-cli`, `chromad-cli`, `deps`
+**Common Scopes**: `server`, `client`, `deps`
 
 #### Subject
 
@@ -70,19 +61,19 @@ git diff --cached
 - **決して** ピリオドで終わらせない
 - **決して** 内容のないコミットメッセージにしない (e.g. `update`, `fix bugs`)
 
-### 5. Commit Changes
+### 4. Commit Changes
 
 生成したコミットメッセージを使用して変更をコミットします。
 
 ```bash
 # Simple
-git commit -m "<type>[(scope)]: <subject>"
+git commit -m "<type>(<scope>): <subject>"
 ```
 
 ```bash
 # With Body
 git commit -m "$(cat <<'EOF'
-<type>[(scope)]: <subject>
+<type>(<scope>): <subject>
 
 [body]
 EOF

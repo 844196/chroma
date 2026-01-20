@@ -25,22 +25,17 @@ jobs:
       - name: Setup mise
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
         with:
-          version: 2025.12.13
+          version: 2026.1.6
+          experimental: true
 
       - name: Check GitHub Actions files
-        run: mise run gha:lint
+        run: mise run :gha:lint
 
       - name: Install dependencies
-        run: deno install
+        run: bun ci
 
-      - name: Check format
-        run: mise run check:format
-
-      - name: Check type
-        run: mise run check:type
-
-      - name: Check lint
-        run: mise run check:lint
+      - name: Run check
+        run: mise run //packages/...:check
 
   test:
     name: Test
@@ -54,10 +49,11 @@ jobs:
       - name: Setup mise
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
         with:
-          version: 2025.12.13
+          version: 2026.1.6
+          experimental: true
 
       - name: Install dependencies
-        run: deno install
+        run: bun ci
 
       - name: Run tests
-        run: mise run test
+        run: mise run //packages/...:test

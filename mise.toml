@@ -1,42 +1,12 @@
+experimental_monorepo_root = true
+monorepo.config_roots = ["packages/*"]
+
 [tools]
-deno = "2.6.3"
+bun = "1.3.6"
+lefthook = "2.0.15"
 
-[tasks.check]
-run = [
-  { task = "check:format" },
-  { task = "check:type" },
-  { task = "check:lint" },
-]
-
-[tasks."check:format"]
-usage = 'arg "[FILES]"'
-run = "deno fmt --check ${usage_files}"
-
-[tasks."check:type"]
-usage = 'arg "[FILES]"'
-run = "deno check ${usage_files}"
-
-[tasks."check:lint"]
-usage = 'arg "[FILES]"'
-run = "deno lint ${usage_files}"
-
-[tasks.fix]
-usage = 'arg "[FILES]"'
-run = ["deno fmt ${usage_files}", "deno lint --fix ${usage_files}"]
-
-[tasks.test]
-usage = 'arg "[FILES]"'
-run = "deno test -A ${usage_files}"
-
-[tasks.build]
-usage = '''
-arg "<VERSION>" env="BUILD_VERSION"
-arg "<PLATFORM>" env="BUILD_PLATFORM"
-'''
-run = [
-  "mise run internal:build -- ${usage_version:?} ${usage_platform:?} cli/chroma.ts",
-  "mise run internal:build -- ${usage_version:?} ${usage_platform:?} cli/chromad.ts",
-]
+[hooks]
+postinstall = "lefthook install"
 
 [tasks."gha:lint"]
 tools.actionlint = "1.7.10"

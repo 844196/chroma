@@ -1,0 +1,36 @@
+{
+  "extends": "@tsconfig/bun/tsconfig.json",
+  // Configurations from https://www.effect.solutions/tsconfig
+  "compilerOptions": {
+    // Build Performance
+    "incremental": true,
+    "composite": true,
+
+    // Module System
+    "target": "ES2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    // Import Handling
+    "verbatimModuleSyntax": true,
+    "rewriteRelativeImportExtensions": true,
+
+    // Type Safety
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUnusedLocals": true,
+    "noImplicitOverride": true,
+
+    // Development
+    "declarationMap": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+
+    "plugins": [
+      // Effect Integration
+      { "name": "@effect/language-service" }
+    ]
+  }
+}
