@@ -2,15 +2,15 @@
 
 ## Project Overview
 
-chromaはURLを指定のChromeプロファイルで開くためのツールです。デーモンプロセスとCLIクライアントから構成され、UNIXドメインソケットを介して通信します。
+chromaはURLを指定のChromeプロファイルで開くためのツールです。サーバーとCLIクライアントから構成され、UNIXドメインソケットを介して通信します。
 
-#### `chromad`
+### `chromad`
 
-バックグラウンドで動作するデーモンプロセスです。UNIXドメインソケットでクライアントからのリクエストを待ち受けてChromeを起動します。
+バックグラウンドで動作するサーバーです。UNIXドメインソケットでクライアントからのリクエストを待ち受けてChromeを起動します。
 
 ユーザーによってlaunchdやsystemdでデーモン化されて動くことが前提です。
 
-#### `chroma`
+### `chroma`
 
 ユーザーが直接実行するCLIツールです。
 
@@ -18,44 +18,36 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 
 ## Tech Stack
 
-- Denoを使用します。
-  - ビルド時に `deno compile` でシングルバイナリにすることで、実行環境にDenoがなくても動くようにします。
+- Bunを使用します。
+  - ビルド時に `bun build --compile`
+    でシングルバイナリにすることで、実行環境にBunがなくても動くようにします。
 - TypeScriptを使用します。
-- サーバーフレームワークにはHonoを使用します。
-- バリデーションにはZodを使用します（詳細は `define-zod-schema` スキルを参照）。
+- Effect-TSを使用して関数型プログラミングスタイルで実装します。
+- サーバーフレームワークにはtRPCを使用します。
 - コマンドライン引数のパースにはCliffyを使用します。
-- フォーマッターにはDeno組み込みの `deno fmt` を使用します。
-- リンターにはDeno組み込みの `deno lint` を使用します。
-- テストにはDeno組み込みの `deno test` を使用します。
-- Deno自体のバージョン管理・タスクランナーにはmiseを使用します。
+- リンター・フォーマッターにはBiomeを使用します。
+- テストにはVitestを使用します。
+- Bun自体のバージョン管理・タスクランナーにはmiseを使用します。
 - CI/CDにはGitHub Actionsを使用します。
 
 ## Project Structure
 
-[Feature-Sliced Design](https://feature-sliced.design/ja/docs/reference/layers)に基づいてファイルを配置しています。
+Bunのワークスペース機能を使用してモノレポ構成にしています。
 
 ```
-<project-root>/
-├── build/                  # ビルド出力ディレクトリ
-├── cli/                    # ビルドターゲット
-│   ├── chroma.ts           # chroma エントリーポイント
-│   └── chromad.ts          # chromad エントリーポイント
-└── src/                    # ソースコード
-    ├── app/                # アプリケーション層: 初期化・ルーティング
-    │   ├── client.ts       # クライアントアプリケーション
-    │   └── server.ts       # サーバーアプリケーション
-    ├── features/           # 機能層: ビジネス機能
-    │   └── chrome/         # Chrome関連機能
-    └── shared/             # 共有層: 共通ライブラリ・ユーティリティ
-        └── config.ts       # 設定ファイル処理
+<project-root>
+├── dist/        # 配布用のビルド成果物
+└── packages/
+    ├── client/  # CLIクライアント
+    └── server/  # サーバー
 ```
+
+各パッケージの詳細は `packages/<PACKAGE_NAME>/AGENTS.md` を参照してください。
 
 ## Development Commands
 
-- `mise run check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
-- `mise run fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
-- `mise run test -- [files...]` : テストを実行します。
-- `mise run build` : プロジェクトをビルドし `build/` ディレクトリに出力します。
+- `mise run //packages/...:check` : 全パッケージの型チェック・フォーマッター・リンターを実行します。
+- `mise run //packages/...:test` : 全パッケージのテストを実行します。
 
 ## Project Conventions
 
@@ -69,11 +61,4 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 
 ### Testing Strategy
 
-- テストには `@std/testing/bdd` を使用してBDDスタイルで記述します。
-  - `describe` でテスト対象をグループ化します。
-  - `it` で個別のテストケースを記述します。
-  - ネストした `describe` を使用して、より詳細な条件やコンテキストを表現します。
-- アサーションには `@std/assert` を使用します。
-- モックには `@std/testing/mock` を使用します。
-
-[src/app/runtime.test.ts](src/app/runtime.test.ts) のテストコードがBDDスタイルの記述例となっています。
+TBW

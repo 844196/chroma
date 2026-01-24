@@ -1,0 +1,9 @@
+{
+  "name": "@chroma/server",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@trpc/server": "11.8.1"
+  }
+}

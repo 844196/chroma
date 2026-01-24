@@ -1,2 +1,6 @@
-/build/
+node_modules/
+/packages/server/build/
+/packages/client/build/
 /dist/
+/chroma.sock
+*.tsbuildinfo

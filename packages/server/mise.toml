@@ -1,0 +1,32 @@
+[tasks.dev]
+env = { CHROMA_RUNTIME_DIR = "{{config_root}}/../.." }
+run = '''
+bun run --define BUILD_VERSION='"dev"' src/main.ts
+'''
+
+[tasks.check]
+usage = 'arg "[files]" var=#true'
+run = [
+  "bunx --bun tsc",
+  "bunx --bun biome check --error-on-warnings ${usage_files}",
+]
+
+[tasks.fix]
+usage = 'arg "[files]" var=#true'
+run = "bunx --bun biome check --write ${usage_files}"
+
+[tasks.test]
+usage = 'arg "[files]" var=#true'
+run = "bunx --bun vitest run ${usage_files}"
+
+[tasks.build]
+usage = '''
+arg "<version>" env="BUILD_VERSION"
+arg "<platform>" env="BUILD_PLATFORM"
+'''
+run = '''
+bun build --compile --target=${usage_platform:?} --minify \
+  --define 'process.env.NODE_ENV="production"' \
+  --define BUILD_VERSION="'${usage_version:?}'" \
+  src/main.ts --outfile build/chromad
+'''
