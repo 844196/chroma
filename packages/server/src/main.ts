@@ -13,6 +13,9 @@ const program = Effect.gen(function* () {
   yield* Effect.scoped(startServer(socketPath))
 })
 
-const appLayer = ChromeLauncher.layer.pipe(Layer.provideMerge(RuntimeDir.layer), Layer.provideMerge(BunContext.layer))
+const appLayer = ChromeLauncher.wslLayer.pipe(
+  Layer.provideMerge(RuntimeDir.layer),
+  Layer.provideMerge(BunContext.layer),
+)
 
 BunRuntime.runMain(program.pipe(Effect.provide(appLayer)))
