@@ -1,3 +1,4 @@
+import { CommandExecutor } from '@effect/platform'
 import { Effect, Either, Option, Schema } from 'effect'
 import { ChromeLauncher } from '../../features/launch-chrome/chrome-launcher.ts'
 import { ProfileName } from '../../schemas/profile-name.ts'
@@ -11,14 +12,20 @@ export const LaunchChromeRequest = Schema.Struct({
 
 export const chromeRouter = Effect.gen(function* () {
   const launchChrome = yield* ChromeLauncher
+  const executor = yield* CommandExecutor.CommandExecutor
 
   return router({
     launch: publicProcedure
       // @effect-diagnostics schemaSyncInEffect:off
       .input(Schema.decodeUnknownSync(LaunchChromeRequest))
       .mutation(async ({ input: { profileName, args } }) => {
+        const task = launchChrome(Option.fromNullable(profileName), args).pipe(
+          Effect.provideService(CommandExecutor.CommandExecutor, executor),
+          Effect.scoped,
+        )
+
         // @effect-diagnostics runEffectInsideEffect:off
-        const result = await Effect.runPromise(Effect.either(launchChrome(Option.fromNullable(profileName), args)))
+        const result = await Effect.runPromise(Effect.either(task))
         if (Either.isRight(result)) {
           return
         }

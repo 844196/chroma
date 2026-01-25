@@ -1,3 +1,4 @@
+import { BunContext } from '@effect/platform-bun'
 import { beforeEach, describe, expect, it, vi } from '@effect/vitest'
 import { Effect, Layer, Option } from 'effect'
 import { ChromeLaunchError, ChromeLauncher } from '../../features/launch-chrome/chrome-launcher'
@@ -14,7 +15,7 @@ describe('chromeRouter', () => {
 
     describe('happy path', () => {
       describe('when called with profileName', () => {
-        it.effect('should call ChromeLauncher with the given profileName', () =>
+        it.scoped('should call ChromeLauncher with the given profileName', () =>
           Effect.gen(function* () {
             const router = yield* chromeRouter
             const caller = router.createCaller({})
@@ -28,12 +29,16 @@ describe('chromeRouter', () => {
             expect(result).toBeUndefined()
             expect(alwaysSuccessfulLauncher).toHaveBeenCalledTimes(1)
             expect(alwaysSuccessfulLauncher).toHaveBeenCalledWith(Option.some('Profile 1'), ['https://example.com'])
-          }).pipe(Effect.provide(Layer.succeed(ChromeLauncher, alwaysSuccessfulLauncher))),
+          }).pipe(
+            Effect.provide(
+              BunContext.layer.pipe(Layer.provideMerge(Layer.succeed(ChromeLauncher, alwaysSuccessfulLauncher))),
+            ),
+          ),
         )
       })
 
       describe('when called without profileName', () => {
-        it.effect('should call ChromeLauncher with None', () =>
+        it.scoped('should call ChromeLauncher with None', () =>
           Effect.gen(function* () {
             const router = yield* chromeRouter
             const caller = router.createCaller({})
@@ -46,12 +51,16 @@ describe('chromeRouter', () => {
             expect(result).toBeUndefined()
             expect(alwaysSuccessfulLauncher).toHaveBeenCalledTimes(1)
             expect(alwaysSuccessfulLauncher).toHaveBeenCalledWith(Option.none(), ['https://example.com'])
-          }).pipe(Effect.provide(Layer.succeed(ChromeLauncher, alwaysSuccessfulLauncher))),
+          }).pipe(
+            Effect.provide(
+              BunContext.layer.pipe(Layer.provideMerge(Layer.succeed(ChromeLauncher, alwaysSuccessfulLauncher))),
+            ),
+          ),
         )
       })
 
       describe('when failed to launch Chrome', () => {
-        it.effect('should throw named error', () => {
+        it.scoped('should throw named error', () => {
           const alwaysFailingLauncher: typeof ChromeLauncher.Service = () =>
             Effect.fail(
               new ChromeLaunchError({
@@ -81,7 +90,11 @@ describe('chromeRouter', () => {
                 },
               },
             })
-          }).pipe(Effect.provide(Layer.succeed(ChromeLauncher, alwaysFailingLauncher)))
+          }).pipe(
+            Effect.provide(
+              BunContext.layer.pipe(Layer.provideMerge(Layer.succeed(ChromeLauncher, alwaysFailingLauncher))),
+            ),
+          )
         })
       })
     })
@@ -97,14 +110,18 @@ describe('chromeRouter', () => {
         LaunchChromeRequest.make({ args: ['https://example.com'], profileName: ProfileName.make('Profile 1') }),
       ] as const
 
-      it.effect.each(validInputs)('should accept %o', (input) =>
+      it.scoped.each(validInputs)('should accept %o', (input) =>
         Effect.gen(function* () {
           const router = yield* chromeRouter
           const caller = router.createCaller({})
 
           const result = yield* Effect.promise(() => caller.launch(input))
           expect(result).toBeUndefined()
-        }).pipe(Effect.provide(Layer.succeed(ChromeLauncher, alwaysSuccessfulLauncher))),
+        }).pipe(
+          Effect.provide(
+            BunContext.layer.pipe(Layer.provideMerge(Layer.succeed(ChromeLauncher, alwaysSuccessfulLauncher))),
+          ),
+        ),
       )
     })
   })
