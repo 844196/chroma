@@ -4,13 +4,13 @@
 
 chromaはURLを指定のChromeプロファイルで開くためのツールです。サーバーとCLIクライアントから構成され、UNIXドメインソケットを介して通信します。
 
-### `chromad`
+### @chroma/server (`chromad`)
 
 バックグラウンドで動作するサーバーです。UNIXドメインソケットでクライアントからのリクエストを待ち受けてChromeを起動します。
 
 ユーザーによってlaunchdやsystemdでデーモン化されて動くことが前提です。
 
-### `chroma`
+### @chroma/client (`chroma`)
 
 ユーザーが直接実行するCLIツールです。
 
@@ -19,11 +19,9 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 ## Tech Stack
 
 - Bunを使用します。
-  - ビルド時に `bun build --compile`
-    でシングルバイナリにすることで、実行環境にBunがなくても動くようにします。
+  - ビルド時に `bun build --compile` でシングルバイナリにすることで、実行環境にBunがなくても動くようにします。
 - TypeScriptを使用します。
-- Effect-TSを使用して関数型プログラミングスタイルで実装します。
-- サーバーフレームワークにはtRPCを使用します。
+- Effect-TSを使用します。
 - コマンドライン引数のパースにはCliffyを使用します。
 - リンター・フォーマッターにはBiomeを使用します。
 - テストにはVitestを使用します。
@@ -35,7 +33,7 @@ chromaはURLを指定のChromeプロファイルで開くためのツールで�
 Bunのワークスペース機能を使用してモノレポ構成にしています。
 
 ```
-<project-root>
+<project-root>/
 ├── dist/        # 配布用のビルド成果物
 └── packages/
     ├── client/  # CLIクライアント
@@ -49,6 +47,34 @@ Bunのワークスペース機能を使用してモノレポ構成にしてい�
 - `mise run //packages/...:check` : 全パッケージの型チェック・フォーマッター・リンターを実行します。
 - `mise run //packages/...:test` : 全パッケージのテストを実行します。
 
+## Architecture Overview
+
+### Communication Flow
+
+```
+┌─────────────────────┐                    ┌─────────────────────┐
+│      chroma         │                    │      chromad        │
+│    (CLI Client)     │                    │      (Server)       │
+├─────────────────────┤                    ├─────────────────────┤
+│ Cliffy Command      │                    │ BunHttpServer       │
+│      ↓              │                    │      ↓              │
+│ ChromeService       │  Unix Socket       │ RpcServer (NDJSON)  │
+│      ↓              │  /rpc endpoint     │      ↓              │
+│ ProfileNameResolver │ ←────────────────→ │ ChromeRpcGroup      │
+│      ↓              │                    │      ↓              │
+│ ChromeClient        │                    │ ChromeService       │
+│ (RpcClient)         │                    │      ↓              │
+└─────────────────────┘                    │ Shell → Chrome      │
+                                           └─────────────────────┘
+```
+
+### Communication Protocol
+
+- トランスポート : HTTP over Unix Socket
+- エンドポイント : `/rpc`
+- シリアライズ : NDJSON（Newline Delimited JSON）
+- RPCフレームワーク : `@effect/rpc`
+
 ## Project Conventions
 
 ### Naming
@@ -59,6 +85,6 @@ Bunのワークスペース機能を使用してモノレポ構成にしてい�
 - 変数・関数・メソッド名には camelCase を使用します。
 - 定数名には ALL_UPPER_SNAKE_CASE を使用します。
 
-### Testing Strategy
+### Testing
 
-TBW
+- Effectのコードのテストには `@effect/vitest` を使用します。
