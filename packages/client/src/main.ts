@@ -5,8 +5,6 @@ import { ChromeClient } from './externals/chrome-client.ts'
 import { Config } from './externals/config.ts'
 import { ChromeService } from './services/chrome-service.ts'
 
-declare const BUILD_VERSION: string
-
 const {
   args: parsedArgs,
   literal: parsedLiteral,
