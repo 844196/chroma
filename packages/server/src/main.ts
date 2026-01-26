@@ -6,8 +6,6 @@ import { ChromeRpcGroup, ChromeRpcLive } from './app/rpcs.ts'
 import { SocketPath, UnixSocket } from './app/runtime.ts'
 import { ChromeService } from './services/chrome-service.ts'
 
-declare const BUILD_VERSION: string
-
 console.log(`Chroma Server Version: ${BUILD_VERSION}`)
 
 const RpcServerLive = RpcServer.layer(ChromeRpcGroup).pipe(
