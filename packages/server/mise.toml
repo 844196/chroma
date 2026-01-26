@@ -25,7 +25,7 @@ arg "<version>" env="BUILD_VERSION"
 arg "<platform>" env="BUILD_PLATFORM"
 '''
 run = '''
-bun build --compile --target=${usage_platform:?} --minify \
+bun build --compile --bytecode --target=${usage_platform:?} --minify \
   --define 'process.env.NODE_ENV="production"' \
   --define BUILD_VERSION="'${usage_version:?}'" \
   src/main.ts --outfile build/chromad
