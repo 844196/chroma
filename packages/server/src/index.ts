@@ -1,5 +1,4 @@
-export type { AppRouter, AppRouterInput, AppRouterOutput } from './app/routers/_app.ts'
-export { LaunchChromeRequest } from './app/routers/chrome.ts'
-export { RuntimeDir, SOCKET_PATH as DEFAULT_SOCKET_PATH } from './app/runtime.ts'
-export { ENDPOINT_BASE_URL } from './app/trpc.ts'
+export { ChromeRpcGroup } from './app/rpcs.ts'
+export { SocketPath as ServerSocketPath } from './app/runtime.ts'
 export { ProfileName } from './schemas/profile-name.ts'
+export { ChromeLaunchError } from './services/chrome-service.ts'
