@@ -15,10 +15,9 @@ run = [
 usage = 'arg "[files]" var=#true'
 run = "bunx --bun biome check --write ${usage_files}"
 
-# TODO テストがまだない
-# [tasks.test]
-# usage = 'arg "[files]" var=#true'
-# run = "bunx --bun vitest run ${usage_files}"
+[tasks.test]
+usage = 'arg "[files]" var=#true'
+run = "bunx --bun vitest run ${usage_files}"
 
 [tasks.build]
 usage = '''
