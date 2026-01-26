@@ -1,6 +1,7 @@
 [tasks.dev]
-env = { CHROMA_RUNTIME_DIR = "{{config_root}}/../.." }
+env = { CHROMA_RUNTIME_DIR = "{{ [env.XDG_RUNTIME_DIR, 'chroma-dev'] | join_path }}" }
 run = '''
+mkdir -p $CHROMA_RUNTIME_DIR
 bun run --define BUILD_VERSION='"dev"' src/main.ts
 '''
 
