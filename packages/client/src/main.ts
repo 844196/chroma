@@ -1,11 +1,9 @@
-import { RuntimeDir } from '@chroma/server'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer as L, Option as O } from 'effect'
-import { AppConfig } from './externals/app-config.ts'
-import { AppTRPCClient } from './externals/app-trpc-client.ts'
-import { LaunchChrome } from './features/launch-chrome/launch-chrome.ts'
-import { ProfileNameResolver } from './features/launch-chrome/profile-name-resolver.ts'
+import { ChromeClient } from './externals/chrome-client.ts'
+import { Config } from './externals/config.ts'
+import { ChromeService } from './services/chrome-service.ts'
 
 declare const BUILD_VERSION: string
 
@@ -54,17 +52,14 @@ const {
   )
   .parse()
 
-const program = Effect.gen(function* () {
-  const launchChrome = yield* LaunchChrome
-  yield* launchChrome(O.fromNullable(parsedOpts.profile), [...parsedArgs, ...parsedLiteral])
-})
-
-const appLayer = LaunchChrome.layer.pipe(
-  L.provideMerge(ProfileNameResolver.layer),
-  L.provideMerge(AppConfig.layer(O.fromNullable(parsedOpts.config))),
-  L.provideMerge(AppTRPCClient.layer(O.fromNullable(parsedOpts.host))),
-  L.provideMerge(RuntimeDir.layer),
-  L.provideMerge(BunContext.layer),
+const program = Effect.flatMap(ChromeService, ($) =>
+  $.launch(O.fromNullable(parsedOpts.profile), [...parsedArgs, ...parsedLiteral]),
 )
 
-BunRuntime.runMain(program.pipe(Effect.provide(appLayer)))
+const MainLive = ChromeService.Default.pipe(
+  L.provide(Config.Default({ path: parsedOpts.config })),
+  L.provide(ChromeClient.Default({ socketPath: parsedOpts.host })),
+  L.provide(BunContext.layer),
+)
+
+BunRuntime.runMain(program.pipe(Effect.provide(MainLive)))
