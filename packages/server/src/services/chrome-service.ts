@@ -34,16 +34,12 @@ export class ChromeService extends Context.Tag('@chroma/server/services/ChromeSe
 
         const run = pipe(
           executor.start(cmd),
-          Effect.flatMap((r) => Effect.all([r.exitCode, Effect.succeed(r.stdout), Effect.succeed(r.stderr)])),
+          Effect.flatMap(({ exitCode, stdout, stderr }) =>
+            Effect.all([exitCode, decodeStream(stdout), decodeStream(stderr)], { concurrency: 3 }),
+          ),
           Effect.filterOrElse(
-            ([exitCode]) => exitCode !== 0,
-            ([exitCode, stdoutStream, stderrStream]) =>
-              Effect.gen(function* () {
-                const [stdout, stderr] = yield* Effect.all([decodeStream(stdoutStream), decodeStream(stderrStream)], {
-                  concurrency: 2,
-                })
-                return new ChromeLaunchError({ exitCode, stdout, stderr })
-              }),
+            ([exitCode]) => exitCode === 0,
+            ([exitCode, stdout, stderr]) => new ChromeLaunchError({ exitCode, stdout, stderr }),
           ),
           Effect.catchAll(Effect.die),
         )
