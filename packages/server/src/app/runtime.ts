@@ -1,7 +1,7 @@
 import { tmpdir, userInfo } from 'node:os'
 import { join as joinPath } from 'node:path'
 import { FileSystem } from '@effect/platform'
-import { Context, Effect, Layer, Option as O } from 'effect'
+import { Context, Effect, Layer, Option as O, Schema } from 'effect'
 
 export class RuntimeDir extends Context.Tag('@chroma/server/app/RuntimeDir')<RuntimeDir, string>() {
   static readonly Default = Layer.effect(
@@ -30,11 +30,22 @@ export const UnixSocket = Effect.fn('UnixSocket')(function* (path: string) {
   const acquire = Effect.gen(function* () {
     const alreadyExists = yield* fs.exists(path).pipe(Effect.orDie)
     if (alreadyExists) {
-      return yield* Effect.dieMessage(`Address already in use: ${path}`)
+      return yield* new AddressAlreadyInUseError({ path })
     }
     return { path }
   })
-  const release = Effect.fn('UnixSocket.release')(() => Effect.orDie(fs.remove(path)))
+  const release = Effect.fn('UnixSocket.release')(function* () {
+    yield* Effect.logDebug(`removing unix socket`).pipe(Effect.annotateLogs({ path }))
+
+    yield* fs.remove(path).pipe(Effect.orDie)
+  })
 
   return yield* Effect.acquireRelease(acquire, release)
 })
+
+export class AddressAlreadyInUseError extends Schema.TaggedError<AddressAlreadyInUseError>()(
+  'AddressAlreadyInUseError',
+  {
+    path: Schema.String,
+  },
+) {}
