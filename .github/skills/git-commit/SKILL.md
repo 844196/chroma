@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: このプロジェクトにおけるGitコミットの手順とコミットメッセージの規約を理解し、適切にコミットできる。
+description: このプロジェクトにおけるGitコミットの手順とコミットメッセージの規約に従って、適切なコミットメッセージを生成し、変更をコミットします。ユーザーから「コミットして」と指示された際に使用します。
 ---
 
 # Git Commit
@@ -39,6 +39,8 @@ git diff --cached
 
 #### Types
 
+変更内容に最も適したタイプを選択します。
+
 - `feat:` - 新機能の追加
 - `fix:` - バグ修正
 - `refactor:` - リファクタリング
@@ -51,9 +53,11 @@ git diff --cached
 
 **Common Scopes**: `server`, `client`, `deps`
 
+`feat` や `fix` は "エンドユーザーから見た時、この変更がどう映るか" を基準に選択します。何かを "修正" した場合でも、エンドユーザーに影響がないのであれば `refactor` や `chore` を選択すべきです。
+
 #### Subject
 
-変更内容を元に「どのような変更を行ったか」を簡潔に伝えます。
+変更内容を元に「どのような変更を行ったか」を英語で簡潔に伝えます。
 
 - **常に** 現在形の命令形で始める (e.g. `add`, `implement`, `fix`, `improve`, `enhance`, `refactor`, `remove`)
 - **常に** タイトルは50文字以内
@@ -82,6 +86,6 @@ EOF
 
 ## Commit Message Examples
 
-- `feat(chroma-cli): add new options for foobar`
+- `feat(client): add new options for foobar`
 - `fix(server): resolve validation issue in user input`
-- `chore(deps): update Deno to X.Y.Z`
+- `chore(deps): update foobar to X.Y.Z`
