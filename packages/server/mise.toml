@@ -1,5 +1,5 @@
 [tasks.dev]
-env = { CHROMA_RUNTIME_DIR = "{{ [env.XDG_RUNTIME_DIR, 'chroma-dev'] | join_path }}" }
+env = { CHROMA_RUNTIME_DIR = "{{ [env.XDG_RUNTIME_DIR, 'chroma-dev'] | join_path }}", CHROMA_LOG_LEVEL = "DEBUG" }
 tools.watchexec = "2.3.3"
 run = '''
 mkdir -p $CHROMA_RUNTIME_DIR
