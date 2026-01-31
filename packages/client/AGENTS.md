@@ -1,26 +1,25 @@
 # @chroma/client
 
-## Package Structure
+## Package Overview
 
-```
-<package-root>/
-├── build/                             # ビルド成果物
-└── src/
-    ├── externals/
-    │   ├── chrome-client.ts           # サーバーへのRPC通信クライアント
-    │   └── config.ts                  # 設定ファイル読み込み
-    ├── schemas/
-    │   └── config.ts                  # 設定ファイルのスキーマ定義
-    ├── services/
-    │   ├── chrome-service.ts          # CLI→RPC呼び出しの橋渡し
-    │   └── profile-name-resolver.ts   # プロファイルエイリアス解決
-    └── main.ts                        # エントリーポイント、Cliffy CLIコマンド定義
-```
+@chroma/client (`chroma`) はユーザーが直接実行するCLIツールです。
 
-## Development Commands
+- 設定ファイル・環境変数・コマンドライン引数をパースし、起動すべきChromeプロファイルを決定します。
+- @chroma/server (`chromad`) にUNIXドメインソケット経由でRPCリクエストを送り、Chromeを起動させます。
 
-- `mise run :client -- [args...]` : 開発中のCLIクライアントを実行します
+`BROWSER` 環境変数経由で他のツールから呼び出されることも想定します。
+
+## Commands
+
+- `mise run :client -- [args...]` : 開発中のCLIクライアントを実行します。
 - `mise run :check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
 - `mise run :fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
 - `mise run :test -- [files...]` : テストを実行します。
 - `mise run :build` : パッケージをビルドします。
+
+## Structure
+
+- `src/main.ts` : エントリーポイント。
+- `src/services/` : サービスレイヤー。実処理の実装。
+- `src/schemas/` : スキーマ定義。
+- `src/externals/` : 外部システムとのインターフェイス (設定ファイル読み込み、RPCクライアント)。
