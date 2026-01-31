@@ -1,7 +1,8 @@
 import { Rpc, RpcGroup } from '@effect/rpc'
 import { Effect, Schema } from 'effect'
 import { ProfileName } from '../schemas/profile-name'
-import { ChromeLaunchError, ChromeService } from '../services/chrome-service'
+import { ChromeLaunchError } from '../services/chrome-launcher'
+import { ChromeService } from '../services/chrome-service'
 import { LoggingMiddleware } from './logging-middleware'
 
 export class ChromeRpcGroup extends RpcGroup.make(
