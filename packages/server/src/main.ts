@@ -7,7 +7,9 @@ import { ChromeRpcGroup, ChromeRpcLive } from './app/rpcs.ts'
 import { SocketPath, UnixSocket } from './app/runtime.ts'
 import { ChromeService } from './services/chrome-service.ts'
 
-const LogLevelLive = Layer.unwrapEffect(Config.logLevel('CHROMA_LOG_LEVEL').pipe(Effect.map(Logger.minimumLogLevel)))
+const LogLevelLive = Layer.unwrapEffect(
+  Config.logLevel('CHROMA_LOG_LEVEL').pipe(Config.withDefault(LogLevel.Info), Effect.map(Logger.minimumLogLevel)),
+)
 
 const RpcServerLive = RpcServer.layer(ChromeRpcGroup).pipe(
   L.provide(ChromeRpcLive),
