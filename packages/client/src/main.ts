@@ -14,6 +14,7 @@ import { ChromeService } from './services/chrome-service.ts'
     .name('chroma')
     .description('Open URL in specific Google Chrome profile.')
     .version(BUILD_VERSION)
+    .meta('Built', BUILD_TIME)
     .env(
       'CHROMA_PROFILE=<PROFILE:string>',
       `

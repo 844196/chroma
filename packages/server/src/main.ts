@@ -36,6 +36,7 @@ const program = Effect.gen(function* () {
   yield* Effect.logInfo('start server').pipe(
     Effect.annotateLogs({
       BUILD_VERSION,
+      BUILD_TIME,
     }),
   )
   return yield* L.launch(MainLive)
