@@ -1,7 +1,10 @@
 [tasks.client]
 env = { CHROMA_RUNTIME_DIR = "{{ [env.XDG_RUNTIME_DIR, 'chroma-dev'] | join_path }}" }
 run = '''
-bun run --define BUILD_VERSION='"dev"' src/main.ts
+bun run \
+  --define BUILD_VERSION='"dev"' \
+  --define BUILD_TIME="\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"" \
+  src/main.ts
 '''
 
 [tasks.check]
@@ -28,5 +31,6 @@ run = '''
 bun build --compile --bytecode --target=${usage_platform:?} --minify \
   --define 'process.env.NODE_ENV="production"' \
   --define BUILD_VERSION="'${usage_version:?}'" \
+  --define BUILD_TIME="'$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
   src/main.ts --outfile build/chroma
 '''
