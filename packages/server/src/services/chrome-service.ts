@@ -1,6 +1,7 @@
-import { Command, CommandExecutor } from '@effect/platform'
-import { Context, Effect, String as EffectString, Layer, Option, pipe, Schema, Stream } from 'effect'
+import { Command } from '@effect/platform'
+import { Context, Effect, Layer, Option } from 'effect'
 import type { ProfileName } from '../schemas/profile-name'
+import { type ChromeLaunchError, ChromeLauncher } from './chrome-launcher'
 
 export class ChromeService extends Context.Tag('@chroma/server/services/ChromeService')<
   ChromeService,
@@ -14,7 +15,7 @@ export class ChromeService extends Context.Tag('@chroma/server/services/ChromeSe
   static readonly wslLayer = Layer.effect(
     ChromeService,
     Effect.gen(function* () {
-      const executor = yield* CommandExecutor.CommandExecutor
+      const launcher = yield* ChromeLauncher
 
       const launch = Effect.fn('ChromeService.wsl.launch')(function* (
         profileName: Option.Option<ProfileName>,
@@ -32,32 +33,10 @@ export class ChromeService extends Context.Tag('@chroma/server/services/ChromeSe
           `-ArgumentList ${formattedArgs.join(', ')}`,
         )
 
-        const run = pipe(
-          executor.start(cmd),
-          Effect.flatMap(({ exitCode, stdout, stderr }) =>
-            Effect.all([exitCode, decodeStream(stdout), decodeStream(stderr)], { concurrency: 3 }),
-          ),
-          Effect.filterOrElse(
-            ([exitCode]) => exitCode === 0,
-            ([exitCode, stdout, stderr]) => new ChromeLaunchError({ exitCode, stdout, stderr }),
-          ),
-          Effect.catchAll(Effect.die),
-        )
-
-        yield* Effect.scoped(run)
+        yield* launcher.launch(cmd)
       })
 
       return { launch }
     }),
-  )
-}
-
-export class ChromeLaunchError extends Schema.TaggedError<ChromeLaunchError>()('ChromeLaunchError', {
-  exitCode: Schema.Number.pipe(Schema.int()),
-  stdout: Schema.String,
-  stderr: Schema.String,
-}) {}
-
-function decodeStream<E, R>(stream: Stream.Stream<Uint8Array, E, R>): Effect.Effect<string, E, R> {
-  return stream.pipe(Stream.decodeText(), Stream.runFold(EffectString.empty, EffectString.concat))
+  ).pipe(Layer.provide(ChromeLauncher.layer))
 }
