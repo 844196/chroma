@@ -1,3 +1,12 @@
+[tasks.check]
+extends = "check"
+
+[tasks.fix]
+extends = "fix"
+
+[tasks.test]
+extends = "test"
+
 [tasks.dev]
 env = { CHROMA_RUNTIME_DIR = "{{ [env.XDG_RUNTIME_DIR, 'chroma-dev'] | join_path }}", CHROMA_LOG_LEVEL = "DEBUG" }
 tools.watchexec = "2.3.3"
@@ -6,21 +15,6 @@ mkdir -p $CHROMA_RUNTIME_DIR
 watchexec --on-busy-update restart --stop-signal SIGTERM -- \
   bun run --define BUILD_VERSION='\"dev\"' --define BUILD_TIME='\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"' src/main.ts
 '''
-
-[tasks.check]
-usage = 'arg "[files]" var=#true'
-run = [
-  "bunx --bun tsc",
-  "bunx --bun biome check --error-on-warnings ${usage_files}",
-]
-
-[tasks.fix]
-usage = 'arg "[files]" var=#true'
-run = "bunx --bun biome check --write ${usage_files}"
-
-[tasks.test]
-usage = 'arg "[files]" var=#true'
-run = "bunx --bun vitest run ${usage_files}"
 
 [tasks.build]
 usage = '''
