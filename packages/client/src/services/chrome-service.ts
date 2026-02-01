@@ -11,11 +11,11 @@ export class ChromeService extends Effect.Service<ChromeService>()('@chroma/clie
 
     const launch = Effect.fn('ChromeService.launch')(function* (
       givenProfileName: Option.Option<string>,
-      args: ReadonlyArray<string>,
+      url: Option.Option<string>,
     ) {
       const profileName = yield* Effect.transposeMapOption(givenProfileName, profileNameResolver.resolve)
 
-      yield* chrome.launch({ profileName, args })
+      yield* chrome.launch({ profileName, url })
     })
 
     return { launch }

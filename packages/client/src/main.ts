@@ -7,10 +7,9 @@ import { ChromeService } from './services/chrome-service.ts'
 
 ;(async () => {
   const {
-    args: parsedArgs,
-    literal: parsedLiteral,
+    args: [url],
     options: parsedOpts,
-  } = await new Command()
+  } = await new Command<void, void, { profile?: string; config?: string; host?: string }, [url?: string]>()
     .name('chroma')
     .description('Open URL in specific Google Chrome profile.')
     .version(BUILD_VERSION)
@@ -40,9 +39,9 @@ import { ChromeService } from './services/chrome-service.ts'
     )
     .option('-c, --config <PATH:string>', 'Path to the configuration file.')
     .option('-H, --host <HOST:string>', 'Daemon socket to connect to.')
-    .arguments('[ARGS...]')
-    .example('Specified profile by option.', 'chroma -p "Profile 2" http://localhost:5173')
-    .example('Specified profile by environment variable.', 'CHROMA_PROFILE="Profile 2" chroma http://localhost:5173')
+    .arguments('[URL:string]')
+    .example('Specified profile by option.', "chroma -p 'Profile 2' 'http://localhost:5173'")
+    .example('Specified profile by environment variable.', "CHROMA_PROFILE='Profile 2' chroma 'http://localhost:5173'")
     .example(
       'Use with other CLI tools via $BROWSER.',
       `
@@ -53,7 +52,7 @@ import { ChromeService } from './services/chrome-service.ts'
     .parse()
 
   const program = Effect.flatMap(ChromeService, ($) =>
-    $.launch(O.fromNullable(parsedOpts.profile), [...parsedArgs, ...parsedLiteral]),
+    $.launch(O.fromNullable(parsedOpts.profile), O.fromNullable(url)),
   )
 
   const MainLive = ChromeService.Default.pipe(
