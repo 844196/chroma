@@ -9,7 +9,7 @@ export class ChromeRpcGroup extends RpcGroup.make(
   Rpc.make('launch', {
     payload: {
       profileName: Schema.Option(ProfileName),
-      args: Schema.Array(Schema.String),
+      url: Schema.Option(Schema.NonEmptyString),
     },
     error: ChromeLaunchError,
   }),
@@ -20,7 +20,7 @@ export const ChromeRpcLive = ChromeRpcGroup.toLayer(
     const chrome = yield* ChromeService
 
     return {
-      launch: ({ profileName, args }) => chrome.launch(profileName, args),
+      launch: ({ profileName, url }) => chrome.launch(profileName, url),
     }
   }),
 )
