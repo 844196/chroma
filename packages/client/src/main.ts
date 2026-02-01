@@ -30,6 +30,14 @@ import { ChromeService } from './services/chrome-service.ts'
       `,
       { prefix: 'CHROMA_' },
     )
+    .env(
+      'CHROMA_CONFIG=<PATH:string>',
+      `
+        Path to the configuration file.
+        If -c/--config is not specified, and this is set, this value will be used.
+      `,
+      { prefix: 'CHROMA_' },
+    )
     .option(
       '-p, --profile <PROFILE:string>',
       `
