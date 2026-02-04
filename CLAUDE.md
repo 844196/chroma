@@ -20,7 +20,8 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 
 ## Commands
 
-- `mise run //packages/...:check` : 全パッケージの型チェック・フォーマッター・リンターを実行します。
+- `mise run //packages/...:check` : 全パッケージで型チェック・フォーマッター・リンターを実行します。
+- `mise run //packages/...:fix` : 全パッケージでフォーマッター・リンターの自動修正を実行します。
 - `mise run //packages/...:test` : 全パッケージのテストを実行します。
 
 ## Project Conventions
@@ -37,6 +38,37 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 - テストファイルはテスト対象ファイルと同じディレクトリに `*.test.ts` として配置します。
 - Effect-TSのコードのテストには `@effect/vitest` を使用します。
 
-### Guardrails
+### Git Commit
 
-- コードを変更したら常に `mise run //packages/...:check` と `mise run //packages/...:test` を実行して、問題がないことを確認します。
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってコミットメッセージを生成します。
+
+#### Format
+
+```
+<type>(<scope>)[!]: <subject>
+
+<body>
+
+[footer(s)]
+```
+
+**重要**: このプロジェクトではスコープおよび本文を必須とします。
+
+#### Allowed Types
+
+- `feat:` - 新機能の追加
+- `fix:` - バグ修正
+- `refactor:` - リファクタリング
+- `docs:` - ドキュメントの追加・更新
+- `style:` - フォーマット修正 (コードの動作に影響しない変更)
+- `perf:` - パフォーマンス改善
+- `test:` - テストコードの追加・修正
+- `chore:` - メンテナンス作業
+  - `chore(deps):` - 依存関係の更新
+
+#### Allowed Scopes
+
+- `client`
+- `server`
+- `shared`
+- `deps`
