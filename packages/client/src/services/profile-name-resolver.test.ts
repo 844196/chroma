@@ -1,6 +1,6 @@
 import type { ProfileName } from '@chroma/server'
-import { describe, expect, it } from '@effect/vitest'
-import { Effect, Layer } from 'effect'
+import { assert, describe, expect, it } from '@effect/vitest'
+import { Effect, Either, Layer } from 'effect'
 import { Config } from '../externals/config'
 import { InvalidProfileNameError, ProfileNameResolver } from './profile-name-resolver'
 
@@ -8,7 +8,7 @@ const aliasMap = (entries: Array<[string, string]>): ReadonlyMap<string, Profile
   new Map(entries.map(([k, v]) => [k, v as ProfileName]))
 
 const testConfig = (aliases: ReadonlyMap<string, ProfileName>) =>
-  Layer.succeed(Config, Config.make({ profileNameAliases: aliases }))
+  Layer.succeed(Config, Config.of({ profileNameAliases: aliases }))
 
 describe('ProfileNameResolver', () => {
   describe('resolve', () => {
@@ -18,10 +18,11 @@ describe('ProfileNameResolver', () => {
         ['work',     aliasMap([['work', 'Profile 1']]),    'Profile 1'],
         ['personal', aliasMap([['personal', 'Default']]),  'Default'  ],
       ] as const)('should resolve alias "%s" to "%s"', ([input, aliases, expected]) => {
-        const testLayer = ProfileNameResolver.Default.pipe(Layer.provide(testConfig(aliases)))
+        const testLayer = ProfileNameResolver.layer.pipe(Layer.provide(testConfig(aliases)))
 
         return Effect.gen(function* () {
-          const result = yield* ProfileNameResolver.resolve(input)
+          const resolver = yield* ProfileNameResolver
+          const result = yield* resolver.resolve(input)
           expect(result).toBe(expected)
         }).pipe(Effect.provide(testLayer))
       })
@@ -34,10 +35,11 @@ describe('ProfileNameResolver', () => {
         ['Profile 1'],
         ['Profile 42'],
       ] as const)('should return "%s" as-is', ([input]) => {
-        const testLayer = ProfileNameResolver.Default.pipe(Layer.provide(testConfig(aliasMap([]))))
+        const testLayer = ProfileNameResolver.layer.pipe(Layer.provide(testConfig(aliasMap([]))))
 
         return Effect.gen(function* () {
-          const result = yield* ProfileNameResolver.resolve(input)
+          const resolver = yield* ProfileNameResolver
+          const result = yield* resolver.resolve(input)
           expect(result).toBe(input)
         }).pipe(Effect.provide(testLayer))
       })
@@ -55,26 +57,26 @@ describe('ProfileNameResolver', () => {
         [' Profile 1', 'leading space'       ],
         ['foo',        'arbitrary string'    ],
       ] as const)('should fail with InvalidProfileNameError for "%s" (%s)', ([input]) => {
-        const testLayer = ProfileNameResolver.Default.pipe(Layer.provide(testConfig(aliasMap([]))))
+        const testLayer = ProfileNameResolver.layer.pipe(Layer.provide(testConfig(aliasMap([]))))
 
         return Effect.gen(function* () {
-          const result = yield* ProfileNameResolver.resolve(input).pipe(Effect.either)
-          expect(result._tag).toBe('Left')
-          if (result._tag === 'Left') {
-            expect(result.left).toBeInstanceOf(InvalidProfileNameError)
-          }
+          const resolver = yield* ProfileNameResolver
+          const result = yield* resolver.resolve(input).pipe(Effect.either)
+          assert(Either.isLeft(result))
+          expect(result.left).toBeInstanceOf(InvalidProfileNameError)
         }).pipe(Effect.provide(testLayer))
       })
     })
 
     describe('priority', () => {
       it.effect('should prefer alias over ProfileName schema validation', () => {
-        const testLayer = ProfileNameResolver.Default.pipe(
+        const testLayer = ProfileNameResolver.layer.pipe(
           Layer.provide(testConfig(aliasMap([['Default', 'Profile 99']]))),
         )
 
         return Effect.gen(function* () {
-          const result = yield* ProfileNameResolver.resolve('Default')
+          const resolver = yield* ProfileNameResolver
+          const result = yield* resolver.resolve('Default')
           expect(result).toBe('Profile 99')
         }).pipe(Effect.provide(testLayer))
       })

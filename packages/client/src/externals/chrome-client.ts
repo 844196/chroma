@@ -8,7 +8,7 @@ export class ChromeClient extends Context.Tag('@chroma/client/externals/ChromeCl
   ChromeClient,
   RpcClient.RpcClient<Rpcs<typeof ChromeRpcGroup>, RpcClientError.RpcClientError>
 >() {
-  static readonly Default = (opts: { socketPath?: string | undefined } = {}) =>
+  static readonly layer = (opts: { socketPath?: string | undefined } = {}) =>
     L.unwrapEffect(
       Effect.gen(function* () {
         const socketPath = yield* Option.match(Option.fromNullable(opts.socketPath), {
@@ -32,5 +32,5 @@ export class ChromeClient extends Context.Tag('@chroma/client/externals/ChromeCl
           L.provide(FetchUnixSocketClientLive),
         )
       }),
-    ).pipe(L.provide(ServerSocketPath.Default))
+    ).pipe(L.provide(ServerSocketPath.layer))
 }

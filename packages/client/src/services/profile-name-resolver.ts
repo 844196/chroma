@@ -1,12 +1,16 @@
 import { ProfileName } from '@chroma/server'
-import { Either as E, Effect, Option as O, Schema } from 'effect'
+import { Context, Either as E, Effect, Layer, Option as O, Schema } from 'effect'
 import { Config } from '../externals/config'
 
-export class ProfileNameResolver extends Effect.Service<ProfileNameResolver>()(
-  '@chroma/client/services/ProfileNameResolver',
+export class ProfileNameResolver extends Context.Tag('@chroma/client/services/ProfileNameResolver')<
+  ProfileNameResolver,
   {
-    accessors: true,
-    effect: Effect.gen(function* () {
+    readonly resolve: (given: string) => Effect.Effect<ProfileName, InvalidProfileNameError>
+  }
+>() {
+  static readonly layer = Layer.effect(
+    ProfileNameResolver,
+    Effect.gen(function* () {
       const { profileNameAliases } = yield* Config
 
       const resolve = Effect.fn('ProfileNameResolver.resolve')((given: string) => {
@@ -25,8 +29,8 @@ export class ProfileNameResolver extends Effect.Service<ProfileNameResolver>()(
 
       return { resolve }
     }),
-  },
-) {}
+  )
+}
 
 export class InvalidProfileNameError extends Schema.TaggedError<InvalidProfileNameError>()('InvalidProfileNameError', {
   cause: Schema.Defect,

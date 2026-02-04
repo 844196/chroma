@@ -63,9 +63,9 @@ import { ChromeService } from './services/chrome-service.ts'
     $.launch(O.fromNullable(parsedOpts.profile), O.fromNullable(url)),
   )
 
-  const MainLive = ChromeService.Default.pipe(
-    L.provide(Config.Default({ path: parsedOpts.config })),
-    L.provide(ChromeClient.Default({ socketPath: parsedOpts.host })),
+  const MainLive = ChromeService.layer.pipe(
+    L.provide(Config.layer({ path: parsedOpts.config })),
+    L.provide(ChromeClient.layer({ socketPath: parsedOpts.host })),
     L.provide(BunContext.layer),
   )
 
