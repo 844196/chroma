@@ -1,7 +1,7 @@
 import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { Effect, Layer } from 'effect'
-import { ChromeService } from '../services/chrome-service'
-import { LoggingMiddleware } from './logging-middleware'
+import { ChromeService } from '../services/chrome-service.ts'
+import { LoggingMiddleware } from './logging-middleware.ts'
 
 export const ChromeRpcLive = ChromeRpcGroup.middleware(LoggingMiddleware)
   .toLayer(

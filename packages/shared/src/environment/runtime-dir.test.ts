@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@effect/vitest'
 import { Effect } from 'effect'
 import { vi } from 'vitest'
-import { RuntimeDir } from './runtime-dir'
+import { RuntimeDir } from './runtime-dir.ts'
 
 const mockedTmpdir = vi.hoisted(() => vi.fn())
 const mockedUserInfo = vi.hoisted(() => vi.fn())

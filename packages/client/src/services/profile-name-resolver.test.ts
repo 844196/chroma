@@ -2,7 +2,7 @@ import { Config } from '@chroma/shared/externals'
 import type { ProfileName } from '@chroma/shared/schemas'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Effect, Either, Layer } from 'effect'
-import { InvalidProfileNameError, ProfileNameResolver } from './profile-name-resolver'
+import { InvalidProfileNameError, ProfileNameResolver } from './profile-name-resolver.ts'
 
 const aliasMap = (entries: Array<[string, string]>): ReadonlyMap<string, ProfileName> =>
   new Map(entries.map(([k, v]) => [k, v as ProfileName]))

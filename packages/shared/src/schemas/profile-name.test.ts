@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@effect/vitest'
 import { Either, Schema } from 'effect'
-import { ProfileName } from './profile-name'
+import { ProfileName } from './profile-name.ts'
 
 describe('ProfileName', () => {
   // biome-ignore format: For data alignment.

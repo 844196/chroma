@@ -1,6 +1,6 @@
 import { join as joinPath } from 'node:path'
 import { Context, Effect, Layer } from 'effect'
-import { RuntimeDir } from './runtime-dir'
+import { RuntimeDir } from './runtime-dir.ts'
 
 export class SocketPath extends Context.Tag('@chroma/shared/environment/SocketPath')<SocketPath, string>() {
   static readonly layerWithoutDependencies = Layer.effect(
