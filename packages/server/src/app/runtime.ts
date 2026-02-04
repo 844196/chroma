@@ -4,7 +4,7 @@ import { FileSystem } from '@effect/platform'
 import { Context, Effect, Layer, Option as O, Schema } from 'effect'
 
 export class RuntimeDir extends Context.Tag('@chroma/server/app/RuntimeDir')<RuntimeDir, string>() {
-  static readonly Default = Layer.effect(
+  static readonly layer = Layer.effect(
     RuntimeDir,
     Effect.sync(() =>
       O.fromNullable(process.env.CHROMA_RUNTIME_DIR).pipe(
@@ -16,12 +16,12 @@ export class RuntimeDir extends Context.Tag('@chroma/server/app/RuntimeDir')<Run
 }
 
 export class SocketPath extends Context.Tag('@chroma/server/app/SocketPath')<SocketPath, string>() {
-  static readonly DefaultWithoutDependencies = Layer.effect(
+  static readonly layerWithoutDependencies = Layer.effect(
     SocketPath,
     Effect.map(RuntimeDir, (dir) => joinPath(dir, 'chroma.sock')),
   )
 
-  static readonly Default = SocketPath.DefaultWithoutDependencies.pipe(Layer.provide(RuntimeDir.Default))
+  static readonly layer = SocketPath.layerWithoutDependencies.pipe(Layer.provide(RuntimeDir.layer))
 }
 
 export const UnixSocket = Effect.fn('UnixSocket')(function* (path: string) {

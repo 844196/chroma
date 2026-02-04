@@ -24,7 +24,7 @@ const HttpServerLive = L.unwrapScoped(
     yield* Effect.logInfo('starting server on unix socket').pipe(Effect.annotateLogs({ socketPath: socket.path }))
     return BunHttpServer.layerServer({ unix: socket.path })
   }),
-).pipe(L.provide(SocketPath.Default))
+).pipe(L.provide(SocketPath.layer))
 
 const MainLive = HttpRouter.Default.serve().pipe(
   L.provide(RpcServerLive),

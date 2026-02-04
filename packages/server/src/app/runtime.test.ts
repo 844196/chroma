@@ -18,7 +18,7 @@ describe('RuntimeDir', () => {
 
       return Effect.gen(function* () {
         expect(yield* RuntimeDir).toBe('/path/to/chroma-runtime-dir')
-      }).pipe(Effect.provide(RuntimeDir.Default))
+      }).pipe(Effect.provide(RuntimeDir.layer))
     })
   })
 
@@ -29,7 +29,7 @@ describe('RuntimeDir', () => {
 
       return Effect.gen(function* () {
         expect(yield* RuntimeDir).toBe('/path/to/xdg-runtime-dir/chroma')
-      }).pipe(Effect.provide(RuntimeDir.Default))
+      }).pipe(Effect.provide(RuntimeDir.layer))
     })
   })
 
@@ -40,7 +40,7 @@ describe('RuntimeDir', () => {
 
       return Effect.gen(function* () {
         expect(yield* RuntimeDir).toBe('/path/to/chroma-runtime-dir')
-      }).pipe(Effect.provide(RuntimeDir.Default))
+      }).pipe(Effect.provide(RuntimeDir.layer))
     })
   })
 
@@ -54,14 +54,14 @@ describe('RuntimeDir', () => {
 
       return Effect.gen(function* () {
         expect(yield* RuntimeDir).toBe('/path/to/tmpdir/chroma-65534')
-      }).pipe(Effect.provide(RuntimeDir.Default))
+      }).pipe(Effect.provide(RuntimeDir.layer))
     })
   })
 })
 
 describe('SocketPath', () => {
   it.effect('should return the socket path inside the runtime directory', () => {
-    const testLayer = SocketPath.DefaultWithoutDependencies.pipe(
+    const testLayer = SocketPath.layerWithoutDependencies.pipe(
       Layer.provide(Layer.succeed(RuntimeDir, '/path/to/runtime-dir')),
     )
 
