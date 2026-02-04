@@ -2,6 +2,7 @@ experimental_monorepo_root = true
 monorepo.config_roots = ["packages/*"]
 
 [settings]
+lockfile = true
 task_show_full_cmd = true
 
 [tools]
