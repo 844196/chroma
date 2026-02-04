@@ -10,7 +10,7 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 - `packages/server` : サーバーパッケージ (`@chroma/server`)
 - `packages/shared` : 共通パッケージ (`@chroma/shared`)
 
-各パッケージの詳細は `packages/<PACKAGE_NAME>/AGENTS.md` に記述されています。
+各パッケージの詳細は `packages/<PACKAGE_NAME>/CLAUDE.md` に記述されています。
 
 ## Tech Stack
 
