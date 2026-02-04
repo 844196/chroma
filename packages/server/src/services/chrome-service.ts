@@ -1,5 +1,7 @@
+import { type as osType } from 'node:os'
 import { Command } from '@effect/platform'
 import { Context, Effect, Layer, Option } from 'effect'
+import isWsl from 'is-wsl'
 import type { ProfileName } from '../schemas/profile-name'
 import { type ChromeLaunchError, ChromeLauncher } from './chrome-launcher'
 
@@ -12,6 +14,19 @@ export class ChromeService extends Context.Tag('@chroma/server/services/ChromeSe
     ) => Effect.Effect<void, ChromeLaunchError>
   }
 >() {
+  static readonly autoLayer = Layer.unwrapEffect(
+    Effect.gen(function* () {
+      const os = osType()
+      if (os === 'Darwin') {
+        return ChromeService.darwinLayer
+      }
+      if (isWsl) {
+        return ChromeService.wslLayer
+      }
+      return yield* Effect.dieMessage(`unsupported OS: ${os}`)
+    }),
+  )
+
   static readonly wslLayer = Layer.effect(
     ChromeService,
     Effect.gen(function* () {
