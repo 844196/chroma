@@ -4,7 +4,6 @@
   "type": "module",
   "dependencies": {
     "@chroma/shared": "workspace:*",
-    "@trpc/server": "11.8.1",
     "is-wsl": "3.1.0"
   }
 }
