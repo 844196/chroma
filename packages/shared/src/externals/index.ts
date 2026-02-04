@@ -1,1 +1,1 @@
-export { Config, ConfigFileParseError, ConfigFileReadError } from './config'
+export { Config, ConfigFileParseError, ConfigFileReadError } from './config.ts'

@@ -1,8 +1,8 @@
 import type { ChromeLaunchError } from '@chroma/shared/errors'
 import type { RpcClientError } from '@effect/rpc'
 import { Context, Effect, Layer, type Option } from 'effect'
-import { ChromeClient } from '../externals/chrome-client'
-import { type InvalidProfileNameError, ProfileNameResolver } from './profile-name-resolver'
+import { ChromeClient } from '../externals/chrome-client.ts'
+import { type InvalidProfileNameError, ProfileNameResolver } from './profile-name-resolver.ts'
 
 export class ChromeService extends Context.Tag('@chroma/client/services/ChromeService')<
   ChromeService,

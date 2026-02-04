@@ -1,1 +1,1 @@
-export { ChromeLaunchError } from './chrome-launch-error'
+export { ChromeLaunchError } from './chrome-launch-error.ts'

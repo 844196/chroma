@@ -4,7 +4,7 @@ import type { ProfileName } from '@chroma/shared/schemas'
 import { Command } from '@effect/platform'
 import { Context, Effect, Layer, Option } from 'effect'
 import isWsl from 'is-wsl'
-import { ChromeLauncher } from './chrome-launcher'
+import { ChromeLauncher } from './chrome-launcher.ts'
 
 export class ChromeService extends Context.Tag('@chroma/server/services/ChromeService')<
   ChromeService,

@@ -1,2 +1,2 @@
-export { Config } from './config'
-export { ProfileName } from './profile-name'
+export { Config } from './config.ts'
+export { ProfileName } from './profile-name.ts'

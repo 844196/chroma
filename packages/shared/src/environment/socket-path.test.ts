@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@effect/vitest'
 import { Effect, Layer } from 'effect'
-import { RuntimeDir } from './runtime-dir'
-import { SocketPath } from './socket-path'
+import { RuntimeDir } from './runtime-dir.ts'
+import { SocketPath } from './socket-path.ts'
 
 describe('SocketPath', () => {
   it.effect('should return the socket path inside the runtime directory', () => {

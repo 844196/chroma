@@ -1,1 +1,1 @@
-export { ChromeRpcGroup } from './chrome'
+export { ChromeRpcGroup } from './chrome.ts'
