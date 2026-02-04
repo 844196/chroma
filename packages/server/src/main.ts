@@ -28,7 +28,7 @@ const HttpServerLive = L.unwrapScoped(
 
 const MainLive = HttpRouter.Default.serve().pipe(
   L.provide(RpcServerLive),
-  L.provide(ChromeService.wslLayer),
+  L.provide(ChromeService.autoLayer),
   L.provide(HttpServerLive),
   L.provide(BunContext.layer),
   L.provide(LogLevelLive),

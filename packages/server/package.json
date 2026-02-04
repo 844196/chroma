@@ -4,6 +4,7 @@
   "type": "module",
   "exports": "./src/index.ts",
   "dependencies": {
-    "@trpc/server": "11.8.1"
+    "@trpc/server": "11.8.1",
+    "is-wsl": "3.1.0"
   }
 }
