@@ -1,5 +1,6 @@
+import { ChromeLaunchError } from '@chroma/shared/errors'
 import { type Command, CommandExecutor } from '@effect/platform'
-import { Context, Effect, String as EffectString, Layer, pipe, Schema, Stream } from 'effect'
+import { Context, Effect, String as EffectString, Layer, pipe, Stream } from 'effect'
 
 export class ChromeLauncher extends Context.Tag('@chroma/server/services/ChromeLauncher')<
   ChromeLauncher,
@@ -32,12 +33,6 @@ export class ChromeLauncher extends Context.Tag('@chroma/server/services/ChromeL
     }),
   )
 }
-
-export class ChromeLaunchError extends Schema.TaggedError<ChromeLaunchError>()('ChromeLaunchError', {
-  exitCode: Schema.Number.pipe(Schema.int()),
-  stdout: Schema.String,
-  stderr: Schema.String,
-}) {}
 
 function decodeStream<E, R>(stream: Stream.Stream<Uint8Array, E, R>): Effect.Effect<string, E, R> {
   return stream.pipe(Stream.decodeText(), Stream.runFold(EffectString.empty, EffectString.concat))

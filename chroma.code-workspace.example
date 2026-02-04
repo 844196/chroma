@@ -11,6 +11,10 @@
     {
       "name": "@chroma/client",
       "path": "packages/client"
+    },
+    {
+      "name": "@chroma/shared",
+      "path": "packages/shared"
     }
   ],
   "settings": {

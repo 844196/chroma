@@ -1,0 +1,12 @@
+{
+  "name": "@chroma/shared",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./environment": "./src/environment/index.ts",
+    "./errors": "./src/errors/index.ts",
+    "./externals": "./src/externals/index.ts",
+    "./rpc": "./src/rpc/index.ts",
+    "./schemas": "./src/schemas/index.ts"
+  }
+}

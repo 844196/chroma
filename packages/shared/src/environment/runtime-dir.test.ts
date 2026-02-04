@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@effect/vitest'
-import { Effect, Layer } from 'effect'
+import { Effect } from 'effect'
 import { vi } from 'vitest'
-import { RuntimeDir, SocketPath } from './runtime'
+import { RuntimeDir } from './runtime-dir'
 
 const mockedTmpdir = vi.hoisted(() => vi.fn())
 const mockedUserInfo = vi.hoisted(() => vi.fn())
@@ -56,17 +56,5 @@ describe('RuntimeDir', () => {
         expect(yield* RuntimeDir).toBe('/path/to/tmpdir/chroma-65534')
       }).pipe(Effect.provide(RuntimeDir.layer))
     })
-  })
-})
-
-describe('SocketPath', () => {
-  it.effect('should return the socket path inside the runtime directory', () => {
-    const testLayer = SocketPath.layerWithoutDependencies.pipe(
-      Layer.provide(Layer.succeed(RuntimeDir, '/path/to/runtime-dir')),
-    )
-
-    return Effect.gen(function* () {
-      expect(yield* SocketPath).toBe('/path/to/runtime-dir/chroma.sock')
-    }).pipe(Effect.provide(testLayer))
   })
 })

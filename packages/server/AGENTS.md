@@ -20,7 +20,5 @@
 ## Structure
 
 - `src/main.ts` : エントリーポイント。
-- `src/index.ts` : @chroma/client向けにエクスポートするバレルファイル。
-- `src/app/` : アプリケーションレイヤー。RPCグループ定義やハンドラ実装、サーバー起動処理など。
+- `src/app/` : アプリケーションレイヤー。RPCハンドラ実装。
 - `src/services/` : サービスレイヤー。
-- `src/schemas/` : スキーマ定義。

@@ -1,0 +1,8 @@
+[tasks.check]
+extends = "check"
+
+[tasks.fix]
+extends = "fix"
+
+[tasks.test]
+extends = "test"

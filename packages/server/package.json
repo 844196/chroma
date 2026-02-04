@@ -2,8 +2,8 @@
   "name": "@chroma/server",
   "private": true,
   "type": "module",
-  "exports": "./src/index.ts",
   "dependencies": {
+    "@chroma/shared": "workspace:*",
     "@trpc/server": "11.8.1",
     "is-wsl": "3.1.0"
   }

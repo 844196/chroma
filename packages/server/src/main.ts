@@ -1,11 +1,12 @@
+import { SocketPath } from '@chroma/shared/environment'
+import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { HttpRouter } from '@effect/platform'
 import { BunContext, BunHttpServer, BunRuntime } from '@effect/platform-bun'
 import { RpcSerialization, RpcServer } from '@effect/rpc'
 import { Cause, Config, Effect, Exit, Layer as L, Layer, Logger, LogLevel } from 'effect'
-import { LoggingMiddlewareLive } from './app/logging-middleware.ts'
-import { ChromeRpcGroup, ChromeRpcLive } from './app/rpcs.ts'
-import { SocketPath, UnixSocket } from './app/runtime.ts'
+import { ChromeRpcLive } from './app/rpcs.ts'
 import { ChromeService } from './services/chrome-service.ts'
+import { UnixSocket } from './support/unix-socket.ts'
 
 const LogLevelLive = Layer.unwrapEffect(
   Config.logLevel('CHROMA_LOG_LEVEL').pipe(Config.withDefault(LogLevel.Info), Effect.map(Logger.minimumLogLevel)),
@@ -13,7 +14,6 @@ const LogLevelLive = Layer.unwrapEffect(
 
 const RpcServerLive = RpcServer.layer(ChromeRpcGroup).pipe(
   L.provide(ChromeRpcLive),
-  L.provide(LoggingMiddlewareLive),
   L.provide(RpcServer.layerProtocolHttp({ path: '/rpc' })),
   L.provide(RpcSerialization.layerNdjson),
 )
