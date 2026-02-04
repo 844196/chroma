@@ -1,5 +1,5 @@
-import { ProfileName } from '@chroma/server'
 import { ParseResult, Schema } from 'effect'
+import { ProfileName } from './profile-name.ts'
 
 const ProfileNameAliasMap = Schema.transformOrFail(
   Schema.partial(Schema.Record({ key: ProfileName, value: Schema.NonEmptyArray(Schema.NonEmptyString) })),

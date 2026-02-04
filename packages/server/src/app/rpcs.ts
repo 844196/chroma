@@ -1,26 +1,16 @@
-import { Rpc, RpcGroup } from '@effect/rpc'
-import { Effect, Schema } from 'effect'
-import { ProfileName } from '../schemas/profile-name'
-import { ChromeLaunchError } from '../services/chrome-launcher'
+import { ChromeRpcGroup } from '@chroma/shared/rpc'
+import { Effect, Layer } from 'effect'
 import { ChromeService } from '../services/chrome-service'
 import { LoggingMiddleware } from './logging-middleware'
 
-export class ChromeRpcGroup extends RpcGroup.make(
-  Rpc.make('launch', {
-    payload: {
-      profileName: Schema.Option(ProfileName),
-      url: Schema.Option(Schema.NonEmptyString),
-    },
-    error: ChromeLaunchError,
-  }),
-).middleware(LoggingMiddleware) {}
+export const ChromeRpcLive = ChromeRpcGroup.middleware(LoggingMiddleware)
+  .toLayer(
+    Effect.gen(function* () {
+      const chrome = yield* ChromeService
 
-export const ChromeRpcLive = ChromeRpcGroup.toLayer(
-  Effect.gen(function* () {
-    const chrome = yield* ChromeService
-
-    return {
-      launch: ({ profileName, url }) => chrome.launch(profileName, url),
-    }
-  }),
-)
+      return {
+        launch: ({ profileName, url }) => chrome.launch(profileName, url),
+      }
+    }),
+  )
+  .pipe(Layer.provide(LoggingMiddleware.layer))

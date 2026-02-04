@@ -1,8 +1,8 @@
+import { Config } from '@chroma/shared/externals'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer as L, Option as O } from 'effect'
 import { ChromeClient } from './externals/chrome-client.ts'
-import { Config } from './externals/config.ts'
 import { ChromeService } from './services/chrome-service.ts'
 
 ;(async () => {

@@ -8,6 +8,7 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 
 - `packages/client` : CLIクライアントパッケージ (`@chroma/client`)
 - `packages/server` : サーバーパッケージ (`@chroma/server`)
+- `packages/shared` : 共通パッケージ (`@chroma/shared`)
 
 各パッケージの詳細は `packages/<PACKAGE_NAME>/AGENTS.md` に記述されています。
 

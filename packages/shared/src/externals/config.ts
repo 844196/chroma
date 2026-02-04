@@ -13,7 +13,7 @@ const DEFAULT_CONFIG_PATH = Option.fromNullable(process.env.XDG_CONFIG_HOME).pip
   ($) => joinPath($, 'chroma', 'config.json'),
 )
 
-export class Config extends Context.Tag('@chroma/client/externals/Config')<Config, typeof ConfigSchema.Type>() {
+export class Config extends Context.Tag('@chroma/shared/externals/Config')<Config, typeof ConfigSchema.Type>() {
   static readonly layer = (opts: { path?: string | undefined } = {}) =>
     Layer.effect(
       Config,

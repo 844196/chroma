@@ -1,10 +1,11 @@
+import { ChromeLaunchError } from '@chroma/shared/errors'
 import { Command, CommandExecutor } from '@effect/platform'
 import { ExitCode, ProcessId, ProcessTypeId, TypeId } from '@effect/platform/CommandExecutor'
 import { SystemError } from '@effect/platform/Error'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option, Sink, Stream } from 'effect'
 import { NodeInspectSymbol } from 'effect/Inspectable'
-import { ChromeLaunchError, ChromeLauncher } from './chrome-launcher'
+import { ChromeLauncher } from './chrome-launcher'
 
 const createProcess = (opts: {
   exitCode: CommandExecutor.ExitCode

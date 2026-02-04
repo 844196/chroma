@@ -1,4 +1,5 @@
-import { ChromeRpcGroup, ServerSocketPath } from '@chroma/server'
+import { SocketPath } from '@chroma/shared/environment'
+import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { FetchHttpClient } from '@effect/platform'
 import { RpcClient, type RpcClientError, RpcSerialization } from '@effect/rpc'
 import type { Rpcs } from '@effect/rpc/RpcGroup'
@@ -12,7 +13,7 @@ export class ChromeClient extends Context.Tag('@chroma/client/externals/ChromeCl
     L.unwrapEffect(
       Effect.gen(function* () {
         const socketPath = yield* Option.match(Option.fromNullable(opts.socketPath), {
-          onNone: () => ServerSocketPath,
+          onNone: () => SocketPath,
           onSome: Effect.succeed,
         })
 
@@ -32,5 +33,5 @@ export class ChromeClient extends Context.Tag('@chroma/client/externals/ChromeCl
           L.provide(FetchUnixSocketClientLive),
         )
       }),
-    ).pipe(L.provide(ServerSocketPath.layer))
+    ).pipe(L.provide(SocketPath.layer))
 }

@@ -1,4 +1,4 @@
-import type { ChromeLaunchError } from '@chroma/server'
+import type { ChromeLaunchError } from '@chroma/shared/errors'
 import type { RpcClientError } from '@effect/rpc'
 import { Context, Effect, Layer, type Option } from 'effect'
 import { ChromeClient } from '../externals/chrome-client'

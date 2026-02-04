@@ -1,6 +1,6 @@
-import { ProfileName } from '@chroma/server'
+import { Config } from '@chroma/shared/externals'
+import { ProfileName } from '@chroma/shared/schemas'
 import { Context, Either as E, Effect, Layer, Option as O, Schema } from 'effect'
-import { Config } from '../externals/config'
 
 export class ProfileNameResolver extends Context.Tag('@chroma/client/services/ProfileNameResolver')<
   ProfileNameResolver,

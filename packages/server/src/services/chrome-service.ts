@@ -1,9 +1,10 @@
 import { type as osType } from 'node:os'
+import type { ChromeLaunchError } from '@chroma/shared/errors'
+import type { ProfileName } from '@chroma/shared/schemas'
 import { Command } from '@effect/platform'
 import { Context, Effect, Layer, Option } from 'effect'
 import isWsl from 'is-wsl'
-import type { ProfileName } from '../schemas/profile-name'
-import { type ChromeLaunchError, ChromeLauncher } from './chrome-launcher'
+import { ChromeLauncher } from './chrome-launcher'
 
 export class ChromeService extends Context.Tag('@chroma/server/services/ChromeService')<
   ChromeService,
