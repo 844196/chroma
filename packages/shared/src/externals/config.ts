@@ -5,7 +5,7 @@ import { Context, Effect, Either, Layer, Option, pipe, Schema } from 'effect'
 import { Config as ConfigSchema } from '../schemas/config.ts'
 
 const DEFAULT_CONFIG: typeof ConfigSchema.Type = {
-  profileNameAliases: new Map(),
+  profileAliases: new Map(),
 }
 
 const DEFAULT_CONFIG_PATH = Option.fromNullable(process.env.XDG_CONFIG_HOME).pipe(

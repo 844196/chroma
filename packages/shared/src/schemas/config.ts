@@ -20,7 +20,7 @@ const ProfileNameAliasMap = Schema.transformOrFail(
 )
 
 export const Config = Schema.Struct({
-  profileNameAliases: Schema.optionalWith(ProfileNameAliasMap, {
+  profileAliases: Schema.optionalWith(ProfileNameAliasMap, {
     default: () => new Map(),
   }),
 })
