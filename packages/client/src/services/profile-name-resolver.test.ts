@@ -8,11 +8,11 @@ const aliasMap = (entries: Array<[string, string]>): ReadonlyMap<string, Profile
   new Map(entries.map(([k, v]) => [k, v as ProfileName]))
 
 const testConfig = (aliases: ReadonlyMap<string, ProfileName>) =>
-  Layer.succeed(Config, Config.of({ profileNameAliases: aliases }))
+  Layer.succeed(Config, Config.of({ profileAliases: aliases }))
 
 describe('ProfileNameResolver', () => {
   describe('resolve', () => {
-    describe('when the given name exists in profileNameAliases', () => {
+    describe('when the given name exists in profileAliases', () => {
       // biome-ignore format: For data alignment.
       it.effect.each([
         ['work',     aliasMap([['work', 'Profile 1']]),    'Profile 1'],
