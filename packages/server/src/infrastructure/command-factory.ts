@@ -1,29 +1,14 @@
 import type { ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
-import { Context, Effect, Option } from 'effect'
+import { Effect, Layer, Option } from 'effect'
+import { CommandFactory } from '../use-case/launch-chrome/command-factory.ts'
 
 /**
- * Chrome起動コマンドを生成する
- *
- * OSごとに異なる起動コマンド、コマンドライン引数、エスケープ処理を吸収する
+ * macOS向けレイヤー
  */
-export class CommandFactory extends Context.Tag('@chroma/server/adapter/CommandFactory')<
-  CommandFactory,
-  {
-    /**
-     * Chrome起動コマンドを生成する
-     */
-    readonly create: (
-      profileName: Option.Option<ProfileName>,
-      url: Option.Option<string>,
-    ) => Effect.Effect<Command.Command>
-  }
->() {
-  /**
-   * macOS向けレイヤー
-   */
-  static readonly darwinLayer = CommandFactory.of({
-    create: Effect.fn('CommandFactory.darwin.create')((profileName, url) => {
+export const CommandFactoryDarwinLive = Layer.succeed(CommandFactory, {
+  create: Effect.fn('CommandFactory.darwin.create')(
+    (profileName: Option.Option<ProfileName>, url: Option.Option<string>) => {
       const args: string[] = []
       if (Option.isSome(profileName)) {
         args.push(`--profile-directory=${profileName.value}`)
@@ -43,16 +28,18 @@ export class CommandFactory extends Context.Tag('@chroma/server/adapter/CommandF
           ...(args.length > 0 ? ['--args', ...args] : []),
         ),
       )
-    }),
-  })
+    },
+  ),
+})
 
-  /**
-   * WSL向けレイヤー
-   *
-   * NOTE: WSLからWindows版Chromeを起動するためのものであり、WSL上に `apt` などでインストールされたChromeを起動させる *ものではない* ことに注意
-   */
-  static readonly wslLayer = CommandFactory.of({
-    create: Effect.fn('CommandFactory.wsl.create')((profileName, url) => {
+/**
+ * WSL向けレイヤー
+ *
+ * NOTE: WSLからWindows版Chromeを起動するためのものであり、WSL上に `apt` などでインストールされたChromeを起動させる *ものではない* ことに注意
+ */
+export const CommandFactoryWslLive = Layer.succeed(CommandFactory, {
+  create: Effect.fn('CommandFactory.wsl.create')(
+    (profileName: Option.Option<ProfileName>, url: Option.Option<string>) => {
       const args: string[] = []
       if (Option.isSome(profileName)) {
         args.push(`'--profile-directory="${profileName.value}"'`)
@@ -69,6 +56,6 @@ export class CommandFactory extends Context.Tag('@chroma/server/adapter/CommandF
           ...(args.length > 0 ? ['-ArgumentList', args.join(', ')] : []),
         ),
       )
-    }),
-  })
-}
+    },
+  ),
+})

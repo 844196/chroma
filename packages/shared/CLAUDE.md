@@ -25,7 +25,7 @@ src/
     config.ts                # Config Tag, ConfigSchema
     profile-name.ts          # ProfileName スキーマ
   infrastructure/            # インフラストラクチャ層
-    config.ts                # ConfigLayer (ファイル読み込み + デコード)
+    config.ts                # ConfigLive (ファイル読み込み + デコード)
     runtime-dir.ts           # RuntimeDir Tag + Layer
     socket-path.ts           # SocketPath Tag + Layer
 ```

@@ -13,7 +13,7 @@ const DEFAULT_CONFIG_PATH = Option.fromNullable(process.env.XDG_CONFIG_HOME).pip
   ($) => joinPath($, 'chroma', 'config.json'),
 )
 
-export const ConfigLayer = (opts: { path?: string | undefined } = {}) =>
+export const ConfigLive = (opts: { path?: string | undefined } = {}) =>
   Layer.effect(
     Config,
     Effect.gen(function* () {
