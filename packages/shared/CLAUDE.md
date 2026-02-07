@@ -2,7 +2,11 @@
 
 ## Package Overview
 
-TBW
+@chroma/shared はクライアント・サーバー間で共有される型定義、スキーマ、インフラストラクチャ実装を提供するパッケージです。
+
+- RPCグループ定義とエラー型
+- ドメイン層: Config Tag、ProfileName スキーマ
+- インフラストラクチャ層: Config Layer 実装、RuntimeDir、SocketPath
 
 ## Commands
 
@@ -12,4 +16,16 @@ TBW
 
 ## Structure
 
-TBW
+```
+src/
+  rpc/                       # RPC定義
+    chrome-rpc-group.ts      # ChromeRpcGroup (RPC定義)
+    chrome-launch-error.ts   # ChromeLaunchError (RPCエラー型)
+  domain/                    # ドメイン層
+    config.ts                # Config Tag, ConfigSchema
+    profile-name.ts          # ProfileName スキーマ
+  infrastructure/            # インフラストラクチャ層
+    config.ts                # ConfigLayer (ファイル読み込み + デコード)
+    runtime-dir.ts           # RuntimeDir Tag + Layer
+    socket-path.ts           # SocketPath Tag + Layer
+```

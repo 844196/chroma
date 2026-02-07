@@ -1,5 +1,4 @@
-import { Config } from '@chroma/shared/externals'
-import { ProfileName } from '@chroma/shared/schemas'
+import { Config, ProfileName } from '@chroma/shared/domain'
 import { Context, Either as E, Effect, Layer, Option as O, Schema } from 'effect'
 
 /**

@@ -1,5 +1,5 @@
 import { type as osType } from 'node:os'
-import { SocketPath } from '@chroma/shared/environment'
+import { SocketPath } from '@chroma/shared/infrastructure'
 import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { HttpRouter } from '@effect/platform'
 import { BunContext, BunHttpServer, BunRuntime } from '@effect/platform-bun'

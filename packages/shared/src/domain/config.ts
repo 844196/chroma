@@ -1,4 +1,5 @@
-import { ParseResult, Schema } from 'effect'
+import { Context, ParseResult, Schema } from 'effect'
+
 import { ProfileName } from './profile-name.ts'
 
 const ProfileNameAliasMap = Schema.transformOrFail(
@@ -19,8 +20,10 @@ const ProfileNameAliasMap = Schema.transformOrFail(
   },
 )
 
-export const Config = Schema.Struct({
+export const ConfigSchema = Schema.Struct({
   profileAliases: Schema.optionalWith(ProfileNameAliasMap, {
     default: () => new Map(),
   }),
 })
+
+export class Config extends Context.Tag('@chroma/shared/domain/Config')<Config, typeof ConfigSchema.Type>() {}

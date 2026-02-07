@@ -1,4 +1,4 @@
-import { Config } from '@chroma/shared/externals'
+import { ConfigLayer } from '@chroma/shared/infrastructure'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer as L, Option as O } from 'effect'
@@ -65,7 +65,7 @@ import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-
   const MainLive = LaunchChromeCommand.layer.pipe(
     L.provide(LaunchChromeUseCase.layer),
     L.provide(ProfileNameResolver.layer),
-    L.provide(Config.layer({ path: parsedOpts.config })),
+    L.provide(ConfigLayer({ path: parsedOpts.config })),
     L.provide(ChromeClient.layer({ socketPath: parsedOpts.host })),
     L.provide(BunContext.layer),
   )
