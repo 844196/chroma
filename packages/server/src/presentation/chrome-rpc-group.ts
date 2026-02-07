@@ -1,15 +1,15 @@
 import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { Effect, Layer } from 'effect'
-import { ChromeService } from '../services/chrome-service.ts'
+import { LaunchChromeUseCase } from '../use-case/launch-chrome/launch-chrome-use-case.ts'
 import { LoggingMiddleware } from './logging-middleware.ts'
 
 export const ChromeRpcLive = ChromeRpcGroup.middleware(LoggingMiddleware)
   .toLayer(
     Effect.gen(function* () {
-      const chrome = yield* ChromeService
+      const launchChromeUseCase = yield* LaunchChromeUseCase
 
       return {
-        launch: ({ profileName, url }) => chrome.launch(profileName, url),
+        launch: ({ profileName, url }) => launchChromeUseCase.invoke(profileName, url),
       }
     }),
   )
