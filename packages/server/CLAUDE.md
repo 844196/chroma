@@ -11,11 +11,11 @@
 
 ## Commands
 
-- `mise run :dev` : 開発中のサーバーを起動します。
-- `mise run :check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
-- `mise run :fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
-- `mise run :test -- [files...]` : テストを実行します。
-- `mise run :build` : パッケージをビルドします。
+- `mise run //packages/server:dev` : 開発中のサーバーを起動します。
+- `mise run //packages/server:check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
+- `mise run //packages/server:fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
+- `mise run //packages/server:test -- [vitest-args...]` : テストを実行します。
+- `mise run //packages/server:build` : パッケージをビルドします。
 
 ## Structure
 

@@ -29,15 +29,21 @@ run = [
 
 [task_templates.check]
 usage = 'arg "[files]" var=#true'
-run = [
-  "bunx --bun tsc",
-  "bunx --bun biome check --error-on-warnings ${usage_files}",
-]
+run = '''
+#!/usr/bin/env bash
+eval "files=($usage_files)"
+bunx --bun tsc
+bunx --bun biome check --error-on-warnings "${files[@]}"
+'''
 
 [task_templates.fix]
 usage = 'arg "[files]" var=#true'
-run = "bunx --bun biome check --write ${usage_files}"
+run = '''
+#!/usr/bin/env bash
+eval "files=($usage_files)"
+bunx --bun biome check --write "${files[@]}"
+'''
 
 [task_templates.test]
-usage = 'arg "[files]" var=#true'
-run = "bunx --bun vitest run ${usage_files}"
+# NOTE: ファイルパスだけでなくVitestのオプションも受け取れるようにするため、usageを使用しない
+run = 'bunx --bun vitest run "$@"'

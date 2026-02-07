@@ -11,11 +11,11 @@
 
 ## Commands
 
-- `mise run :client -- [args...]` : 開発中のCLIクライアントを実行します。
-- `mise run :check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
-- `mise run :fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
-- `mise run :test -- [files...]` : テストを実行します。
-- `mise run :build` : パッケージをビルドします。
+- `mise run //packages/client:client -- [args...]` : 開発中のCLIクライアントを実行します。
+- `mise run //packages/client:check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
+- `mise run //packages/client:fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
+- `mise run //packages/client:test -- [vitest-args...]` : テストを実行します。
+- `mise run //packages/client:build` : パッケージをビルドします。
 
 ## Structure
 
