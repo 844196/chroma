@@ -20,9 +20,19 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 
 ## Commands
 
+### Run All Packages
+
 - `mise run //packages/...:check` : 全パッケージで型チェック・フォーマッター・リンターを実行します。
 - `mise run //packages/...:fix` : 全パッケージでフォーマッター・リンターの自動修正を実行します。
 - `mise run //packages/...:test` : 全パッケージのテストを実行します。
+
+**注意**: `...` はプレースホルダーではなく、mise tasksのワイルドカード構文としてそのまま入力します。また、全パッケージを対象とする場合は追加の引数を渡すことはできません。
+
+### Run Individual Package
+
+- `mise run //packages/<package>:check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
+- `mise run //packages/<package>:fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
+- `mise run //packages/<package>:test -- [vitest-args...]` : テストを実行します。
 
 ## Project Conventions
 
