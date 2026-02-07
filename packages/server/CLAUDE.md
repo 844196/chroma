@@ -21,15 +21,16 @@
 
 ```
 src/
-  presentation/                   # プレゼンテーション層
-    chrome-rpc-group.ts           # ChromeRpcGroup ハンドラ実装
-    logging-middleware.ts         # ロギングミドルウェア
-  use-case/                       # ユースケース層
+  presentation/                           # プレゼンテーション層
+    chrome-rpc-group.ts                   # ChromeRpcGroup ハンドラ実装
+    logging-middleware.ts                 # ロギングミドルウェア
+  use-case/                               # ユースケース層
     launch-chrome/
-      launch-chrome-use-case.ts   # LaunchChromeUseCase Tag + Layer
-  adapter/                        # アダプター層
-    command-factory.ts            # CommandFactory Tag + Layer (OS別Chrome起動コマンド生成)
-  infrastructure/                 # インフラストラクチャ層
-    command-executor.ts           # CommandExecutor Tag + Layer
-    unix-socket.ts                # UnixSocket (ソケット管理)
+      command-factory.ts                  # CommandFactory Tag (ポート定義)
+      command-executor.ts                 # CommandExecutor Tag, CommandFailedError (ポート定義)
+      launch-chrome-use-case.ts           # LaunchChromeUseCase Tag + Layer
+  infrastructure/                         # インフラストラクチャ層
+    command-factory.ts                    # CommandFactoryDarwinLive, CommandFactoryWslLive (ポート実装)
+    command-executor.ts                   # CommandExecutorLive (ポート実装)
+    unix-socket.ts                        # UnixSocket (ソケット管理)
 ```

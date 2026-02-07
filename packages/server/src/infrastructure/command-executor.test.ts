@@ -4,7 +4,8 @@ import { SystemError } from '@effect/platform/Error'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option, Sink, Stream } from 'effect'
 import { NodeInspectSymbol } from 'effect/Inspectable'
-import { CommandExecutor, CommandFailedError } from './command-executor.ts'
+import { CommandExecutor, CommandFailedError } from '../use-case/launch-chrome/command-executor.ts'
+import { CommandExecutorLive } from './command-executor.ts'
 
 const createProcess = (opts: {
   exitCode: PlatformCommandExecutor.ExitCode
@@ -31,7 +32,7 @@ describe('CommandExecutor', () => {
         [TypeId]: TypeId,
         start: () => Effect.succeed(createProcess({ exitCode: ExitCode(0) })),
       })
-      const testLayer = CommandExecutor.layer.pipe(Layer.provide(mockExecutor))
+      const testLayer = CommandExecutorLive.pipe(Layer.provide(mockExecutor))
 
       return Effect.gen(function* () {
         const executor = yield* CommandExecutor
@@ -55,7 +56,7 @@ describe('CommandExecutor', () => {
             }),
           ),
       })
-      const testLayer = CommandExecutor.layer.pipe(Layer.provide(mockExecutor))
+      const testLayer = CommandExecutorLive.pipe(Layer.provide(mockExecutor))
 
       return Effect.gen(function* () {
         const executor = yield* CommandExecutor
@@ -82,7 +83,7 @@ describe('CommandExecutor', () => {
         [TypeId]: TypeId,
         start: () => Effect.fail(new SystemError({ reason: 'Unknown', module: 'Command', method: 'start' })),
       })
-      const testLayer = CommandExecutor.layer.pipe(Layer.provide(mockExecutor))
+      const testLayer = CommandExecutorLive.pipe(Layer.provide(mockExecutor))
 
       return Effect.gen(function* () {
         const executor = yield* CommandExecutor

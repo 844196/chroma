@@ -2,7 +2,7 @@ import type { ChromeLaunchError } from '@chroma/shared/rpc'
 import type { RpcClientError } from '@effect/rpc'
 import { Context, Effect, Layer, type Option } from 'effect'
 import { type InvalidProfileNameError, ProfileNameResolver } from '../../domain/profile-name-resolver.ts'
-import { ChromeClient } from '../../infrastructure/chrome-client.ts'
+import { ChromeClient } from './chrome-client.ts'
 
 /**
  * Chromeを起動するユースケース

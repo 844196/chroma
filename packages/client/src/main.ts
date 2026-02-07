@@ -1,9 +1,9 @@
-import { ConfigLayer } from '@chroma/shared/infrastructure'
+import { ConfigLive } from '@chroma/shared/infrastructure'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer as L, Option as O } from 'effect'
 import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
-import { ChromeClient } from './infrastructure/chrome-client.ts'
+import { ChromeClientLive } from './infrastructure/chrome-client.ts'
 import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
 import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-case.ts'
 
@@ -65,8 +65,8 @@ import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-
   const MainLive = LaunchChromeCommand.layer.pipe(
     L.provide(LaunchChromeUseCase.layer),
     L.provide(ProfileNameResolver.layer),
-    L.provide(ConfigLayer({ path: parsedOpts.config })),
-    L.provide(ChromeClient.layer({ socketPath: parsedOpts.host })),
+    L.provide(ConfigLive({ path: parsedOpts.config })),
+    L.provide(ChromeClientLive({ socketPath: parsedOpts.host })),
     L.provide(BunContext.layer),
   )
 

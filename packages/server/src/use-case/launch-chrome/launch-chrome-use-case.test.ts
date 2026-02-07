@@ -2,8 +2,8 @@ import { ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option, Schema } from 'effect'
-import { CommandFactory } from '../../adapter/command-factory.ts'
-import { CommandExecutor, CommandFailedError } from '../../infrastructure/command-executor.ts'
+import { CommandExecutor, CommandFailedError } from './command-executor.ts'
+import { CommandFactory } from './command-factory.ts'
 import { LaunchChromeUseCase } from './launch-chrome-use-case.ts'
 
 const profileName = Schema.decodeSync(ProfileName)('Default')

@@ -1,7 +1,7 @@
 import type { ProfileName } from '@chroma/shared/domain'
 import { Context, Effect, Layer, type Option } from 'effect'
-import { CommandFactory } from '../../adapter/command-factory.ts'
-import { CommandExecutor, type CommandFailedError } from '../../infrastructure/command-executor.ts'
+import { CommandExecutor, type CommandFailedError } from './command-executor.ts'
+import { CommandFactory } from './command-factory.ts'
 
 /**
  * Chromeを起動するユースケース

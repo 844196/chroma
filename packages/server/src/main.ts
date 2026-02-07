@@ -6,8 +6,8 @@ import { BunContext, BunHttpServer, BunRuntime } from '@effect/platform-bun'
 import { RpcSerialization, RpcServer } from '@effect/rpc'
 import { Cause, Config, Effect, Exit, Layer as L, Layer, Logger, LogLevel } from 'effect'
 import isWsl from 'is-wsl'
-import { CommandFactory } from './adapter/command-factory.ts'
-import { CommandExecutor } from './infrastructure/command-executor.ts'
+import { CommandExecutorLive } from './infrastructure/command-executor.ts'
+import { CommandFactoryDarwinLive, CommandFactoryWslLive } from './infrastructure/command-factory.ts'
 import { UnixSocket } from './infrastructure/unix-socket.ts'
 import { ChromeRpcLive } from './presentation/chrome-rpc-group.ts'
 import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-case.ts'
@@ -34,10 +34,10 @@ const CommandFactoryLive = L.unwrapEffect(
   Effect.gen(function* () {
     const os = osType()
     if (os === 'Darwin') {
-      return L.succeed(CommandFactory, CommandFactory.darwinLayer)
+      return CommandFactoryDarwinLive
     }
     if (isWsl) {
-      return L.succeed(CommandFactory, CommandFactory.wslLayer)
+      return CommandFactoryWslLive
     }
     return yield* Effect.dieMessage(`unsupported OS: ${os}`)
   }),
@@ -47,7 +47,7 @@ const MainLive = HttpRouter.Default.serve().pipe(
   L.provide(RpcServerLive),
   L.provide(LaunchChromeUseCase.layer),
   L.provide(CommandFactoryLive),
-  L.provide(CommandExecutor.layer),
+  L.provide(CommandExecutorLive),
   L.provide(HttpServerLive),
   L.provide(BunContext.layer),
   L.provide(LogLevelLive),
