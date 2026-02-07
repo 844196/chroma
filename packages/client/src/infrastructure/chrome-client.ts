@@ -5,7 +5,12 @@ import { RpcClient, type RpcClientError, RpcSerialization } from '@effect/rpc'
 import type { Rpcs } from '@effect/rpc/RpcGroup'
 import { Context, Effect, Layer as L, Option } from 'effect'
 
-export class ChromeClient extends Context.Tag('@chroma/client/externals/ChromeClient')<
+/**
+ * サーバーとのRPCクライアント
+ *
+ * UNIXドメインソケット経由で @chroma/server にRPCリクエストを送信する
+ */
+export class ChromeClient extends Context.Tag('@chroma/client/infrastructure/ChromeClient')<
   ChromeClient,
   RpcClient.RpcClient<Rpcs<typeof ChromeRpcGroup>, RpcClientError.RpcClientError>
 >() {
