@@ -17,8 +17,24 @@
 - `mise run //packages/client:test -- [vitest-args...]` : テストを実行します。
 - `mise run //packages/client:build` : パッケージをビルドします。
 
+## Architecture
+
+クリーンアーキテクチャを採用しています。レイヤー間の依存方向は以下の通りです:
+
+```
+presentation → use-case → domain
+                        → infrastructure
+```
+
+- `presentation` は `use-case` に依存できるが、その逆は不可。
+- `use-case` は `domain` と `infrastructure` の `Context.Tag` に依存できるが、その逆は不可。
+- `domain` と `infrastructure` は互いに依存しない。
+- `main.ts` は全レイヤーに依存し、`Layer` でワイヤリングする。
+
 ## Structure
 
-- `src/main.ts` : エントリーポイント。
-- `src/services/` : サービスレイヤー。実処理の実装。
-- `src/externals/` : 外部システムとのインターフェイス (RPCクライアント)。
+- `src/main.ts` : エントリーポイント。CLI引数解析とLayerワイヤリング。
+- `src/presentation/` : ユースケース呼び出しとエラーハンドリング。
+- `src/use-case/` : ユースケース。ビジネスロジックのオーケストレーション。
+- `src/domain/` : ドメインサービス・ドメインモデル。
+- `src/infrastructure/` : 外部システムとのインターフェイス (RPCクライアント)。

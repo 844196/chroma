@@ -2,9 +2,12 @@ import { Config } from '@chroma/shared/externals'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer as L, Option as O } from 'effect'
-import { ChromeClient } from './externals/chrome-client.ts'
-import { ChromeService } from './services/chrome-service.ts'
+import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
+import { ChromeClient } from './infrastructure/chrome-client.ts'
+import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
+import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-case.ts'
 
+// NOTE: "bun build --bytecode" はトップレベルawaitをサポートしていないためIIFEで囲む
 ;(async () => {
   const {
     args: [url],
@@ -59,15 +62,18 @@ import { ChromeService } from './services/chrome-service.ts'
     )
     .parse()
 
-  const program = Effect.flatMap(ChromeService, ($) =>
-    $.launch(O.fromNullable(parsedOpts.profile), O.fromNullable(url)),
-  )
-
-  const MainLive = ChromeService.layer.pipe(
+  const MainLive = LaunchChromeCommand.layer.pipe(
+    L.provide(LaunchChromeUseCase.layer),
+    L.provide(ProfileNameResolver.layer),
     L.provide(Config.layer({ path: parsedOpts.config })),
     L.provide(ChromeClient.layer({ socketPath: parsedOpts.host })),
     L.provide(BunContext.layer),
   )
+
+  const program = Effect.gen(function* () {
+    const cmd = yield* LaunchChromeCommand
+    yield* cmd.run(O.fromNullable(parsedOpts.profile), O.fromNullable(url))
+  })
 
   BunRuntime.runMain(program.pipe(Effect.provide(MainLive)))
 })()
