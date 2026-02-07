@@ -1,8 +1,7 @@
-import { ChromeLaunchError } from '@chroma/shared/errors'
-import type { ProfileName } from '@chroma/shared/schemas'
+import type { ProfileName } from '@chroma/shared/domain'
 import { Context, Effect, Layer, type Option } from 'effect'
 import { CommandFactory } from '../../adapter/command-factory.ts'
-import { CommandExecutor } from '../../infrastructure/command-executor.ts'
+import { CommandExecutor, type CommandFailedError } from '../../infrastructure/command-executor.ts'
 
 /**
  * Chromeを起動するユースケース
@@ -21,7 +20,7 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/server/use-case/la
     readonly invoke: (
       profileName: Option.Option<ProfileName>,
       url: Option.Option<string>,
-    ) => Effect.Effect<void, ChromeLaunchError>
+    ) => Effect.Effect<void, CommandFailedError> // ユースケース固有のエラー型を定義するほどではないため、インフラ層のエラーをそのまま返している
   }
 >() {
   static readonly layer = Layer.effect(
@@ -35,13 +34,7 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/server/use-case/la
         url: Option.Option<string>,
       ) {
         const cmd = yield* factory.create(profileName, url)
-        yield* executor
-          .exec(cmd)
-          .pipe(
-            Effect.mapError(
-              (err) => new ChromeLaunchError({ exitCode: err.exitCode, stdout: err.stdout, stderr: err.stderr }),
-            ),
-          )
+        yield* executor.exec(cmd)
       })
 
       return { invoke }

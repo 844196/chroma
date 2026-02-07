@@ -1,4 +1,4 @@
-import type { ChromeLaunchError } from '@chroma/shared/errors'
+import type { ChromeLaunchError } from '@chroma/shared/rpc'
 import type { RpcClientError } from '@effect/rpc'
 import { Context, Effect, Layer, type Option } from 'effect'
 import type { InvalidProfileNameError } from '../domain/profile-name-resolver.ts'

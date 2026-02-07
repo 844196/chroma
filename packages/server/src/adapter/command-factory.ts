@@ -1,4 +1,4 @@
-import type { ProfileName } from '@chroma/shared/schemas'
+import type { ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
 import { Context, Effect, Option } from 'effect'
 

@@ -1,4 +1,4 @@
-import { SocketPath } from '@chroma/shared/environment'
+import { SocketPath } from '@chroma/shared/infrastructure'
 import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { FetchHttpClient } from '@effect/platform'
 import { RpcClient, type RpcClientError, RpcSerialization } from '@effect/rpc'

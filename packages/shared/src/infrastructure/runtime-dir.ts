@@ -2,7 +2,7 @@ import { tmpdir, userInfo } from 'node:os'
 import { join as joinPath } from 'node:path'
 import { Context, Effect, Layer, Option as O } from 'effect'
 
-export class RuntimeDir extends Context.Tag('@chroma/shared/environment/RuntimeDir')<RuntimeDir, string>() {
+export class RuntimeDir extends Context.Tag('@chroma/shared/infrastructure/RuntimeDir')<RuntimeDir, string>() {
   static readonly layer = Layer.effect(
     RuntimeDir,
     Effect.sync(() =>

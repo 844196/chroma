@@ -1,5 +1,4 @@
-import { ChromeLaunchError } from '@chroma/shared/errors'
-import { ProfileName } from '@chroma/shared/schemas'
+import { ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option, Schema } from 'effect'
@@ -31,7 +30,7 @@ describe('LaunchChromeUseCase', () => {
       }).pipe(Effect.provide(testLayer))
     })
 
-    it.effect('CommandExecutorがCommandFailedErrorで失敗した場合、ChromeLaunchErrorに変換されること', () => {
+    it.effect('CommandExecutorがCommandFailedErrorで失敗した場合、そのまま伝搬されること', () => {
       const dummyCmd = Command.make('dummy')
 
       const mockFactory = Layer.succeed(CommandFactory, {
@@ -53,7 +52,7 @@ describe('LaunchChromeUseCase', () => {
         expect(Option.isSome(cause)).toBe(true)
         assert(Option.isSome(cause))
 
-        expect(cause.value).toBeInstanceOf(ChromeLaunchError)
+        expect(cause.value).toBeInstanceOf(CommandFailedError)
         expect(cause.value.exitCode).toBe(1)
         expect(cause.value.stdout).toBe('out')
         expect(cause.value.stderr).toBe('err')
