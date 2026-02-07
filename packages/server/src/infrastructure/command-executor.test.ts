@@ -1,17 +1,16 @@
-import { ChromeLaunchError } from '@chroma/shared/errors'
-import { Command, CommandExecutor } from '@effect/platform'
+import { Command, CommandExecutor as PlatformCommandExecutor } from '@effect/platform'
 import { ExitCode, ProcessId, ProcessTypeId, TypeId } from '@effect/platform/CommandExecutor'
 import { SystemError } from '@effect/platform/Error'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option, Sink, Stream } from 'effect'
 import { NodeInspectSymbol } from 'effect/Inspectable'
-import { ChromeLauncher } from './chrome-launcher.ts'
+import { CommandExecutor, CommandFailedError } from './command-executor.ts'
 
 const createProcess = (opts: {
-  exitCode: CommandExecutor.ExitCode
+  exitCode: PlatformCommandExecutor.ExitCode
   stdout?: Stream.Stream<Uint8Array>
   stderr?: Stream.Stream<Uint8Array>
-}): CommandExecutor.Process => ({
+}): PlatformCommandExecutor.Process => ({
   [ProcessTypeId]: ProcessTypeId,
   [NodeInspectSymbol]: () => '',
   exitCode: Effect.succeed(opts.exitCode),
@@ -25,27 +24,27 @@ const createProcess = (opts: {
   toString: () => '',
 })
 
-describe('ChromeLauncher', () => {
-  describe('launch', () => {
-    it.effect('should succeed when command exits with code 0', () => {
-      const mockExecutor = Layer.mock(CommandExecutor.CommandExecutor, {
+describe('CommandExecutor', () => {
+  describe('exec', () => {
+    it.effect('Chrome起動コマンドが終了コード0で終了した場合、成功とみなされること', () => {
+      const mockExecutor = Layer.mock(PlatformCommandExecutor.CommandExecutor, {
         [TypeId]: TypeId,
         start: () => Effect.succeed(createProcess({ exitCode: ExitCode(0) })),
       })
-      const testLayer = ChromeLauncher.layer.pipe(Layer.provide(mockExecutor))
+      const testLayer = CommandExecutor.layer.pipe(Layer.provide(mockExecutor))
 
       return Effect.gen(function* () {
-        const launcher = yield* ChromeLauncher
+        const executor = yield* CommandExecutor
 
-        const cmd = Command.make('echo', 'hello')
-        const result = yield* Effect.exit(launcher.launch(cmd))
+        const cmd = Command.make('chrome', 'https://example.com')
+        const result = yield* Effect.exit(executor.exec(cmd))
 
         expect(Exit.isSuccess(result)).toBe(true)
       }).pipe(Effect.provide(testLayer))
     })
 
-    it.effect('should fail with ChromeLaunchError when command exits with non-zero code', () => {
-      const mockExecutor = Layer.mock(CommandExecutor.CommandExecutor, {
+    it.effect('Chrome起動コマンドが終了コード非0で終了した場合、失敗とみなされること', () => {
+      const mockExecutor = Layer.mock(PlatformCommandExecutor.CommandExecutor, {
         [TypeId]: TypeId,
         start: () =>
           Effect.succeed(
@@ -56,14 +55,14 @@ describe('ChromeLauncher', () => {
             }),
           ),
       })
-      const testLayer = ChromeLauncher.layer.pipe(Layer.provide(mockExecutor))
+      const testLayer = CommandExecutor.layer.pipe(Layer.provide(mockExecutor))
 
       return Effect.gen(function* () {
-        const launcher = yield* ChromeLauncher
+        const executor = yield* CommandExecutor
 
-        const cmd = Command.make('false')
+        const cmd = Command.make('chrome', 'https://example.com')
 
-        const result = yield* Effect.exit(launcher.launch(cmd))
+        const result = yield* Effect.exit(executor.exec(cmd))
         expect(Exit.isFailure(result)).toBe(true)
         assert(Exit.isFailure(result))
 
@@ -71,26 +70,26 @@ describe('ChromeLauncher', () => {
         expect(Option.isSome(cause)).toBe(true)
         assert(Option.isSome(cause))
 
-        expect(cause.value).toBeInstanceOf(ChromeLaunchError)
+        expect(cause.value).toBeInstanceOf(CommandFailedError)
         expect(cause.value.exitCode).toBe(1)
         expect(cause.value.stdout).toBe('stdout output')
         expect(cause.value.stderr).toBe('stderr output')
       }).pipe(Effect.provide(testLayer))
     })
 
-    it.effect('should die when executor fails unexpectedly', () => {
-      const mockExecutor = Layer.mock(CommandExecutor.CommandExecutor, {
+    it.effect('Chrome起動コマンドの実行自体に失敗した場合、dieとみなされること', () => {
+      const mockExecutor = Layer.mock(PlatformCommandExecutor.CommandExecutor, {
         [TypeId]: TypeId,
         start: () => Effect.fail(new SystemError({ reason: 'Unknown', module: 'Command', method: 'start' })),
       })
-      const testLayer = ChromeLauncher.layer.pipe(Layer.provide(mockExecutor))
+      const testLayer = CommandExecutor.layer.pipe(Layer.provide(mockExecutor))
 
       return Effect.gen(function* () {
-        const launcher = yield* ChromeLauncher
+        const executor = yield* CommandExecutor
 
-        const cmd = Command.make('echo', 'hello')
+        const cmd = Command.make('chrome', 'https://example.com')
 
-        const result = yield* Effect.exit(launcher.launch(cmd))
+        const result = yield* Effect.exit(executor.exec(cmd))
         expect(Exit.isFailure(result)).toBe(true)
         assert(Exit.isFailure(result))
 

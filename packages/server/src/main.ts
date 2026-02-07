@@ -1,12 +1,16 @@
+import { type as osType } from 'node:os'
 import { SocketPath } from '@chroma/shared/environment'
 import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { HttpRouter } from '@effect/platform'
 import { BunContext, BunHttpServer, BunRuntime } from '@effect/platform-bun'
 import { RpcSerialization, RpcServer } from '@effect/rpc'
 import { Cause, Config, Effect, Exit, Layer as L, Layer, Logger, LogLevel } from 'effect'
-import { ChromeRpcLive } from './app/rpcs.ts'
-import { ChromeService } from './services/chrome-service.ts'
-import { UnixSocket } from './support/unix-socket.ts'
+import isWsl from 'is-wsl'
+import { CommandFactory } from './adapter/command-factory.ts'
+import { CommandExecutor } from './infrastructure/command-executor.ts'
+import { UnixSocket } from './infrastructure/unix-socket.ts'
+import { ChromeRpcLive } from './presentation/chrome-rpc-group.ts'
+import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-case.ts'
 
 const LogLevelLive = Layer.unwrapEffect(
   Config.logLevel('CHROMA_LOG_LEVEL').pipe(Config.withDefault(LogLevel.Info), Effect.map(Logger.minimumLogLevel)),
@@ -26,9 +30,24 @@ const HttpServerLive = L.unwrapScoped(
   }),
 ).pipe(L.provide(SocketPath.layer))
 
+const CommandFactoryLive = L.unwrapEffect(
+  Effect.gen(function* () {
+    const os = osType()
+    if (os === 'Darwin') {
+      return L.succeed(CommandFactory, CommandFactory.darwinLayer)
+    }
+    if (isWsl) {
+      return L.succeed(CommandFactory, CommandFactory.wslLayer)
+    }
+    return yield* Effect.dieMessage(`unsupported OS: ${os}`)
+  }),
+)
+
 const MainLive = HttpRouter.Default.serve().pipe(
   L.provide(RpcServerLive),
-  L.provide(ChromeService.autoLayer),
+  L.provide(LaunchChromeUseCase.layer),
+  L.provide(CommandFactoryLive),
+  L.provide(CommandExecutor.layer),
   L.provide(HttpServerLive),
   L.provide(BunContext.layer),
   L.provide(LogLevelLive),
