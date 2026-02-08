@@ -4,7 +4,7 @@ import { RuntimeDir } from './runtime-dir.ts'
 import { SocketPath } from './socket-path.ts'
 
 describe('SocketPath', () => {
-  it.effect('should return the socket path inside the runtime directory', () => {
+  it.effect('ランタイムディレクトリ内のソケットパスを返すこと', () => {
     const testLayer = SocketPath.layerWithoutDependencies.pipe(
       Layer.provide(Layer.succeed(RuntimeDir, '/path/to/runtime-dir')),
     )

@@ -12,8 +12,8 @@ vi.mock('node:os', () => ({
 }))
 
 describe('RuntimeDir', () => {
-  describe('when CHROMA_RUNTIME_DIR is set', () => {
-    it.effect('should use CHROMA_RUNTIME_DIR', () => {
+  describe('CHROMA_RUNTIME_DIRが設定されている場合', () => {
+    it.effect('CHROMA_RUNTIME_DIRが使用されること', () => {
       vi.stubEnv('CHROMA_RUNTIME_DIR', '/path/to/chroma-runtime-dir')
 
       return Effect.gen(function* () {
@@ -22,8 +22,8 @@ describe('RuntimeDir', () => {
     })
   })
 
-  describe('when XDG_RUNTIME_DIR is set', () => {
-    it.effect('should use XDG_RUNTIME_DIR', () => {
+  describe('XDG_RUNTIME_DIRが設定されている場合', () => {
+    it.effect('XDG_RUNTIME_DIRが使用されること', () => {
       vi.stubEnv('CHROMA_RUNTIME_DIR', undefined)
       vi.stubEnv('XDG_RUNTIME_DIR', '/path/to/xdg-runtime-dir')
 
@@ -33,8 +33,8 @@ describe('RuntimeDir', () => {
     })
   })
 
-  describe('when both CHROMA_RUNTIME_DIR and XDG_RUNTIME_DIR are set', () => {
-    it.effect('should prefer CHROMA_RUNTIME_DIR', () => {
+  describe('CHROMA_RUNTIME_DIRとXDG_RUNTIME_DIRの両方が設定されている場合', () => {
+    it.effect('CHROMA_RUNTIME_DIRが優先されること', () => {
       vi.stubEnv('CHROMA_RUNTIME_DIR', '/path/to/chroma-runtime-dir')
       vi.stubEnv('XDG_RUNTIME_DIR', '/path/to/xdg-runtime-dir')
 
@@ -44,8 +44,8 @@ describe('RuntimeDir', () => {
     })
   })
 
-  describe('when CHROMA_RUNTIME_DIR and XDG_RUNTIME_DIR are not set', () => {
-    it.effect('should use system tmpdir', () => {
+  describe('CHROMA_RUNTIME_DIRとXDG_RUNTIME_DIRが未設定の場合', () => {
+    it.effect('システムのtmpdirが使用されること', () => {
       vi.stubEnv('CHROMA_RUNTIME_DIR', undefined)
       vi.stubEnv('XDG_RUNTIME_DIR', undefined)
 
