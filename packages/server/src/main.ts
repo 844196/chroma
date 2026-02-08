@@ -1,5 +1,5 @@
 import { type as osType } from 'node:os'
-import { SocketPath } from '@chroma/shared/infrastructure'
+import { ConfigLive, SocketPath } from '@chroma/shared/infrastructure'
 import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { HttpRouter } from '@effect/platform'
 import { BunContext, BunHttpServer, BunRuntime } from '@effect/platform-bun'
@@ -7,6 +7,7 @@ import { RpcSerialization, RpcServer } from '@effect/rpc'
 import { Cause, Config, Effect, Exit, Layer as L, Layer, Logger, LogLevel } from 'effect'
 import isWsl from 'is-wsl'
 import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
+import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
 import { CommandExecutorLive } from './infrastructure/command-executor.ts'
 import { CommandFactoryDarwinLive, CommandFactoryWslLive } from './infrastructure/command-factory.ts'
 import { UnixSocket } from './infrastructure/unix-socket.ts'
@@ -46,6 +47,8 @@ const CommandFactoryLive = L.unwrapEffect(
 const MainLive = HttpRouter.Default.serve().pipe(
   L.provide(RpcServerLive),
   L.provide(LaunchChromeUseCase.layer),
+  L.provide(ProfileNameResolver.layer),
+  L.provide(ConfigLive()),
   L.provide(CommandFactoryLive),
   L.provide(CommandExecutorLive),
   L.provide(HttpServerLive),

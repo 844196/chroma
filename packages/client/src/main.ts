@@ -3,7 +3,6 @@ import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer as L, Option as O } from 'effect'
 import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
-import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
 import { ChromeClientLive } from './infrastructure/chrome-client.ts'
 import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
 
@@ -64,8 +63,7 @@ import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
 
   const MainLive = LaunchChromeCommand.layer.pipe(
     L.provide(LaunchChromeUseCase.layer),
-    L.provide(ProfileNameResolver.layer),
-    L.provide(ConfigLive({ path: parsedOpts.config })),
+    L.provide(ConfigLive({ path: parsedOpts.config })), // NOTE: 現時点では必要ないが、将来使う可能性があるため残しておく
     L.provide(ChromeClientLive({ socketPath: parsedOpts.host })),
     L.provide(BunContext.layer),
   )

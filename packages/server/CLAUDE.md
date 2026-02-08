@@ -21,16 +21,17 @@
 
 ```
 src/
-  presentation/                           # プレゼンテーション層
-    chrome-rpc-group.ts                   # ChromeRpcGroup ハンドラ実装
-    logging-middleware.ts                 # ロギングミドルウェア
-  application/                            # アプリケーション層
-    launch-chrome-use-case.ts             # LaunchChromeUseCase Tag + Layer
-  domain/                                 # ドメイン層
-    command-factory.ts                    # CommandFactory Tag (ポート定義)
-    command-executor.ts                   # CommandExecutor Tag, CommandFailedError (ポート定義)
-  infrastructure/                         # インフラストラクチャ層
-    command-factory.ts                    # CommandFactoryDarwinLive, CommandFactoryWslLive (ポート実装)
-    command-executor.ts                   # CommandExecutorLive (ポート実装)
-    unix-socket.ts                        # UnixSocket (ソケット管理)
+  presentation/                # プレゼンテーション層
+    chrome-rpc-group.ts        # ChromeRpcGroup ハンドラ実装
+    logging-middleware.ts      # ロギングミドルウェア
+  application/                 # アプリケーション層
+    launch-chrome-use-case.ts  # LaunchChromeUseCase Tag + Layer
+  domain/                      # ドメイン層
+    profile-name-resolver.ts   # ProfileNameResolver Tag + Layer (DomainService)
+    command-factory.ts         # CommandFactory Tag (ポート定義)
+    command-executor.ts        # CommandExecutor Tag, CommandFailedError (ポート定義)
+  infrastructure/              # インフラストラクチャ層
+    command-factory.ts         # CommandFactoryDarwinLive, CommandFactoryWslLive (ポート実装)
+    command-executor.ts        # CommandExecutorLive (ポート実装)
+    unix-socket.ts             # UnixSocket (ソケット管理)
 ```
