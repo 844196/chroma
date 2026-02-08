@@ -12,12 +12,12 @@ const testConfig = (aliases: ReadonlyMap<string, ProfileName>) =>
 
 describe('ProfileNameResolver', () => {
   describe('resolve', () => {
-    describe('when the given name exists in profileAliases', () => {
+    describe('指定された名前がprofileAliasesに存在する場合', () => {
       // biome-ignore format: For data alignment.
       it.effect.each([
         ['work',     aliasMap([['work', 'Profile 1']]),    'Profile 1'],
         ['personal', aliasMap([['personal', 'Default']]),  'Default'  ],
-      ] as const)('should resolve alias "%s" to "%s"', ([input, aliases, expected]) => {
+      ] as const)('エイリアス"%s"が"%s"に解決されること', ([input, aliases, expected]) => {
         const testLayer = ProfileNameResolver.layer.pipe(Layer.provide(testConfig(aliases)))
 
         return Effect.gen(function* () {
@@ -28,13 +28,13 @@ describe('ProfileNameResolver', () => {
       })
     })
 
-    describe('when the given name is not an alias but a valid ProfileName', () => {
+    describe('指定された名前がエイリアスではないが有効なProfileNameの場合', () => {
       // biome-ignore format: For data alignment.
       it.effect.each([
         ['Default'],
         ['Profile 1'],
         ['Profile 42'],
-      ] as const)('should return "%s" as-is', ([input]) => {
+      ] as const)('"%s"がそのまま返されること', ([input]) => {
         const testLayer = ProfileNameResolver.layer.pipe(Layer.provide(testConfig(aliasMap([]))))
 
         return Effect.gen(function* () {
@@ -45,7 +45,7 @@ describe('ProfileNameResolver', () => {
       })
     })
 
-    describe('when the given name is neither an alias nor a valid ProfileName', () => {
+    describe('指定された名前がエイリアスでも有効なProfileNameでもない場合', () => {
       // biome-ignore format: For data alignment.
       it.effect.each([
         ['',           'empty string'        ],
@@ -56,7 +56,7 @@ describe('ProfileNameResolver', () => {
         ['Profile 1 ', 'trailing space'      ],
         [' Profile 1', 'leading space'       ],
         ['foo',        'arbitrary string'    ],
-      ] as const)('should fail with InvalidProfileNameError for "%s" (%s)', ([input]) => {
+      ] as const)('"%s"(%s)に対してInvalidProfileNameErrorで失敗すること', ([input]) => {
         const testLayer = ProfileNameResolver.layer.pipe(Layer.provide(testConfig(aliasMap([]))))
 
         return Effect.gen(function* () {
@@ -68,8 +68,8 @@ describe('ProfileNameResolver', () => {
       })
     })
 
-    describe('priority', () => {
-      it.effect('should prefer alias over ProfileName schema validation', () => {
+    describe('優先順位', () => {
+      it.effect('ProfileNameスキーマバリデーションよりエイリアスが優先されること', () => {
         const testLayer = ProfileNameResolver.layer.pipe(
           Layer.provide(testConfig(aliasMap([['Default', 'Profile 99']]))),
         )

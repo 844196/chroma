@@ -8,7 +8,7 @@ describe('ProfileName', () => {
     ['Default'],
     ['Profile 1'],
     ['Profile 42'],
-  ])('should pass validation for "%s"', (input) => {
+  ])('"%s"はバリデーションを通過すること', (input) => {
     const result  = Schema.decodeUnknownEither(ProfileName)(input)
     expect(Either.isRight(result)).toBe(true)
   })
@@ -23,7 +23,7 @@ describe('ProfileName', () => {
     [' Profile 1 '],
     ['Profile 0'],
     ['Profile -42'],
-  ])('should fail validation for "%s"', (input) => {
+  ])('"%s"はバリデーションに失敗すること', (input) => {
     const result  = Schema.decodeUnknownEither(ProfileName)(input)
     expect(Either.isRight(result)).toBe(false)
   })
