@@ -1,4 +1,4 @@
-import type { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/rpc'
+import type { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/domain'
 import type { RpcClientError } from '@effect/rpc'
 import { Context, Effect, Layer, type Option } from 'effect'
 import { LaunchChromeUseCase } from '../application/launch-chrome-use-case.ts'

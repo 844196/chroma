@@ -1,5 +1,4 @@
-import type { ProfileName } from '@chroma/shared/domain'
-import { InvalidProfileNameError } from '@chroma/shared/rpc'
+import { InvalidProfileNameError, type ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option, Schema } from 'effect'

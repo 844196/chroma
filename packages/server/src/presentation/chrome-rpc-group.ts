@@ -1,4 +1,5 @@
-import { ChromeLaunchError, ChromeRpcGroup, InvalidProfileNameError } from '@chroma/shared/rpc'
+import { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/domain'
+import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { Effect, Layer } from 'effect'
 import { LaunchChromeUseCase } from '../application/launch-chrome-use-case.ts'
 import { LoggingMiddleware } from './logging-middleware.ts'
