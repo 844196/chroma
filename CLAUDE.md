@@ -134,18 +134,6 @@ classDiagram
 
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってコミットメッセージを生成します。
 
-#### コミットメッセージフォーマット
-
-```
-<type>(<scope>)[!]: <subject>
-
-<body>
-
-[footer(s)]
-```
-
-**重要**: このプロジェクトではスコープおよび本文を必須とします。
-
 #### 利用可能なタイプ
 
 - `feat:` - 新機能の追加
@@ -160,7 +148,9 @@ classDiagram
 
 #### 利用可能なスコープ
 
-- `client`
-- `server`
-- `shared`
-- `deps`
+- `client` - クライアントパッケージ
+- `server` - サーバーパッケージ
+- `shared` - 共通パッケージ
+- `deps` - 依存関係
+- `ci` - CI/CD (`.github/workflows/` 等)
+- `claude` - `CLAUDE.md` / `.claude/` 関連
