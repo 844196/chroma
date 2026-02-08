@@ -1,7 +1,8 @@
 import type { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/domain'
 import type { RpcClientError } from '@effect/rpc'
-import { Context, Effect, Layer, type Option } from 'effect'
+import { Context, Effect, Layer, Option as O, type Option } from 'effect'
 import { ChromeClient } from '../domain/chrome-client.ts'
+import { CwdProfileResolver } from '../domain/cwd-profile-resolver.ts'
 
 /**
  * Chromeを起動するユースケース
@@ -16,12 +17,14 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application
     /**
      * Chromeの起動をサーバーにリクエストする
      *
-     * - プロファイル名が指定された場合、そのままサーバーに送信する（エイリアス解決はサーバー側で行われる）
-     * - プロファイル名が指定されなかった場合、サーバー側の挙動に委ねる
+     * - プロファイル名が明示指定された場合、そのままサーバーに送信する（エイリアス解決はサーバー側で行われる）
+     * - プロファイル名が未指定の場合、cwdに基づくpaths設定でフォールバック解決を試みる
+     * - いずれにも該当しない場合、サーバー側の挙動に委ねる
      */
     readonly invoke: (
       profileName: Option.Option<string>,
       url: Option.Option<string>,
+      cwd: string,
     ) => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError | RpcClientError.RpcClientError>
   }
 >() {
@@ -29,12 +32,15 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application
     LaunchChromeUseCase,
     Effect.gen(function* () {
       const chrome = yield* ChromeClient
+      const cwdProfileResolver = yield* CwdProfileResolver
 
       const invoke = Effect.fn('LaunchChromeUseCase.invoke')(function* (
         givenProfileName: Option.Option<string>,
         url: Option.Option<string>,
+        cwd: string,
       ) {
-        yield* chrome.launch({ profileName: givenProfileName, url })
+        const profileName = O.isSome(givenProfileName) ? givenProfileName : cwdProfileResolver.resolve(cwd)
+        yield* chrome.launch({ profileName, url })
       })
 
       return { invoke }

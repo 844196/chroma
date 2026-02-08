@@ -2,6 +2,7 @@ import { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/domai
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option } from 'effect'
 import { ChromeClient } from '../domain/chrome-client.ts'
+import { CwdProfileResolver } from '../domain/cwd-profile-resolver.ts'
 import { LaunchChromeUseCase } from './launch-chrome-use-case.ts'
 
 // ChromeClientはRpcClient型のためLayer.succeedで直接モックを提供する
@@ -12,8 +13,13 @@ const createMockChromeClient = (
   }) => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError>,
 ) => Layer.succeed(ChromeClient, { launch } as never)
 
-const buildTestLayer = (mockChromeClient: Layer.Layer<ChromeClient>) =>
-  LaunchChromeUseCase.layer.pipe(Layer.provide(mockChromeClient))
+const createMockCwdProfileResolver = (resolve: (cwd: string) => Option.Option<string>) =>
+  Layer.succeed(CwdProfileResolver, { resolve })
+
+const buildTestLayer = (
+  mockChromeClient: Layer.Layer<ChromeClient>,
+  mockCwdProfileResolver: Layer.Layer<CwdProfileResolver> = createMockCwdProfileResolver(() => Option.none()),
+) => LaunchChromeUseCase.layer.pipe(Layer.provide(mockChromeClient), Layer.provide(mockCwdProfileResolver))
 
 describe('LaunchChromeUseCase', () => {
   describe('invoke', () => {
@@ -32,7 +38,7 @@ describe('LaunchChromeUseCase', () => {
       return Effect.gen(function* () {
         const useCase = yield* LaunchChromeUseCase
 
-        yield* useCase.invoke(Option.some('work'), Option.some('https://example.com'))
+        yield* useCase.invoke(Option.some('work'), Option.some('https://example.com'), '/tmp')
 
         expect(Option.isSome(receivedProfileName)).toBe(true)
         assert(Option.isSome(receivedProfileName))
@@ -59,7 +65,7 @@ describe('LaunchChromeUseCase', () => {
       return Effect.gen(function* () {
         const useCase = yield* LaunchChromeUseCase
 
-        yield* useCase.invoke(Option.none(), Option.some('https://example.com'))
+        yield* useCase.invoke(Option.none(), Option.some('https://example.com'), '/tmp')
 
         expect(Option.isNone(receivedProfileName)).toBe(true)
 
@@ -77,7 +83,7 @@ describe('LaunchChromeUseCase', () => {
       return Effect.gen(function* () {
         const useCase = yield* LaunchChromeUseCase
 
-        const result = yield* Effect.exit(useCase.invoke(Option.some('work'), Option.none()))
+        const result = yield* Effect.exit(useCase.invoke(Option.some('work'), Option.none(), '/tmp'))
         expect(Exit.isFailure(result)).toBe(true)
         assert(Exit.isFailure(result))
 
@@ -101,7 +107,7 @@ describe('LaunchChromeUseCase', () => {
       return Effect.gen(function* () {
         const useCase = yield* LaunchChromeUseCase
 
-        const result = yield* Effect.exit(useCase.invoke(Option.some('invalid'), Option.none()))
+        const result = yield* Effect.exit(useCase.invoke(Option.some('invalid'), Option.none(), '/tmp'))
         expect(Exit.isFailure(result)).toBe(true)
         assert(Exit.isFailure(result))
 
@@ -110,6 +116,72 @@ describe('LaunchChromeUseCase', () => {
         assert(Option.isSome(cause))
 
         expect(cause.value).toBeInstanceOf(InvalidProfileNameError)
+      }).pipe(Effect.provide(testLayer))
+    })
+
+    it.effect('プロファイル名未指定でpathsに一致する場合、解決された値がサーバーに送信されること', () => {
+      let receivedProfileName: Option.Option<string> = Option.none()
+
+      const testLayer = buildTestLayer(
+        createMockChromeClient((payload) => {
+          receivedProfileName = payload.profileName
+          return Effect.void
+        }),
+        createMockCwdProfileResolver((cwd) =>
+          cwd.startsWith('/home/user/work') ? Option.some('work-profile') : Option.none(),
+        ),
+      )
+
+      return Effect.gen(function* () {
+        const useCase = yield* LaunchChromeUseCase
+
+        yield* useCase.invoke(Option.none(), Option.none(), '/home/user/work/project')
+
+        expect(Option.isSome(receivedProfileName)).toBe(true)
+        assert(Option.isSome(receivedProfileName))
+        expect(receivedProfileName.value).toBe('work-profile')
+      }).pipe(Effect.provide(testLayer))
+    })
+
+    it.effect('プロファイル名未指定でpathsに一致しない場合、Noneがサーバーに送信されること', () => {
+      let receivedProfileName: Option.Option<string> = Option.some('dummy')
+
+      const testLayer = buildTestLayer(
+        createMockChromeClient((payload) => {
+          receivedProfileName = payload.profileName
+          return Effect.void
+        }),
+        createMockCwdProfileResolver(() => Option.none()),
+      )
+
+      return Effect.gen(function* () {
+        const useCase = yield* LaunchChromeUseCase
+
+        yield* useCase.invoke(Option.none(), Option.none(), '/home/user/other')
+
+        expect(Option.isNone(receivedProfileName)).toBe(true)
+      }).pipe(Effect.provide(testLayer))
+    })
+
+    it.effect('プロファイル名が明示指定されている場合、pathsの一致に関わらず指定値が使われること', () => {
+      let receivedProfileName: Option.Option<string> = Option.none()
+
+      const testLayer = buildTestLayer(
+        createMockChromeClient((payload) => {
+          receivedProfileName = payload.profileName
+          return Effect.void
+        }),
+        createMockCwdProfileResolver(() => Option.some('cwd-profile')),
+      )
+
+      return Effect.gen(function* () {
+        const useCase = yield* LaunchChromeUseCase
+
+        yield* useCase.invoke(Option.some('explicit-profile'), Option.none(), '/home/user/work/project')
+
+        expect(Option.isSome(receivedProfileName)).toBe(true)
+        assert(Option.isSome(receivedProfileName))
+        expect(receivedProfileName.value).toBe('explicit-profile')
       }).pipe(Effect.provide(testLayer))
     })
   })

@@ -14,6 +14,7 @@ export class LaunchChromeCommand extends Context.Tag('@chroma/client/presentatio
     readonly run: (
       profile: Option.Option<string>,
       url: Option.Option<string>,
+      cwd: string,
     ) => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError | RpcClientError.RpcClientError>
   }
 >() {
@@ -25,8 +26,9 @@ export class LaunchChromeCommand extends Context.Tag('@chroma/client/presentatio
       const run = Effect.fn('LaunchChromeCommand.run')(function* (
         profile: Option.Option<string>,
         url: Option.Option<string>,
+        cwd: string,
       ) {
-        yield* launchChromeUseCase.invoke(profile, url)
+        yield* launchChromeUseCase.invoke(profile, url, cwd)
       })
 
       return { run }
