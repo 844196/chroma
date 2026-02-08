@@ -1,6 +1,6 @@
 import { type Command, CommandExecutor as PlatformCommandExecutor } from '@effect/platform'
 import { Effect, String as EffectString, Layer, pipe, Stream } from 'effect'
-import { CommandExecutor, CommandFailedError } from '../use-case/launch-chrome/command-executor.ts'
+import { CommandExecutor, CommandFailedError } from '../domain/command-executor.ts'
 
 export const CommandExecutorLive = Layer.effect(
   CommandExecutor,

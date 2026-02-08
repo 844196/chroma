@@ -1,12 +1,12 @@
 import type { ProfileName } from '@chroma/shared/domain'
 import { Context, Effect, Layer, type Option } from 'effect'
-import { CommandExecutor, type CommandFailedError } from './command-executor.ts'
-import { CommandFactory } from './command-factory.ts'
+import { CommandExecutor, type CommandFailedError } from '../domain/command-executor.ts'
+import { CommandFactory } from '../domain/command-factory.ts'
 
 /**
  * Chromeを起動するユースケース
  */
-export class LaunchChromeUseCase extends Context.Tag('@chroma/server/use-case/launch-chrome/LaunchChromeUseCase')<
+export class LaunchChromeUseCase extends Context.Tag('@chroma/server/application/LaunchChromeUseCase')<
   LaunchChromeUseCase,
   {
     /**
@@ -20,7 +20,7 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/server/use-case/la
     readonly invoke: (
       profileName: Option.Option<ProfileName>,
       url: Option.Option<string>,
-    ) => Effect.Effect<void, CommandFailedError> // ユースケース固有のエラー型を定義するほどではないため、インフラ層のエラーをそのまま返している
+    ) => Effect.Effect<void, CommandFailedError> // ユースケース固有のエラー型を定義するほどではないため、ポートで定義されたエラーをそのまま返している
   }
 >() {
   static readonly layer = Layer.effect(

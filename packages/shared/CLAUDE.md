@@ -22,7 +22,7 @@ src/
     chrome-rpc-group.ts      # ChromeRpcGroup (RPC定義)
     chrome-launch-error.ts   # ChromeLaunchError (RPCエラー型)
   domain/                    # ドメイン層
-    config.ts                # Config Tag, ConfigSchema
+    config.ts                # Config Tag (ポート定義), ConfigSchema
     profile-name.ts          # ProfileName スキーマ
   infrastructure/            # インフラストラクチャ層
     config.ts                # ConfigLive (ファイル読み込み + デコード)

@@ -1,8 +1,8 @@
 import type { ChromeLaunchError } from '@chroma/shared/rpc'
 import type { RpcClientError } from '@effect/rpc'
 import { Context, Effect, Layer, type Option } from 'effect'
-import { type InvalidProfileNameError, ProfileNameResolver } from '../../domain/profile-name-resolver.ts'
-import { ChromeClient } from './chrome-client.ts'
+import { ChromeClient } from '../domain/chrome-client.ts'
+import { type InvalidProfileNameError, ProfileNameResolver } from '../domain/profile-name-resolver.ts'
 
 /**
  * Chromeを起動するユースケース
@@ -12,7 +12,7 @@ import { ChromeClient } from './chrome-client.ts'
  * @see {@link ProfileNameResolver} プロファイル名の解決
  * @see {@link ChromeClient} サーバーへのRPCリクエスト
  */
-export class LaunchChromeUseCase extends Context.Tag('@chroma/client/use-case/launch-chrome/LaunchChromeUseCase')<
+export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application/LaunchChromeUseCase')<
   LaunchChromeUseCase,
   {
     /**

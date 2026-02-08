@@ -7,7 +7,7 @@ import { Context, type Effect, type Option } from 'effect'
  *
  * OSごとに異なる起動コマンド、コマンドライン引数、エスケープ処理を吸収する
  */
-export class CommandFactory extends Context.Tag('@chroma/server/use-case/launch-chrome/CommandFactory')<
+export class CommandFactory extends Context.Tag('@chroma/server/domain/CommandFactory')<
   CommandFactory,
   {
     /**

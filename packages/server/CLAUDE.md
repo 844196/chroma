@@ -24,11 +24,11 @@ src/
   presentation/                           # プレゼンテーション層
     chrome-rpc-group.ts                   # ChromeRpcGroup ハンドラ実装
     logging-middleware.ts                 # ロギングミドルウェア
-  use-case/                               # ユースケース層
-    launch-chrome/
-      command-factory.ts                  # CommandFactory Tag (ポート定義)
-      command-executor.ts                 # CommandExecutor Tag, CommandFailedError (ポート定義)
-      launch-chrome-use-case.ts           # LaunchChromeUseCase Tag + Layer
+  application/                            # アプリケーション層
+    launch-chrome-use-case.ts             # LaunchChromeUseCase Tag + Layer
+  domain/                                 # ドメイン層
+    command-factory.ts                    # CommandFactory Tag (ポート定義)
+    command-executor.ts                   # CommandExecutor Tag, CommandFailedError (ポート定義)
   infrastructure/                         # インフラストラクチャ層
     command-factory.ts                    # CommandFactoryDarwinLive, CommandFactoryWslLive (ポート実装)
     command-executor.ts                   # CommandExecutorLive (ポート実装)

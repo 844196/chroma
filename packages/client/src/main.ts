@@ -2,10 +2,10 @@ import { ConfigLive } from '@chroma/shared/infrastructure'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer as L, Option as O } from 'effect'
+import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
 import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
 import { ChromeClientLive } from './infrastructure/chrome-client.ts'
 import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
-import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-case.ts'
 
 // NOTE: "bun build --bytecode" はトップレベルawaitをサポートしていないためIIFEで囲む
 ;(async () => {

@@ -1,7 +1,7 @@
 import type { ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
 import { Effect, Layer, Option } from 'effect'
-import { CommandFactory } from '../use-case/launch-chrome/command-factory.ts'
+import { CommandFactory } from '../domain/command-factory.ts'
 
 /**
  * macOS向けレイヤー
