@@ -2,7 +2,7 @@ import { homedir } from 'node:os'
 import { ConfigLive } from '@chroma/shared/infrastructure'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
-import { Effect, Layer as L, Option as O } from 'effect'
+import { Effect, Layer, Option } from 'effect'
 import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
 import { CwdProfileResolver } from './domain/cwd-profile-resolver.ts'
 import { HomeDir } from './domain/home-dir.ts'
@@ -65,17 +65,17 @@ import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
     .parse()
 
   const MainLive = LaunchChromeCommand.layer.pipe(
-    L.provide(LaunchChromeUseCase.layer),
-    L.provide(CwdProfileResolver.layer),
-    L.provide(L.succeed(HomeDir, homedir())),
-    L.provide(ConfigLive({ path: parsedOpts.config })),
-    L.provide(ChromeClientLive({ socketPath: parsedOpts.host })),
-    L.provide(BunContext.layer),
+    Layer.provide(LaunchChromeUseCase.layer),
+    Layer.provide(CwdProfileResolver.layer),
+    Layer.provide(Layer.succeed(HomeDir, homedir())),
+    Layer.provide(ConfigLive({ path: parsedOpts.config })),
+    Layer.provide(ChromeClientLive({ socketPath: parsedOpts.host })),
+    Layer.provide(BunContext.layer),
   )
 
   const program = Effect.gen(function* () {
     const cmd = yield* LaunchChromeCommand
-    yield* cmd.run(O.fromNullable(parsedOpts.profile), O.fromNullable(url), process.cwd())
+    yield* cmd.run(Option.fromNullable(parsedOpts.profile), Option.fromNullable(url), process.cwd())
   })
 
   BunRuntime.runMain(program.pipe(Effect.provide(MainLive)))

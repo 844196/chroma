@@ -1,5 +1,5 @@
 import { Config, InvalidProfileNameError, ProfileName } from '@chroma/shared/domain'
-import { Context, Either as E, Effect, Layer, Option as O, Schema } from 'effect'
+import { Context, Effect, Either, Layer, Option, Schema } from 'effect'
 
 /**
  * プロファイル名を解決する
@@ -26,13 +26,13 @@ export class ProfileNameResolver extends Context.Tag('@chroma/server/domain/Prof
       const { profileAliases } = yield* Config
 
       const resolve = Effect.fn('ProfileNameResolver.resolve')((given: string) => {
-        const resolved = O.fromNullable(profileAliases.get(given))
-        if (O.isSome(resolved)) {
+        const resolved = Option.fromNullable(profileAliases.get(given))
+        if (Option.isSome(resolved)) {
           return Effect.succeed(resolved.value)
         }
 
         const decoded = Schema.decodeEither(ProfileName)(given)
-        if (E.isRight(decoded)) {
+        if (Either.isRight(decoded)) {
           return Effect.succeed(decoded.right)
         }
 
