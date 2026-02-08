@@ -9,6 +9,7 @@
       "WebFetch(domain:effect.website)",
       "WebFetch(domain:effect-ts.github.io)",
       "WebFetch(domain:www.effect.solutions)",
+      "WebFetch(domain:cliffy.io)",
       "Bash(mise run //packages/*:check*)",
       "Bash(mise run //packages/*:fix*)",
       "Bash(mise run //packages/*:test*)"
