@@ -6,6 +6,7 @@ import { Config, ConfigSchema } from '../domain/config.ts'
 
 const DEFAULT_CONFIG: typeof ConfigSchema.Type = {
   profileAliases: new Map(),
+  paths: new Map(),
 }
 
 const DEFAULT_CONFIG_PATH = Option.fromNullable(process.env.XDG_CONFIG_HOME).pipe(

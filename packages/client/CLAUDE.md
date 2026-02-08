@@ -5,6 +5,7 @@
 @chroma/client (`chroma`) はユーザーが直接実行するCLIツールです。
 
 - 設定ファイル・環境変数・コマンドライン引数をパースし、起動すべきChromeプロファイルを決定します。
+  - カレントディレクトリに基づき、設定ファイルの `paths` フィールドからプロファイル名を自動解決します。
 - @chroma/server (`chromad`) にUNIXドメインソケット経由でRPCリクエストを送り、Chromeを起動させます。
 
 `BROWSER` 環境変数経由で他のツールから呼び出されることも想定します。
@@ -27,6 +28,8 @@ src/
     launch-chrome-use-case.ts    # LaunchChromeUseCase Tag + Layer
   domain/                        # ドメイン層
     chrome-client.ts             # ChromeClient Tag (ポート定義)
+    cwd-profile-resolver.ts      # CwdProfileResolver Tag + Layer (DomainService)
+    home-dir.ts                  # HomeDir Tag (ポート定義)
   infrastructure/                # インフラストラクチャ層
     chrome-client.ts             # ChromeClientLive (RPCクライアント ポート実装)
 ```

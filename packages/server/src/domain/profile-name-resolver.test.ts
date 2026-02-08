@@ -7,7 +7,7 @@ const aliasMap = (entries: Array<[string, string]>): ReadonlyMap<string, Profile
   new Map(entries.map(([k, v]) => [k, v as ProfileName]))
 
 const testConfig = (aliases: ReadonlyMap<string, ProfileName>) =>
-  Layer.succeed(Config, Config.of({ profileAliases: aliases }))
+  Layer.succeed(Config, Config.of({ profileAliases: aliases, paths: new Map() }))
 
 describe('ProfileNameResolver', () => {
   describe('resolve', () => {
