@@ -26,7 +26,6 @@ src/
   application/                   # アプリケーション層
     launch-chrome-use-case.ts    # LaunchChromeUseCase Tag + Layer
   domain/                        # ドメイン層
-    profile-name-resolver.ts     # ProfileNameResolver Tag + Layer
     chrome-client.ts             # ChromeClient Tag (ポート定義)
   infrastructure/                # インフラストラクチャ層
     chrome-client.ts             # ChromeClientLive (RPCクライアント ポート実装)

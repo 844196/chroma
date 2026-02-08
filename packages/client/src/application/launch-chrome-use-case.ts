@@ -1,15 +1,13 @@
-import type { ChromeLaunchError } from '@chroma/shared/rpc'
+import type { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/rpc'
 import type { RpcClientError } from '@effect/rpc'
 import { Context, Effect, Layer, type Option } from 'effect'
 import { ChromeClient } from '../domain/chrome-client.ts'
-import { type InvalidProfileNameError, ProfileNameResolver } from '../domain/profile-name-resolver.ts'
 
 /**
  * Chromeを起動するユースケース
  *
- * プロファイル名の解決を行い、サーバーにChrome起動をリクエストする
+ * ユーザー入力をそのままサーバーに転送し、Chrome起動をリクエストする
  *
- * @see {@link ProfileNameResolver} プロファイル名の解決
  * @see {@link ChromeClient} サーバーへのRPCリクエスト
  */
 export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application/LaunchChromeUseCase')<
@@ -18,7 +16,7 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application
     /**
      * Chromeの起動をサーバーにリクエストする
      *
-     * - プロファイル名が指定された場合、エイリアス解決を経てサーバーに送信する
+     * - プロファイル名が指定された場合、そのままサーバーに送信する（エイリアス解決はサーバー側で行われる）
      * - プロファイル名が指定されなかった場合、サーバー側の挙動に委ねる
      */
     readonly invoke: (
@@ -30,16 +28,13 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application
   static readonly layer = Layer.effect(
     LaunchChromeUseCase,
     Effect.gen(function* () {
-      const profileNameResolver = yield* ProfileNameResolver
       const chrome = yield* ChromeClient
 
       const invoke = Effect.fn('LaunchChromeUseCase.invoke')(function* (
         givenProfileName: Option.Option<string>,
         url: Option.Option<string>,
       ) {
-        const profileName = yield* Effect.transposeMapOption(givenProfileName, profileNameResolver.resolve)
-
-        yield* chrome.launch({ profileName, url })
+        yield* chrome.launch({ profileName: givenProfileName, url })
       })
 
       return { invoke }

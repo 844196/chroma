@@ -1,4 +1,5 @@
 import { Config, ProfileName } from '@chroma/shared/domain'
+import { InvalidProfileNameError } from '@chroma/shared/rpc'
 import { Context, Either as E, Effect, Layer, Option as O, Schema } from 'effect'
 
 /**
@@ -7,7 +8,7 @@ import { Context, Either as E, Effect, Layer, Option as O, Schema } from 'effect
  * ユーザーが指定した文字列をプロファイルディレクトリ名に変換する。
  * 設定ファイルのエイリアス定義を優先し、一致しなければProfileNameスキーマでバリデーションする。
  */
-export class ProfileNameResolver extends Context.Tag('@chroma/client/domain/ProfileNameResolver')<
+export class ProfileNameResolver extends Context.Tag('@chroma/server/domain/ProfileNameResolver')<
   ProfileNameResolver,
   {
     /**
@@ -36,17 +37,10 @@ export class ProfileNameResolver extends Context.Tag('@chroma/client/domain/Prof
           return Effect.succeed(decoded.right)
         }
 
-        return Effect.fail(new InvalidProfileNameError({ cause: decoded.left }))
+        return Effect.fail(new InvalidProfileNameError({ givenName: given }))
       })
 
       return { resolve }
     }),
   )
 }
-
-/**
- * 指定された文字列がエイリアスにも有効なプロファイル名にも該当しない場合のエラー
- */
-export class InvalidProfileNameError extends Schema.TaggedError<InvalidProfileNameError>()('InvalidProfileNameError', {
-  cause: Schema.Defect,
-}) {}
