@@ -1,6 +1,6 @@
 # @chroma/client
 
-## Package Overview
+## パッケージ概要
 
 @chroma/client (`chroma`) はユーザーが直接実行するCLIツールです。
 
@@ -10,15 +10,19 @@
 
 `BROWSER` 環境変数経由で他のツールから呼び出されることも想定します。
 
-## Commands
+## パッケージ固有の技術スタック
 
-- `mise run //packages/client:client -- [args...]` : 開発中のCLIクライアントを実行します。
+- Cliffyを使用してコマンドライン引数をパースします。
+
+## 開発コマンド
+
+- `mise run //packages/client:dev -- [args...]` : 開発中のCLIクライアントを実行します。
 - `mise run //packages/client:check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
 - `mise run //packages/client:fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
 - `mise run //packages/client:test -- [vitest-args...]` : テストを実行します。
 - `mise run //packages/client:build` : パッケージをビルドします。
 
-## Structure
+## 構成
 
 ```
 src/

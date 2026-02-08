@@ -1,6 +1,6 @@
 # @chroma/server
 
-## Package Overview
+## パッケージ概要
 
 @chroma/server (`chromad`) はバックグラウンドで動作するサーバーです。
 
@@ -9,7 +9,7 @@
 
 ユーザーによってlaunchdやsystemdでデーモン化されて動くことが前提です。
 
-## Commands
+## 開発コマンド
 
 - `mise run //packages/server:dev` : 開発中のサーバーを起動します。
 - `mise run //packages/server:check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
@@ -17,7 +17,7 @@
 - `mise run //packages/server:test -- [vitest-args...]` : テストを実行します。
 - `mise run //packages/server:build` : パッケージをビルドします。
 
-## Structure
+## 構成
 
 ```
 src/

@@ -7,7 +7,7 @@ extends = "fix"
 [tasks.test]
 extends = "test"
 
-[tasks.client]
+[tasks.dev]
 env = { CHROMA_RUNTIME_DIR = "{{ [env.XDG_RUNTIME_DIR, 'chroma-dev'] | join_path }}" }
 run = '''
 bun run \
