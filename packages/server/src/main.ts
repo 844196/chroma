@@ -6,11 +6,11 @@ import { BunContext, BunHttpServer, BunRuntime } from '@effect/platform-bun'
 import { RpcSerialization, RpcServer } from '@effect/rpc'
 import { Cause, Config, Effect, Exit, Layer as L, Layer, Logger, LogLevel } from 'effect'
 import isWsl from 'is-wsl'
+import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
 import { CommandExecutorLive } from './infrastructure/command-executor.ts'
 import { CommandFactoryDarwinLive, CommandFactoryWslLive } from './infrastructure/command-factory.ts'
 import { UnixSocket } from './infrastructure/unix-socket.ts'
 import { ChromeRpcLive } from './presentation/chrome-rpc-group.ts'
-import { LaunchChromeUseCase } from './use-case/launch-chrome/launch-chrome-use-case.ts'
 
 const LogLevelLive = Layer.unwrapEffect(
   Config.logLevel('CHROMA_LOG_LEVEL').pipe(Config.withDefault(LogLevel.Info), Effect.map(Logger.minimumLogLevel)),

@@ -1,6 +1,6 @@
 import { ChromeLaunchError, ChromeRpcGroup } from '@chroma/shared/rpc'
 import { Effect, Layer } from 'effect'
-import { LaunchChromeUseCase } from '../use-case/launch-chrome/launch-chrome-use-case.ts'
+import { LaunchChromeUseCase } from '../application/launch-chrome-use-case.ts'
 import { LoggingMiddleware } from './logging-middleware.ts'
 
 export const ChromeRpcLive = ChromeRpcGroup.middleware(LoggingMiddleware)

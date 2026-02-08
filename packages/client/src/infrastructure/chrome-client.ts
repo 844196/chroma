@@ -3,7 +3,7 @@ import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { FetchHttpClient } from '@effect/platform'
 import { RpcClient, RpcSerialization } from '@effect/rpc'
 import { Effect, Layer as L, Option } from 'effect'
-import { ChromeClient } from '../use-case/launch-chrome/chrome-client.ts'
+import { ChromeClient } from '../domain/chrome-client.ts'
 
 export const ChromeClientLive = (opts: { socketPath?: string | undefined }) =>
   L.unwrapEffect(

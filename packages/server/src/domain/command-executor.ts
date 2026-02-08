@@ -6,7 +6,7 @@ import { Context, type Effect, Schema } from 'effect'
  *
  * @see CommandFactory
  */
-export class CommandExecutor extends Context.Tag('@chroma/server/use-case/launch-chrome/CommandExecutor')<
+export class CommandExecutor extends Context.Tag('@chroma/server/domain/CommandExecutor')<
   CommandExecutor,
   {
     /**

@@ -2,7 +2,7 @@ import { ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
 import { describe, expect, it } from '@effect/vitest'
 import { Effect, Option, Schema } from 'effect'
-import { CommandFactory } from '../use-case/launch-chrome/command-factory.ts'
+import { CommandFactory } from '../domain/command-factory.ts'
 import { CommandFactoryDarwinLive, CommandFactoryWslLive } from './command-factory.ts'
 
 const profileName = Schema.decodeSync(ProfileName)('Default')

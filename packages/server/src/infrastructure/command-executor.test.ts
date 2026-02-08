@@ -4,7 +4,7 @@ import { SystemError } from '@effect/platform/Error'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option, Sink, Stream } from 'effect'
 import { NodeInspectSymbol } from 'effect/Inspectable'
-import { CommandExecutor, CommandFailedError } from '../use-case/launch-chrome/command-executor.ts'
+import { CommandExecutor, CommandFailedError } from '../domain/command-executor.ts'
 import { CommandExecutorLive } from './command-executor.ts'
 
 const createProcess = (opts: {

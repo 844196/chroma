@@ -8,7 +8,7 @@ import { Context } from 'effect'
  *
  * UNIXドメインソケット経由で @chroma/server にRPCリクエストを送信する
  */
-export class ChromeClient extends Context.Tag('@chroma/client/use-case/launch-chrome/ChromeClient')<
+export class ChromeClient extends Context.Tag('@chroma/client/domain/ChromeClient')<
   ChromeClient,
   RpcClient.RpcClient<Rpcs<typeof ChromeRpcGroup>, RpcClientError.RpcClientError>
 >() {}
