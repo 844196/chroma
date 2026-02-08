@@ -4,7 +4,7 @@ import { ChromeRpcGroup } from '@chroma/shared/rpc'
 import { HttpRouter } from '@effect/platform'
 import { BunContext, BunHttpServer, BunRuntime } from '@effect/platform-bun'
 import { RpcSerialization, RpcServer } from '@effect/rpc'
-import { Cause, Config, Effect, Exit, Layer as L, Layer, Logger, LogLevel } from 'effect'
+import { Cause, Config, Effect, Exit, Layer, Logger, LogLevel } from 'effect'
 import isWsl from 'is-wsl'
 import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
 import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
@@ -18,20 +18,20 @@ const LogLevelLive = Layer.unwrapEffect(
 )
 
 const RpcServerLive = RpcServer.layer(ChromeRpcGroup).pipe(
-  L.provide(ChromeRpcLive),
-  L.provide(RpcServer.layerProtocolHttp({ path: '/rpc' })),
-  L.provide(RpcSerialization.layerNdjson),
+  Layer.provide(ChromeRpcLive),
+  Layer.provide(RpcServer.layerProtocolHttp({ path: '/rpc' })),
+  Layer.provide(RpcSerialization.layerNdjson),
 )
 
-const HttpServerLive = L.unwrapScoped(
+const HttpServerLive = Layer.unwrapScoped(
   Effect.gen(function* () {
     const socket = yield* Effect.flatMap(SocketPath, UnixSocket)
     yield* Effect.logInfo('starting server on unix socket').pipe(Effect.annotateLogs({ socketPath: socket.path }))
     return BunHttpServer.layerServer({ unix: socket.path })
   }),
-).pipe(L.provide(SocketPath.layer))
+).pipe(Layer.provide(SocketPath.layer))
 
-const CommandFactoryLive = L.unwrapEffect(
+const CommandFactoryLive = Layer.unwrapEffect(
   Effect.gen(function* () {
     const os = osType()
     if (os === 'Darwin') {
@@ -45,15 +45,15 @@ const CommandFactoryLive = L.unwrapEffect(
 )
 
 const MainLive = HttpRouter.Default.serve().pipe(
-  L.provide(RpcServerLive),
-  L.provide(LaunchChromeUseCase.layer),
-  L.provide(ProfileNameResolver.layer),
-  L.provide(ConfigLive()),
-  L.provide(CommandFactoryLive),
-  L.provide(CommandExecutorLive),
-  L.provide(HttpServerLive),
-  L.provide(BunContext.layer),
-  L.provide(LogLevelLive),
+  Layer.provide(RpcServerLive),
+  Layer.provide(LaunchChromeUseCase.layer),
+  Layer.provide(ProfileNameResolver.layer),
+  Layer.provide(ConfigLive()),
+  Layer.provide(CommandFactoryLive),
+  Layer.provide(CommandExecutorLive),
+  Layer.provide(HttpServerLive),
+  Layer.provide(BunContext.layer),
+  Layer.provide(LogLevelLive),
 )
 
 const program = Effect.gen(function* () {
@@ -63,7 +63,7 @@ const program = Effect.gen(function* () {
       BUILD_TIME,
     }),
   )
-  return yield* L.launch(MainLive)
+  return yield* Layer.launch(MainLive)
 })
 
 BunRuntime.runMain(program, {

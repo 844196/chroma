@@ -1,5 +1,5 @@
 import { Config } from '@chroma/shared/domain'
-import { Context, Effect, Layer, Option as O } from 'effect'
+import { Context, Effect, Layer, Option } from 'effect'
 import { HomeDir } from './home-dir.ts'
 
 /**
@@ -16,7 +16,7 @@ export class CwdProfileResolver extends Context.Tag('@chroma/client/domain/CwdPr
      * - `paths` のエントリの中でcwdに前方一致する最も長いパスの値を返す
      * - 一致するエントリがなければ `None` を返す
      */
-    readonly resolve: (cwd: string) => O.Option<string>
+    readonly resolve: (cwd: string) => Option.Option<string>
   }
 >() {
   static readonly layer = Layer.effect(
@@ -32,14 +32,14 @@ export class CwdProfileResolver extends Context.Tag('@chroma/client/domain/CwdPr
       })
       expandedEntries.sort(([a], [b]) => b.length - a.length)
 
-      const resolve = (cwd: string): O.Option<string> => {
+      const resolve = (cwd: string): Option.Option<string> => {
         const normalizedCwd = cwd.endsWith('/') ? cwd : `${cwd}/`
         for (const [pathPrefix, profileName] of expandedEntries) {
           if (normalizedCwd.startsWith(pathPrefix)) {
-            return O.some(profileName)
+            return Option.some(profileName)
           }
         }
-        return O.none()
+        return Option.none()
       }
 
       return { resolve }

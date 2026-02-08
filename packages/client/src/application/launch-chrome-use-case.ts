@@ -1,6 +1,6 @@
 import type { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/domain'
 import type { RpcClientError } from '@effect/rpc'
-import { Context, Effect, Layer, Option as O, type Option } from 'effect'
+import { Context, Effect, Layer, Option } from 'effect'
 import { ChromeClient } from '../domain/chrome-client.ts'
 import { CwdProfileResolver } from '../domain/cwd-profile-resolver.ts'
 
@@ -39,7 +39,7 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application
         url: Option.Option<string>,
         cwd: string,
       ) {
-        const profileName = O.isSome(givenProfileName) ? givenProfileName : cwdProfileResolver.resolve(cwd)
+        const profileName = Option.isSome(givenProfileName) ? givenProfileName : cwdProfileResolver.resolve(cwd)
         yield* chrome.launch({ profileName, url })
       })
 
