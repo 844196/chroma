@@ -1,7 +1,7 @@
 import { Rpc, RpcGroup } from '@effect/rpc'
 import { Schema } from 'effect'
-import { ChromeLaunchError } from './chrome-launch-error.ts'
-import { InvalidProfileNameError } from './invalid-profile-name-error.ts'
+import { ChromeLaunchError } from '../domain/chrome-launch-error.ts'
+import { InvalidProfileNameError } from '../domain/invalid-profile-name-error.ts'
 
 export class ChromeRpcGroup extends RpcGroup.make(
   Rpc.make('launch', {

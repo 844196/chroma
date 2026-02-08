@@ -1,6 +1,4 @@
-import type { ProfileName } from '@chroma/shared/domain'
-import { Config } from '@chroma/shared/domain'
-import { InvalidProfileNameError } from '@chroma/shared/rpc'
+import { Config, InvalidProfileNameError, type ProfileName } from '@chroma/shared/domain'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Effect, Either, Layer } from 'effect'
 import { ProfileNameResolver } from './profile-name-resolver.ts'

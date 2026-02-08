@@ -1,4 +1,4 @@
-import { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/rpc'
+import { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/domain'
 import { assert, describe, expect, it } from '@effect/vitest'
 import { Cause, Effect, Exit, Layer, Option } from 'effect'
 import { ChromeClient } from '../domain/chrome-client.ts'

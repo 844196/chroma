@@ -1,4 +1,4 @@
-import type { InvalidProfileNameError } from '@chroma/shared/rpc'
+import type { InvalidProfileNameError } from '@chroma/shared/domain'
 import { Context, Effect, Layer, type Option } from 'effect'
 import { CommandExecutor, type CommandFailedError } from '../domain/command-executor.ts'
 import { CommandFactory } from '../domain/command-factory.ts'

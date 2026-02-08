@@ -1,5 +1,4 @@
-import { Config, ProfileName } from '@chroma/shared/domain'
-import { InvalidProfileNameError } from '@chroma/shared/rpc'
+import { Config, InvalidProfileNameError, ProfileName } from '@chroma/shared/domain'
 import { Context, Either as E, Effect, Layer, Option as O, Schema } from 'effect'
 
 /**

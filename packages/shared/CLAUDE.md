@@ -4,8 +4,8 @@
 
 @chroma/shared はクライアント・サーバー間で共有される型定義、スキーマ、インフラストラクチャ実装を提供するパッケージです。
 
-- RPCグループ定義とエラー型
-- ドメイン層: Config Tag、ProfileName スキーマ
+- RPCグループ定義
+- ドメイン層: Config Tag、ProfileName スキーマ、エラー型
 - インフラストラクチャ層: Config Layer 実装、RuntimeDir、SocketPath
 
 ## Commands
@@ -20,10 +20,10 @@
 src/
   rpc/                              # RPC定義
     chrome-rpc-group.ts             # ChromeRpcGroup (RPC定義)
-    chrome-launch-error.ts          # ChromeLaunchError (RPCエラー型)
-    invalid-profile-name-error.ts   # InvalidProfileNameError (RPCエラー型)
   domain/                           # ドメイン層
+    chrome-launch-error.ts          # ChromeLaunchError (ドメインエラー型)
     config.ts                       # Config Tag (ポート定義), ConfigSchema
+    invalid-profile-name-error.ts   # InvalidProfileNameError (ドメインエラー型)
     profile-name.ts                 # ProfileName スキーマ
   infrastructure/                   # インフラストラクチャ層
     config.ts                       # ConfigLive (ファイル読み込み + デコード)
