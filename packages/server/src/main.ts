@@ -11,14 +11,14 @@ import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
 import { CommandExecutorLive } from './infrastructure/command-executor.ts'
 import { CommandFactoryDarwinLive, CommandFactoryWslLive } from './infrastructure/command-factory.ts'
 import { UnixSocket } from './infrastructure/unix-socket.ts'
-import { ChromeRpcLive } from './presentation/chrome-rpc-group.ts'
+import { ChromeRpcGroupLive } from './presentation/chrome-rpc-group.ts'
 
 const LogLevelLive = Layer.unwrapEffect(
   Config.logLevel('CHROMA_LOG_LEVEL').pipe(Config.withDefault(LogLevel.Info), Effect.map(Logger.minimumLogLevel)),
 )
 
 const RpcServerLive = RpcServer.layer(ChromeRpcGroup).pipe(
-  Layer.provide(ChromeRpcLive),
+  Layer.provide(ChromeRpcGroupLive),
   Layer.provide(RpcServer.layerProtocolHttp({ path: '/rpc' })),
   Layer.provide(RpcSerialization.layerNdjson),
 )

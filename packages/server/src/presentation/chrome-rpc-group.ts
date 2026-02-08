@@ -4,7 +4,7 @@ import { Effect, Layer } from 'effect'
 import { LaunchChromeUseCase } from '../application/launch-chrome-use-case.ts'
 import { LoggingMiddleware } from './logging-middleware.ts'
 
-export const ChromeRpcLive = ChromeRpcGroup.middleware(LoggingMiddleware)
+export const ChromeRpcGroupLive = ChromeRpcGroup.middleware(LoggingMiddleware)
   .toLayer(
     Effect.gen(function* () {
       const launchChromeUseCase = yield* LaunchChromeUseCase
