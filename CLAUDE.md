@@ -1,6 +1,6 @@
 # chroma
 
-## Project Overview
+## プロジェクト概要
 
 chromaはURLを指定のChromeプロファイルで開くためのツールです。CLIクライアントとサーバーから構成され、UNIXドメインソケットを介して通信します。
 
@@ -10,17 +10,29 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 - `packages/server` : サーバーパッケージ (`@chroma/server`)
 - `packages/shared` : 共通パッケージ (`@chroma/shared`)
 
-各パッケージの詳細は `packages/<PACKAGE_NAME>/CLAUDE.md` に記述されています。
+各パッケージの詳細は `packages/<package>/CLAUDE.md` に記述されています。
 
-## Tech Stack
+## 技術スタック
 
+- miseを使用します。
 - Bunを使用します。
 - TypeScriptを使用します。
 - Effect-TSを使用します。
+  - `@effect/rpc` を使用してRPCを実装します。
+  - `@effect/platform` を使用してファイルシステム・OS操作を行います。
+- Vitestを使用します。
 
-## Commands
+## 開発コマンド
 
-### Run All Packages
+### パッケージ共通
+
+以下のコマンドは全パッケージで共通です。`<package>` は `client` / `server` / `shared` のいずれかに置き換えてください。
+
+- `mise run //packages/<package>:check -- [files...]` : `<package>` で型チェック・フォーマッター・リンターを実行します。
+- `mise run //packages/<package>:fix -- [files...]` : `<package>` でフォーマッター・リンターの自動修正を実行します。
+- `mise run //packages/<package>:test -- [vitest-args...]` : `<package>` のテストを実行します。
+
+### 全パッケージのタスクを一括実行する
 
 - `mise run //packages/...:check` : 全パッケージで型チェック・フォーマッター・リンターを実行します。
 - `mise run //packages/...:fix` : 全パッケージでフォーマッター・リンターの自動修正を実行します。
@@ -28,25 +40,19 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 
 **注意**: `...` はプレースホルダーではなく、mise tasksのワイルドカード構文としてそのまま入力します。また、全パッケージを対象とする場合は追加の引数を渡すことはできません。
 
-### Run Individual Package
-
-- `mise run //packages/<package>:check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
-- `mise run //packages/<package>:fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
-- `mise run //packages/<package>:test -- [vitest-args...]` : テストを実行します。
-
-## Architecture
+## アーキテクチャ
 
 レイヤー間の依存は内側への一方向のみ許可し、Effect-TS の `Context.Tag` と `Layer` でこれを実現します。
 
-### How to achieve DIP with Effect-TS
+### DIPの実現方法
 
-1. **インターフェイス定義**: 依存先のインターフェイスを `Context.Tag` として定義する
-2. **実装提供**: インターフェイスに対する実装を `Layer` として提供する
-3. **ワイヤリング**: エントリーポイントで `Layer` を合成する。最終的に `Effect.provide` でプログラム全体に渡すことで、すべての `Context.Tag` が解決される
+1. **インターフェイス定義**: 依存先のインターフェイスを `Context.Tag` として定義する。
+2. **実装提供**: インターフェイスに対する実装を `Layer` として提供する。
+3. **ワイヤリング**: エントリーポイントで `Layer` を合成する。最終的に `Effect.provide` でプログラム全体に渡すことで、すべての `Context.Tag` が解決される。
 
 利用側のコードは `yield*` で依存先の `Context.Tag` を参照するため、実装の詳細を知りません。テスト時は `Layer.succeed` でモック実装を注入します。
 
-### Dependency Rule
+### 依存ルール
 
 ```mermaid
 ---
@@ -90,21 +96,21 @@ classDiagram
   Adapter ..|> Port
 ```
 
-## Project Conventions
+## プロジェクト規約
 
-### Naming
+### 命名規則
 
 - ディレクトリ・ファイル名には kebab-case を使用します。
 - 型エイリアス・インターフェイス・クラス名には PascalCase を使用します。
 - 変数・関数・メソッド名には camelCase を使用します。
 - 定数名には ALL_UPPER_SNAKE_CASE を使用します。
 
-### Testing
+### テスト
 
 - テストファイルはテスト対象ファイルと同じディレクトリに `*.test.ts` として配置します。
 - Effect-TSのコードのテストには `@effect/vitest` を使用します。
 - `describe` / `it` の記述は日本語で統一します。
-  - `describe`: 最上位にはクラス名・モジュール名等の技術的識別子をそのまま使用します。ネストした `describe` にはメソッド名等の技術的識別子、または日本語のシナリオ説明（例: `'〜の場合'`）を使用します。
+  - `describe`: 最上位にはクラス名・モジュール名等の技術的識別子をそのまま使用します。ネストした `describe` にはメソッド名等の技術的識別子、または日本語のシナリオ説明（例: `〜の場合`）を使用します。
   - `it`: `〜こと` で終わる日本語の文にします。
 
   ```ts
@@ -124,11 +130,11 @@ classDiagram
   assert(Exit.isFailure(result))  // 型が絞り込まれ、以降 result.cause にアクセスできる
   ```
 
-### Git Commit
+### Gitコミット
 
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってコミットメッセージを生成します。
 
-#### Format
+#### コミットメッセージフォーマット
 
 ```
 <type>(<scope>)[!]: <subject>
@@ -140,7 +146,7 @@ classDiagram
 
 **重要**: このプロジェクトではスコープおよび本文を必須とします。
 
-#### Allowed Types
+#### 利用可能なタイプ
 
 - `feat:` - 新機能の追加
 - `fix:` - バグ修正
@@ -152,7 +158,7 @@ classDiagram
 - `chore:` - メンテナンス作業
   - `chore(deps):` - 依存関係の更新
 
-#### Allowed Scopes
+#### 利用可能なスコープ
 
 - `client`
 - `server`
