@@ -12,13 +12,21 @@ import { CommandExecutorLive } from './infrastructure/command-executor.ts'
 import { CommandFactoryDarwinLive, CommandFactoryWslLive } from './infrastructure/command-factory.ts'
 import { UnixSocket } from './infrastructure/unix-socket.ts'
 import { ChromeRpcGroupLive } from './presentation/chrome-rpc-group.ts'
+import { LoggingMiddleware } from './presentation/logging-middleware.ts'
 
 const LogLevelLive = Layer.unwrapEffect(
   Config.logLevel('CHROMA_LOG_LEVEL').pipe(Config.withDefault(LogLevel.Info), Effect.map(Logger.minimumLogLevel)),
 )
 
-const RpcServerLive = RpcServer.layer(ChromeRpcGroup).pipe(
+// NOTE: ChromeRpcGroup.middleware() はランタイム実装の制約により RpcGroup<any> を返す。
+// RpcServer.layer() にミドルウェア付きグループを渡す必要があるが、型が any に汚染されるため
+// 型アサーションで元の型に戻す。ミドルウェアの実行に必要な LoggingMiddleware.layer は
+// ランタイム用に Layer.provide で明示的に提供している。
+const ChromeRpcGroupWithMiddleware = ChromeRpcGroup.middleware(LoggingMiddleware) as unknown as typeof ChromeRpcGroup
+
+const RpcServerLive = RpcServer.layer(ChromeRpcGroupWithMiddleware).pipe(
   Layer.provide(ChromeRpcGroupLive),
+  Layer.provide(LoggingMiddleware.layer),
   Layer.provide(RpcServer.layerProtocolHttp({ path: '/rpc' })),
   Layer.provide(RpcSerialization.layerNdjson),
 )
