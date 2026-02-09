@@ -12,7 +12,9 @@
       "WebFetch(domain:cliffy.io)",
       "Bash(mise run //packages/*:check*)",
       "Bash(mise run //packages/*:fix*)",
-      "Bash(mise run //packages/*:test*)"
+      "Bash(mise run //packages/*:test*)",
+      "Bash(mise run //packages/*:dev*)",
+      "Skill(e2e-dev)"
     ]
   },
   "hooks": {
