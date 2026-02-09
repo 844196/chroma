@@ -1,6 +1,6 @@
 import { ChromeLaunchError, InvalidProfileNameError } from '@chroma/shared/domain'
 import { ChromeRpcGroup } from '@chroma/shared/rpc'
-import { Effect } from 'effect'
+import { Effect, Option } from 'effect'
 import { LaunchChromeUseCase } from '../application/launch-chrome-use-case.ts'
 
 export const ChromeRpcGroupLive = ChromeRpcGroup.toLayer(
@@ -8,6 +8,13 @@ export const ChromeRpcGroupLive = ChromeRpcGroup.toLayer(
     const launchChromeUseCase = yield* LaunchChromeUseCase
 
     const launch = Effect.fn('ChromeRpcGroup.launch')(function* ({ profileName, url }) {
+      yield* Effect.logDebug('RPC request received').pipe(
+        Effect.annotateLogs({
+          profileName: Option.getOrElse(profileName, () => '(none)'),
+          url: Option.getOrElse(url, () => '(none)'),
+        }),
+      )
+
       yield* launchChromeUseCase.invoke(profileName, url).pipe(
         Effect.catchTags({
           CommandFailedError: (e) =>

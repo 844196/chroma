@@ -43,9 +43,11 @@ const CommandFactoryLive = Layer.unwrapEffect(
   Effect.gen(function* () {
     const os = osType()
     if (os === 'Darwin') {
+      yield* Effect.logDebug('detected OS').pipe(Effect.annotateLogs({ os: 'Darwin' }))
       return CommandFactoryDarwinLive
     }
     if (isWsl) {
+      yield* Effect.logDebug('detected OS').pipe(Effect.annotateLogs({ os: 'WSL' }))
       return CommandFactoryWslLive
     }
     return yield* Effect.dieMessage(`unsupported OS: ${os}`)

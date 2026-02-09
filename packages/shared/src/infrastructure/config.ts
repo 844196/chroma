@@ -25,9 +25,11 @@ export const ConfigLive = (opts: { path?: string | undefined } = {}) =>
 
       const fileContentResult = yield* Effect.either(fs.readFileString(path))
       if (Either.isLeft(fileContentResult)) {
-        return isSpecifiedPath
-          ? yield* new ConfigFileReadError({ path, cause: fileContentResult.left })
-          : DEFAULT_CONFIG
+        if (isSpecifiedPath) {
+          return yield* new ConfigFileReadError({ path, cause: fileContentResult.left })
+        }
+        yield* Effect.logDebug('config file not found, using defaults').pipe(Effect.annotateLogs({ path }))
+        return DEFAULT_CONFIG
       }
 
       const config = yield* pipe(
@@ -35,6 +37,8 @@ export const ConfigLive = (opts: { path?: string | undefined } = {}) =>
         Schema.decode(Schema.parseJson(ConfigSchema)),
         Effect.mapError((cause) => new ConfigFileParseError({ cause })),
       )
+
+      yield* Effect.logDebug('config file loaded').pipe(Effect.annotateLogs({ path }))
 
       return config
     }),
