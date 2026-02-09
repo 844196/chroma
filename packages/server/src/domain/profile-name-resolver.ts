@@ -25,18 +25,20 @@ export class ProfileNameResolver extends Context.Tag('@chroma/server/domain/Prof
     Effect.gen(function* () {
       const { profileAliases } = yield* Config
 
-      const resolve = Effect.fn('ProfileNameResolver.resolve')((given: string) => {
+      const resolve = Effect.fn('ProfileNameResolver.resolve')(function* (given: string) {
         const resolved = Option.fromNullable(profileAliases.get(given))
         if (Option.isSome(resolved)) {
-          return Effect.succeed(resolved.value)
+          yield* Effect.logDebug('resolved via alias').pipe(Effect.annotateLogs({ given, resolved: resolved.value }))
+          return resolved.value
         }
 
         const decoded = Schema.decodeEither(ProfileName)(given)
         if (Either.isRight(decoded)) {
-          return Effect.succeed(decoded.right)
+          yield* Effect.logDebug('used as profile name directly').pipe(Effect.annotateLogs({ given }))
+          return decoded.right
         }
 
-        return Effect.fail(new InvalidProfileNameError({ givenName: given }))
+        return yield* new InvalidProfileNameError({ givenName: given })
       })
 
       return { resolve }

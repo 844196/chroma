@@ -1,5 +1,5 @@
 import type { InvalidProfileNameError } from '@chroma/shared/domain'
-import { Context, Effect, Layer, type Option } from 'effect'
+import { Context, Effect, Layer, Option } from 'effect'
 import { CommandExecutor, type CommandFailedError } from '../domain/command-executor.ts'
 import { CommandFactory } from '../domain/command-factory.ts'
 import { ProfileNameResolver } from '../domain/profile-name-resolver.ts'
@@ -41,8 +41,18 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/server/application
         url: Option.Option<string>,
       ) {
         const profileName = yield* Effect.transposeMapOption(givenProfileName, profileNameResolver.resolve)
+        yield* Effect.logDebug('profile name resolved').pipe(
+          Effect.annotateLogs({
+            givenProfileName: Option.getOrElse(givenProfileName, () => '(none)'),
+            resolvedProfileName: Option.getOrElse(profileName, () => '(none)'),
+          }),
+        )
+
         const cmd = yield* factory.create(profileName, url)
+        yield* Effect.logDebug('command created')
+
         yield* executor.exec(cmd)
+        yield* Effect.logDebug('command executed successfully')
       })
 
       return { invoke }

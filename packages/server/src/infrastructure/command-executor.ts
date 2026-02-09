@@ -8,10 +8,15 @@ export const CommandExecutorLive = Layer.effect(
     const platformCommandExecutor = yield* PlatformCommandExecutor.CommandExecutor
 
     const exec = Effect.fn('CommandExecutor.exec')(function* (cmd: Command.Command) {
+      yield* Effect.logDebug('executing command')
+
       const run = pipe(
         platformCommandExecutor.start(cmd),
         Effect.flatMap(({ exitCode, stdout, stderr }) =>
           Effect.all([exitCode, decodeStream(stdout), decodeStream(stderr)], { concurrency: 3 }),
+        ),
+        Effect.tap(([exitCode, stdout, stderr]) =>
+          Effect.logDebug('command finished').pipe(Effect.annotateLogs({ exitCode, stdout, stderr })),
         ),
         Effect.catchAll(Effect.die),
         Effect.filterOrFail(
