@@ -10,8 +10,18 @@ extends = "test"
 [tasks.dev]
 env = { CHROMA_RUNTIME_DIR = "{{ [env.XDG_RUNTIME_DIR, 'chroma-dev'] | join_path }}", CHROMA_LOG_LEVEL = "DEBUG" }
 tools.watchexec = "2.3.3"
+usage = '''
+flag "--with-rm-socket" help="Remove existing runtime socket file before starting the server." default="#true"
+'''
 run = '''
+#!/usr/bin/env bash
+
 mkdir -p $CHROMA_RUNTIME_DIR
+if [[ "${usage_with_rm_socket}" == "true" ]]; then
+  echo "Removing existing socket file..."
+  rm -f "$CHROMA_RUNTIME_DIR/chroma.sock"
+fi
+
 watchexec --on-busy-update restart --stop-signal SIGTERM -- \
   bun run --define BUILD_VERSION='\"dev\"' --define BUILD_TIME='\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"' src/main.ts
 '''
