@@ -14,16 +14,26 @@ import { UnixSocket } from './infrastructure/unix-socket.ts'
 import { ChromeRpcGroupLive } from './presentation/chrome-rpc-group.ts'
 import { LoggingMiddleware } from './presentation/logging-middleware.ts'
 
+/**
+ * ログレベル設定ライブレイヤー
+ */
 const LogLevelLive = Layer.unwrapEffect(
   Config.logLevel('CHROMA_LOG_LEVEL').pipe(Config.withDefault(LogLevel.Info), Effect.map(Logger.minimumLogLevel)),
 )
 
-// NOTE: ChromeRpcGroup.middleware() はランタイム実装の制約により RpcGroup<any> を返す。
-// RpcServer.layer() にミドルウェア付きグループを渡す必要があるが、型が any に汚染されるため
-// 型アサーションで元の型に戻す。ミドルウェアの実行に必要な LoggingMiddleware.layer は
-// ランタイム用に Layer.provide で明示的に提供している。
+/**
+ * ミドルウェア付き ChromeRpcGroup
+ *
+ * NOTE: ChromeRpcGroup.middleware() はランタイム実装の制約により RpcGroup<any> を返す。
+ * RpcServer.layer() にミドルウェア付きグループを渡す必要があるが、型が any に汚染されるため
+ * 型アサーションで元の型に戻す。ミドルウェアの実行に必要な LoggingMiddleware.layer は
+ * ランタイム用に Layer.provide で明示的に提供している。
+ */
 const ChromeRpcGroupWithMiddleware = ChromeRpcGroup.middleware(LoggingMiddleware) as unknown as typeof ChromeRpcGroup
 
+/**
+ * RPCサーバーライブレイヤー
+ */
 const RpcServerLive = RpcServer.layer(ChromeRpcGroupWithMiddleware).pipe(
   Layer.provide(ChromeRpcGroupLive),
   Layer.provide(LoggingMiddleware.layer),
@@ -31,6 +41,9 @@ const RpcServerLive = RpcServer.layer(ChromeRpcGroupWithMiddleware).pipe(
   Layer.provide(RpcSerialization.layerNdjson),
 )
 
+/**
+ * HTTPサーバーライブレイヤー (Unix domain socket)
+ */
 const HttpServerLive = Layer.unwrapScoped(
   Effect.gen(function* () {
     const socket = yield* Effect.flatMap(SocketPath, UnixSocket)
@@ -39,6 +52,9 @@ const HttpServerLive = Layer.unwrapScoped(
   }),
 ).pipe(Layer.provide(SocketPath.layer))
 
+/**
+ * 実行されているOSに応じたコマンドファクトリーライブレイヤー
+ */
 const CommandFactoryLive = Layer.unwrapEffect(
   Effect.gen(function* () {
     const os = osType()
@@ -54,6 +70,9 @@ const CommandFactoryLive = Layer.unwrapEffect(
   }),
 )
 
+/**
+ * 合成されたメインライブレイヤー
+ */
 const MainLive = HttpRouter.Default.serve().pipe(
   Layer.provide(RpcServerLive),
   Layer.provide(LaunchChromeUseCase.layer),

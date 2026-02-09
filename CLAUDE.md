@@ -10,7 +10,13 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 - `packages/server` : サーバーパッケージ (`@chroma/server`)
 - `packages/shared` : 共通パッケージ (`@chroma/shared`)
 
-各パッケージの詳細は `packages/<package>/CLAUDE.md` に記述されています。
+各パッケージの詳細は `packages/<package>/CLAUDE.md` に記述されています。より深いアーキテクチャ詳細（リクエストライフサイクル・Layer合成・外部コマンド実行等）は `docs/` を参照してください。
+
+## ドキュメント
+
+- `packages/<package>/CLAUDE.md` — パッケージごとの構成・型・依存関係・環境変数（常にコンテキストに読み込まれる）
+- `docs/server.md` — サーバー詳細アーキテクチャ（リクエストフロー・Layer合成・外部コマンド実行・ロギング）
+- `docs/client.md` — クライアント詳細アーキテクチャ（CLIフロー・プロファイル解決アルゴリズム・RPC接続）
 
 ## 技術スタック
 
@@ -154,3 +160,12 @@ classDiagram
 - `deps` - 依存関係
 - `ci` - CI/CD (`.github/workflows/` 等)
 - `claude` - `CLAUDE.md` / `.claude/` 関連
+
+### ドキュメント整合性
+
+コード変更時は対応するドキュメントも更新してください。
+
+- **ファイルの追加・削除** → `packages/<package>/CLAUDE.md` の構成セクション
+- **Tag/Layer/ポートの追加・削除・シグネチャ変更** → `packages/<package>/CLAUDE.md` の型・依存関係セクション
+- **リクエストフロー・Layer合成の変更** → `docs/<package>.md`
+- **環境変数・設定の追加・削除** → `packages/<package>/CLAUDE.md` の環境変数セクション
