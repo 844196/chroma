@@ -3,3 +3,4 @@ node_modules/
 /packages/client/build/
 /dist/
 *.tsbuildinfo
+.claude/plans/
