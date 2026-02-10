@@ -24,10 +24,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mise run //packages/...:fix"
-          },
-          {
-            "type": "command",
             "command": "mise run //packages/...:check >&2 || return 2"
           }
         ]
