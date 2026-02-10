@@ -14,7 +14,7 @@
       "Bash(mise run //packages/*:fix*)",
       "Bash(mise run //packages/*:test*)",
       "Bash(mise run //packages/*:dev*)",
-      "Skill(e2e-dev)"
+      "Skill(e2e-testing)"
     ]
   },
   "hooks": {
