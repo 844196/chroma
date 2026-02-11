@@ -2,6 +2,7 @@ import { homedir } from 'node:os'
 import { join as joinPath } from 'node:path'
 import { FileSystem } from '@effect/platform'
 import { Effect, Either, Layer, Option, pipe, Schema } from 'effect'
+import { ParseError } from 'effect/ParseResult'
 import { Config, ConfigSchema } from '../domain/config.ts'
 
 const DEFAULT_CONFIG: typeof ConfigSchema.Type = {
@@ -50,5 +51,5 @@ export class ConfigFileReadError extends Schema.TaggedError<ConfigFileReadError>
 }) {}
 
 export class ConfigFileParseError extends Schema.TaggedError<ConfigFileParseError>()('ConfigFileParseError', {
-  cause: Schema.Defect,
+  cause: Schema.instanceOf(ParseError),
 }) {}

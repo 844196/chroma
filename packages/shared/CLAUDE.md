@@ -73,7 +73,7 @@ Context.Tag<SocketPath, string>
 | `InvalidProfileNameError` | domain/invalid-profile-name-error.ts | `givenName: string` |
 | `InternalServerError` | rpc/internal-server-error.ts | (なし) |
 | `ConfigFileReadError` | infrastructure/config.ts | `path: string`, `cause: Defect` |
-| `ConfigFileParseError` | infrastructure/config.ts | `cause: Defect` |
+| `ConfigFileParseError` | infrastructure/config.ts | `cause: ParseResult.ParseError` |
 
 ## 環境変数
 
