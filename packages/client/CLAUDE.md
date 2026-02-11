@@ -28,7 +28,7 @@
 src/
   main.ts                          # エントリーポイント (CLIパース + Layer合成)
   presentation/                    # プレゼンテーション層
-    launch-chrome-command.ts       # LaunchChromeCommand Tag + Layer (CLIエントリ)
+    launch-chrome-command.ts       # LaunchChromeCommand Tag + Layer + LaunchChromeCommandError (CLIエントリ)
   application/                     # アプリケーション層
     launch-chrome-use-case.ts      # LaunchChromeUseCase Tag + Layer
   domain/                          # ドメイン層
@@ -57,9 +57,12 @@ LaunchChromeCommand (presentation)
 ## 主要な型シグネチャ
 
 ```typescript
+// LaunchChromeCommandError — プレゼンテーション層のエラー (Data.TaggedError)
+// { message: string, cause: unknown }
+
 // LaunchChromeCommand — CLIエントリーポイント
 run: (profile: Option.Option<string>, url: Option.Option<string>, cwd: string)
-  => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError | InternalServerError | RpcClientError>
+  => Effect.Effect<void, LaunchChromeCommandError>
 
 // LaunchChromeUseCase — プロファイル解決 + RPC呼び出し
 invoke: (profileName: Option.Option<string>, url: Option.Option<string>, cwd: string)

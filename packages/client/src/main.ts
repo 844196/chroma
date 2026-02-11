@@ -78,5 +78,12 @@ import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
     yield* cmd.run(Option.fromNullable(parsedOpts.profile), Option.fromNullable(url), process.cwd())
   })
 
-  BunRuntime.runMain(program.pipe(Effect.provide(MainLive)))
+  BunRuntime.runMain(
+    program.pipe(
+      Effect.provide(MainLive),
+      Effect.tapError((error) => Effect.sync(() => process.stderr.write(`chroma: ${error.message}\n`))),
+      Effect.tapDefect(() => Effect.sync(() => process.stderr.write('chroma: an unexpected error occurred.\n'))),
+    ),
+    { disableErrorReporting: true },
+  )
 })()
