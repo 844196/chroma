@@ -21,6 +21,7 @@ src/
   rpc/                              # RPC定義
     index.ts                        # バレル (@chroma/shared/rpc)
     chrome-rpc-group.ts             # ChromeRpcGroup (RPC定義)
+    internal-server-error.ts        # InternalServerError (RPCエラー型)
   domain/                           # ドメイン層
     index.ts                        # バレル (@chroma/shared/domain)
     chrome-launch-error.ts          # ChromeLaunchError (ドメインエラー型)
@@ -54,7 +55,7 @@ Context.Tag<Config, typeof ConfigSchema.Type>
 ChromeRpcGroup.launch: {
   payload: { profileName: Option<NonEmptyString>, url: Option<NonEmptyString> }
   success: void
-  error: ChromeLaunchError | InvalidProfileNameError
+  error: ChromeLaunchError | InvalidProfileNameError | InternalServerError
 }
 
 // RuntimeDir — ランタイムディレクトリパス Tag
@@ -70,6 +71,7 @@ Context.Tag<SocketPath, string>
 |--------|-----------|-----------|
 | `ChromeLaunchError` | domain/chrome-launch-error.ts | `exitCode: int`, `stdout: string`, `stderr: string` |
 | `InvalidProfileNameError` | domain/invalid-profile-name-error.ts | `givenName: string` |
+| `InternalServerError` | rpc/internal-server-error.ts | (なし) |
 | `ConfigFileReadError` | infrastructure/config.ts | `path: string`, `cause: Defect` |
 | `ConfigFileParseError` | infrastructure/config.ts | `cause: Defect` |
 

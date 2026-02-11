@@ -59,11 +59,11 @@ LaunchChromeCommand (presentation)
 ```typescript
 // LaunchChromeCommand — CLIエントリーポイント
 run: (profile: Option.Option<string>, url: Option.Option<string>, cwd: string)
-  => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError | RpcClientError>
+  => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError | InternalServerError | RpcClientError>
 
 // LaunchChromeUseCase — プロファイル解決 + RPC呼び出し
 invoke: (profileName: Option.Option<string>, url: Option.Option<string>, cwd: string)
-  => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError | RpcClientError>
+  => Effect.Effect<void, ChromeLaunchError | InvalidProfileNameError | InternalServerError | RpcClientError>
 
 // ChromeClient — RpcClient<Rpcs<typeof ChromeRpcGroup>> (ポート)
 // RpcClient.make(ChromeRpcGroup) で生成される型

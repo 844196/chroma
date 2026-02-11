@@ -24,10 +24,12 @@ src/
   main.ts                        # エントリーポイント (Layer合成 + サーバー起動)
   presentation/                  # プレゼンテーション層
     chrome-rpc-group.ts          # ChromeRpcGroupLive (RPCハンドラ実装)
+    error-masking-middleware.ts  # ErrorMaskingMiddleware Tag + Layer (RPCミドルウェア)
     logging-middleware.ts        # LoggingMiddleware Tag + Layer (RPCミドルウェア)
   application/                   # アプリケーション層
     launch-chrome-use-case.ts    # LaunchChromeUseCase Tag + Layer
   domain/                        # ドメイン層
+    app-env.ts                   # AppEnv Tag (ポート定義)
     profile-name-resolver.ts     # ProfileNameResolver Tag + Layer (DomainService)
     command-factory.ts           # CommandFactory Tag (ポート定義)
     command-executor.ts          # CommandExecutor Tag, CommandFailedError (ポート定義)
@@ -49,6 +51,9 @@ ChromeRpcGroupLive (presentation)
       │   └─ CommandFactoryWslLive (infrastructure / WSL)
       └─ CommandExecutor (domain / ポート)
           └─ CommandExecutorLive (infrastructure)
+
+ErrorMaskingMiddleware (presentation)
+  └─ AppEnv (domain / ポート) → process.env.NODE_ENV
 
 LoggingMiddleware (presentation)
   └─ RPCリクエストの成功/失敗をログ出力
@@ -77,9 +82,16 @@ create: (profileName: Option.Option<ProfileName>, url: Option.Option<string>)
 exec: (cmd: Command.Command)
   => Effect.Effect<void, CommandFailedError>
 
-// LoggingMiddleware — RPCミドルウェア
+// ErrorMaskingMiddleware — RPCミドルウェア (最外層)
+// production: defect → InternalServerError に変換 (内部情報のマスク)
+// development: defect をそのまま伝播
+
+// LoggingMiddleware — RPCミドルウェア (内側)
 // 成功時: Effect.logInfo('RPC succeeded') + withLogSpan(rpc.key)
 // 失敗時: Effect.logError('RPC failed', cause) + withLogSpan(rpc.key)
+
+// AppEnv — アプリケーション環境 (ポート)
+// Context.Tag<AppEnv, 'development' | 'production'>
 ```
 
 ## エラー型
@@ -96,6 +108,7 @@ exec: (cmd: Command.Command)
 | 変数 | デフォルト | 用途 |
 |------|----------|------|
 | `CHROMA_LOG_LEVEL` | `Info` | ログレベル設定 (`All`, `Debug`, `Info`, `Warning`, `Error`, `Fatal`, `None`) |
+| `NODE_ENV` | `production` | アプリケーション環境 (`development`: defectをそのまま伝播, それ以外: `production`扱いでdefectをマスク) |
 
 ソケットパス・設定ファイルパスの環境変数は `@chroma/shared` を参照。
 

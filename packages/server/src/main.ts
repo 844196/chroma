@@ -7,11 +7,13 @@ import { RpcSerialization, RpcServer } from '@effect/rpc'
 import { Cause, Config, Effect, Exit, Layer, Logger, LogLevel } from 'effect'
 import isWsl from 'is-wsl'
 import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
+import { AppEnv } from './domain/app-env.ts'
 import { ProfileNameResolver } from './domain/profile-name-resolver.ts'
 import { CommandExecutorLive } from './infrastructure/command-executor.ts'
 import { CommandFactoryDarwinLive, CommandFactoryWslLive } from './infrastructure/command-factory.ts'
 import { UnixSocket } from './infrastructure/unix-socket.ts'
 import { ChromeRpcGroupLive } from './presentation/chrome-rpc-group.ts'
+import { ErrorMaskingMiddleware } from './presentation/error-masking-middleware.ts'
 import { LoggingMiddleware } from './presentation/logging-middleware.ts'
 
 /**
@@ -26,10 +28,14 @@ const LogLevelLive = Layer.unwrapEffect(
  *
  * NOTE: ChromeRpcGroup.middleware() はランタイム実装の制約により RpcGroup<any> を返す。
  * RpcServer.layer() にミドルウェア付きグループを渡す必要があるが、型が any に汚染されるため
- * 型アサーションで元の型に戻す。ミドルウェアの実行に必要な LoggingMiddleware.layer は
+ * 型アサーションで元の型に戻す。ミドルウェアの実行に必要な各ミドルウェアの layer は
  * ランタイム用に Layer.provide で明示的に提供している。
+ *
+ * ミドルウェアチェーン: LoggingMiddleware(内側) → ErrorMaskingMiddleware(外側)
  */
-const ChromeRpcGroupWithMiddleware = ChromeRpcGroup.middleware(LoggingMiddleware) as unknown as typeof ChromeRpcGroup
+const ChromeRpcGroupWithMiddleware = ChromeRpcGroup.middleware(LoggingMiddleware).middleware(
+  ErrorMaskingMiddleware,
+) as unknown as typeof ChromeRpcGroup
 
 /**
  * RPCサーバーライブレイヤー
@@ -37,6 +43,7 @@ const ChromeRpcGroupWithMiddleware = ChromeRpcGroup.middleware(LoggingMiddleware
 const RpcServerLive = RpcServer.layer(ChromeRpcGroupWithMiddleware).pipe(
   Layer.provide(ChromeRpcGroupLive),
   Layer.provide(LoggingMiddleware.layer),
+  Layer.provide(ErrorMaskingMiddleware.layer),
   Layer.provide(RpcServer.layerProtocolHttp({ path: '/rpc' })),
   Layer.provide(RpcSerialization.layerNdjson),
 )
@@ -83,6 +90,7 @@ const MainLive = HttpRouter.Default.serve().pipe(
   Layer.provide(HttpServerLive),
   Layer.provide(BunContext.layer),
   Layer.provide(LogLevelLive),
+  Layer.provide(Layer.succeed(AppEnv, process.env.NODE_ENV === 'development' ? 'development' : 'production')),
 )
 
 const program = Effect.gen(function* () {

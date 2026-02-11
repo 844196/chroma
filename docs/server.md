@@ -15,6 +15,10 @@ HttpRouter.Default.serve()
 RpcServer.layer(ChromeRpcGroupWithMiddleware)
   │ NDJSON デシリアライズ → RPC ディスパッチ
   ▼
+ErrorMaskingMiddleware (最外層)
+  │ production: defect → InternalServerError に変換
+  │ development: そのまま伝播
+  ▼
 LoggingMiddleware
   │ Effect.withLogSpan(rpc.key) でスパン開始
   ▼
@@ -31,6 +35,10 @@ LaunchChromeUseCase.invoke
 LoggingMiddleware (戻り)
   │ 成功: logInfo('RPC succeeded')
   │ 失敗: logError('RPC failed', cause)
+  ▼
+ErrorMaskingMiddleware (戻り)
+  │ production: defect を InternalServerError にマスク
+  │ development: defect をそのまま伝播
   ▼
 RpcServer
   │ NDJSON シリアライズ → HTTP レスポンス
