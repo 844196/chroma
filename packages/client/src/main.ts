@@ -89,12 +89,10 @@ import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
           Match.tag('ConfigFileParseError', (e) =>
             Effect.sync(() => {
               process.stderr.write('chroma: invalid format in config file\n')
-              if (e.cause instanceof ParseResult.ParseError) {
-                const issues = ParseResult.ArrayFormatter.formatErrorSync(e.cause)
-                for (const issue of issues) {
-                  const path = issue.path.join('.')
-                  process.stderr.write(path ? `* ${path} ${issue.message}\n` : `* ${issue.message}\n`)
-                }
+              const issues = ParseResult.ArrayFormatter.formatErrorSync(e.cause)
+              for (const issue of issues) {
+                const path = issue.path.join('.')
+                process.stderr.write(path ? `* ${path} ${issue.message}\n` : `* ${issue.message}\n`)
               }
             }),
           ),
