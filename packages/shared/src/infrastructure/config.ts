@@ -1,7 +1,7 @@
 import { homedir } from 'node:os'
 import { join as joinPath } from 'node:path'
 import { FileSystem } from '@effect/platform'
-import { Effect, Either, Layer, Option, pipe, Schema } from 'effect'
+import { Effect, Either, Layer, pipe, Schema } from 'effect'
 import { ParseError } from 'effect/ParseResult'
 import { Config, ConfigSchema } from '../domain/config.ts'
 
@@ -10,9 +10,10 @@ const DEFAULT_CONFIG: typeof ConfigSchema.Type = {
   paths: new Map(),
 }
 
-const DEFAULT_CONFIG_PATH = Option.fromNullable(process.env.XDG_CONFIG_HOME).pipe(
-  Option.getOrElse(() => joinPath(homedir(), '.config')),
-  ($) => joinPath($, 'chroma', 'config.json'),
+const DEFAULT_CONFIG_PATH = joinPath(
+  process.env.XDG_CONFIG_HOME ?? joinPath(homedir(), '.config'),
+  'chroma',
+  'config.json',
 )
 
 export const ConfigLive = (opts: { path?: string | undefined } = {}) =>

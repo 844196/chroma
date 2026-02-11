@@ -13,13 +13,14 @@ import { Effect, Schema } from 'effect'
 export const UnixSocket = Effect.fn('UnixSocket')(function* (path: string) {
   const fs = yield* FileSystem.FileSystem
 
-  const acquire = Effect.gen(function* () {
-    const alreadyExists = yield* fs.exists(path).pipe(Effect.orDie)
-    if (alreadyExists) {
-      return yield* new AddressAlreadyInUseError({ path })
-    }
-    return { path }
-  })
+  const acquire = fs.exists(path).pipe(
+    Effect.orDie,
+    Effect.filterOrFail(
+      (exists) => !exists,
+      () => new AddressAlreadyInUseError({ path }),
+    ),
+    Effect.as({ path }),
+  )
 
   const release = Effect.fn('UnixSocket.release')(function* () {
     yield* Effect.logDebug(`removing unix socket`).pipe(Effect.annotateLogs({ path }))

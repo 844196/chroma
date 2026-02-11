@@ -1,6 +1,6 @@
 import type { ProfileName } from '@chroma/shared/domain'
 import { Command } from '@effect/platform'
-import { Effect, Layer, Option } from 'effect'
+import { Array as Arr, Effect, Layer, Option } from 'effect'
 import { CommandFactory } from '../domain/command-factory.ts'
 
 /**
@@ -9,13 +9,7 @@ import { CommandFactory } from '../domain/command-factory.ts'
 export const CommandFactoryDarwinLive = Layer.succeed(CommandFactory, {
   create: Effect.fn('CommandFactory.darwin.create')(
     (profileName: Option.Option<ProfileName>, url: Option.Option<string>) => {
-      const args: string[] = []
-      if (Option.isSome(profileName)) {
-        args.push(`--profile-directory=${profileName.value}`)
-      }
-      if (Option.isSome(url)) {
-        args.push(url.value)
-      }
+      const args = Arr.getSomes([Option.map(profileName, (p) => `--profile-directory=${p}`), url])
 
       return Effect.succeed(
         Command.make(
@@ -40,13 +34,10 @@ export const CommandFactoryDarwinLive = Layer.succeed(CommandFactory, {
 export const CommandFactoryWslLive = Layer.succeed(CommandFactory, {
   create: Effect.fn('CommandFactory.wsl.create')(
     (profileName: Option.Option<ProfileName>, url: Option.Option<string>) => {
-      const args: string[] = []
-      if (Option.isSome(profileName)) {
-        args.push(`'--profile-directory="${profileName.value}"'`)
-      }
-      if (Option.isSome(url)) {
-        args.push(`'${url.value}'`)
-      }
+      const args = Arr.getSomes([
+        Option.map(profileName, (p) => `'--profile-directory="${p}"'`),
+        Option.map(url, (u) => `'${u}'`),
+      ])
 
       return Effect.succeed(
         Command.make(
