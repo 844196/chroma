@@ -24,6 +24,8 @@ miseおよびBunのモノレポ機能を使用してモノレポ構成にして�
 - Bunを使用します。
 - TypeScriptを使用します。
 - Effect-TSを使用します。
+  - Effect-TSが提供するモジュールに関して調査する際は <https://effect.website/llms-full.txt> を読み込みます。
+- 以下のEffect-TSファーストパーティライブラリを使用します。
   - `@effect/rpc` を使用してRPCを実装します。
   - `@effect/platform` を使用してファイルシステム・OS操作を行います。
 - Vitestを使用します。
