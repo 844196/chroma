@@ -2,7 +2,7 @@ import { homedir } from 'node:os'
 import { ConfigLive } from '@chroma/shared/infrastructure'
 import { Command } from '@cliffy/command'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
-import { Effect, Layer, Option } from 'effect'
+import { Effect, Layer, Match, Option, ParseResult } from 'effect'
 import { LaunchChromeUseCase } from './application/launch-chrome-use-case.ts'
 import { CwdProfileResolver } from './domain/cwd-profile-resolver.ts'
 import { HomeDir } from './domain/home-dir.ts'
@@ -81,7 +81,29 @@ import { LaunchChromeCommand } from './presentation/launch-chrome-command.ts'
   BunRuntime.runMain(
     program.pipe(
       Effect.provide(MainLive),
-      Effect.tapError((error) => Effect.sync(() => process.stderr.write(`chroma: ${error.message}\n`))),
+      Effect.tapError((error) =>
+        Match.value(error).pipe(
+          Match.tag('ConfigFileReadError', (e) =>
+            Effect.sync(() => process.stderr.write(`chroma: could not read config file: ${e.path}\n`)),
+          ),
+          Match.tag('ConfigFileParseError', (e) =>
+            Effect.sync(() => {
+              process.stderr.write('chroma: invalid format in config file\n')
+              if (e.cause instanceof ParseResult.ParseError) {
+                const issues = ParseResult.ArrayFormatter.formatErrorSync(e.cause)
+                for (const issue of issues) {
+                  const path = issue.path.join('.')
+                  process.stderr.write(path ? `* ${path} ${issue.message}\n` : `* ${issue.message}\n`)
+                }
+              }
+            }),
+          ),
+          Match.tag('LaunchChromeCommandError', (e) =>
+            Effect.sync(() => process.stderr.write(`chroma: ${e.message}\n`)),
+          ),
+          Match.exhaustive,
+        ),
+      ),
       Effect.tapDefect(() => Effect.sync(() => process.stderr.write('chroma: an unexpected error occurred.\n'))),
     ),
     { disableErrorReporting: true },

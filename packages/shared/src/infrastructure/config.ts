@@ -34,7 +34,7 @@ export const ConfigLive = (opts: { path?: string | undefined } = {}) =>
 
       const config = yield* pipe(
         fileContentResult.right,
-        Schema.decode(Schema.parseJson(ConfigSchema)),
+        Schema.decode(Schema.parseJson(ConfigSchema), { errors: 'all' }),
         Effect.mapError((cause) => new ConfigFileParseError({ cause })),
       )
 
