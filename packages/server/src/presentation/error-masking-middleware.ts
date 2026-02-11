@@ -9,11 +9,10 @@ export class ErrorMaskingMiddleware extends RpcMiddleware.Tag<ErrorMaskingMiddle
 }) {
   static readonly layer = Layer.effect(
     ErrorMaskingMiddleware,
-    Effect.gen(function* () {
-      const appEnv = yield* AppEnv
-      return ErrorMaskingMiddleware.of(({ next }) =>
+    Effect.map(AppEnv, (appEnv) =>
+      ErrorMaskingMiddleware.of(({ next }) =>
         appEnv === 'production' ? next.pipe(Effect.catchAllDefect(() => Effect.fail(new InternalServerError()))) : next,
-      )
-    }),
+      ),
+    ),
   )
 }

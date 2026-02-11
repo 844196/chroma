@@ -17,15 +17,12 @@ const ProfileNameAliasMap = Schema.transformOrFail(
   Schema.ReadonlyMap({ key: Schema.NonEmptyString, value: ProfileName }),
   {
     strict: true,
-    decode: (record) => {
-      const acc: Array<[string, ProfileName]> = []
-      for (const [profile, aliases] of Object.entries(record)) {
-        for (const alias of aliases ?? []) {
-          acc.push([alias, profile as ProfileName])
-        }
-      }
-      return ParseResult.succeed(acc)
-    },
+    decode: (record) =>
+      ParseResult.succeed(
+        Object.entries(record).flatMap(([profile, aliases]) =>
+          (aliases ?? []).map((alias) => [alias, profile as ProfileName] as const),
+        ),
+      ),
     encode: (entries, _, ast) => ParseResult.fail(new ParseResult.Forbidden(ast, entries, 'Not supported')),
   },
 )

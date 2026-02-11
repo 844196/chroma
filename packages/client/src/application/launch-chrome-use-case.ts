@@ -43,7 +43,7 @@ export class LaunchChromeUseCase extends Context.Tag('@chroma/client/application
         url: Option.Option<string>,
         cwd: string,
       ) {
-        const profileName = Option.isSome(givenProfileName) ? givenProfileName : cwdProfileResolver.resolve(cwd)
+        const profileName = givenProfileName.pipe(Option.orElse(() => cwdProfileResolver.resolve(cwd)))
         yield* chrome.launch({ profileName, url })
       })
 

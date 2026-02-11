@@ -1,5 +1,5 @@
 import { Config } from '@chroma/shared/domain'
-import { Context, Effect, Layer, Option } from 'effect'
+import { Array as Arr, Context, Effect, Layer, Option } from 'effect'
 import { HomeDir } from './home-dir.ts'
 
 /**
@@ -34,12 +34,9 @@ export class CwdProfileResolver extends Context.Tag('@chroma/client/domain/CwdPr
 
       const resolve = (cwd: string): Option.Option<string> => {
         const normalizedCwd = cwd.endsWith('/') ? cwd : `${cwd}/`
-        for (const [pathPrefix, profileName] of expandedEntries) {
-          if (normalizedCwd.startsWith(pathPrefix)) {
-            return Option.some(profileName)
-          }
-        }
-        return Option.none()
+        return Arr.findFirst(expandedEntries, ([pathPrefix]) => normalizedCwd.startsWith(pathPrefix)).pipe(
+          Option.map(([, profileName]) => profileName),
+        )
       }
 
       return { resolve }
