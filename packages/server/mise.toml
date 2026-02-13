@@ -36,5 +36,5 @@ bun build --compile --bytecode --format esm --target=${usage_platform:?} --minif
   --define 'process.env.NODE_ENV="production"' \
   --define BUILD_VERSION="'${usage_version:?}'" \
   --define BUILD_TIME="'$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
-  src/main.ts --outfile build/chromad
+  src/main.ts --outfile dist/bin/chromad
 '''

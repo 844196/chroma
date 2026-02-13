@@ -6,3 +6,6 @@ extends = "fix"
 
 [tasks.test]
 extends = "test"
+
+[tasks.build]
+run = 'bun run scripts/generate-config-schema.ts'
