@@ -10,6 +10,7 @@
 
 ## 開発コマンド
 
+- `mise run //packages/shared:build` : JSON Schemaを生成します。
 - `mise run //packages/shared:check -- [files...]` : 型チェック・フォーマッター・リンターを実行します。
 - `mise run //packages/shared:fix -- [files...]` : フォーマッター・リンターの自動修正を実行します。
 - `mise run //packages/shared:test -- [vitest-args...]` : テストを実行します。
@@ -17,6 +18,8 @@
 ## 構成
 
 ```
+scripts/
+  generate-config-schema.ts       # config.json JSON Schema生成スクリプト
 src/
   rpc/                              # RPC定義
     index.ts                        # バレル (@chroma/shared/rpc)
