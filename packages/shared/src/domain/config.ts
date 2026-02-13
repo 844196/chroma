@@ -30,10 +30,17 @@ const ProfileNameAliasMap = Schema.transformOrFail(
 export const ConfigSchema = Schema.Struct({
   profileAliases: Schema.optionalWith(ProfileNameAliasMap, {
     default: () => new Map(),
+  }).annotations({
+    description: 'Mapping from Chrome profile directory name to its aliases',
   }),
   paths: Schema.optionalWith(PathMapping, {
     default: () => new Map(),
+  }).annotations({
+    description: 'Mapping from path prefix to Chrome profile name or alias (longest prefix match)',
   }),
+}).annotations({
+  description: 'chroma configuration file schema',
+  jsonSchema: { additionalProperties: true },
 })
 
 export class Config extends Context.Tag('@chroma/shared/domain/Config')<Config, typeof ConfigSchema.Type>() {}
