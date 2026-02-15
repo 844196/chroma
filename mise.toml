@@ -22,6 +22,7 @@ usage = 'arg "<archive_name>"'
 run = [
   "mkdir -p dist/${usage_archive_name:?}",
   "cp LICENSE dist/${usage_archive_name:?}/",
+  "cp -r examples dist/${usage_archive_name:?}/",
   "cp -r packages/*/dist/* dist/${usage_archive_name:?}/",
   "(cd dist && tar czvf ${usage_archive_name:?}.tar.gz ${usage_archive_name:?})",
   "rm -r dist/${usage_archive_name:?}",
