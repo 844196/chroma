@@ -140,28 +140,7 @@ classDiagram
 
 ### Gitコミット
 
-[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってコミットメッセージを生成します。
-
-#### 利用可能なタイプ
-
-- `feat:` - 新機能の追加
-- `fix:` - バグ修正
-- `refactor:` - リファクタリング
-- `docs:` - ドキュメントの追加・更新
-- `style:` - フォーマット修正 (コードの動作に影響しない変更)
-- `perf:` - パフォーマンス改善
-- `test:` - テストコードの追加・修正
-- `chore:` - メンテナンス作業
-  - `chore(deps):` - 依存関係の更新
-
-#### 利用可能なスコープ
-
-- `client` - クライアントパッケージ
-- `server` - サーバーパッケージ
-- `shared` - 共通パッケージ
-- `deps` - 依存関係
-- `ci` - CI/CD (`.github/workflows/` 等)
-- `claude` - `CLAUDE.md` / `.claude/` 関連
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従ってコミットメッセージを生成します。利用可能なタイプとスコープは `.versionrc` を参照してください。
 
 ### ドキュメント整合性
 
