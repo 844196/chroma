@@ -13,7 +13,21 @@ const PathMapping = Schema.transformOrFail(
 )
 
 const ProfileNameAliasMap = Schema.transformOrFail(
-  Schema.partial(Schema.Record({ key: ProfileName, value: Schema.NonEmptyArray(Schema.NonEmptyString) })),
+  Schema.partial(Schema.Record({ key: ProfileName, value: Schema.NonEmptyArray(Schema.NonEmptyString) })).annotations({
+    jsonSchema: {
+      propertyNames: {
+        anyOf: [
+          { const: 'Default', description: 'Default Chrome profile' },
+          {
+            type: 'string',
+            pattern: '^Profile [1-9][0-9]*$',
+            description: 'Non-default Chrome profile directory name (e.g. "Profile 1")',
+          },
+        ],
+        description: 'Chrome profile directory name ("Default" or "Profile N")',
+      },
+    },
+  }),
   Schema.ReadonlyMap({ key: Schema.NonEmptyString, value: ProfileName }),
   {
     strict: true,
