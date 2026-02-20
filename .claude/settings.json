@@ -14,6 +14,7 @@
       "Bash(mise run //packages/*:fix*)",
       "Bash(mise run //packages/*:test*)",
       "Bash(mise run //packages/*:dev*)",
+      "Bash(mise run //packages/*:build*)",
       "Skill(e2e-testing)"
     ]
   },
