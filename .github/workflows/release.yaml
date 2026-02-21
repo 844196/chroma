@@ -73,9 +73,7 @@ jobs:
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
         with:
           version: 2026.2.17
-          install-tools: false
-        env:
-          MISE_TOOL: github:convco/convco@0.6.2
+          experimental: true
 
       - name: Generate release notes
         run: convco changelog ${{ github.ref_name }} --max-versions 1 -o release-notes.md
