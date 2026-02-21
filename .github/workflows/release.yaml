@@ -1,10 +1,10 @@
 name: Release
-run-name: 'Release (${{ github.event.release.tag_name }})'
+run-name: 'Release (${{ github.ref_name }})'
 
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - 'v*'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
-      contents: write
+      contents: read
     strategy:
       matrix:
         platform:
@@ -42,13 +42,75 @@ jobs:
       - name: Run build
         run: mise run //packages/...:build
         env:
-          BUILD_VERSION: ${{ github.event.release.tag_name }}
+          BUILD_VERSION: ${{ github.ref_name }}
           BUILD_PLATFORM: bun-${{ matrix.platform }}-modern
 
       - name: Make tarball
-        run: mise run //:dist -- chroma-${{ github.event.release.tag_name }}-${{ matrix.platform }}
+        run: mise run //:dist -- chroma-${{ github.ref_name }}-${{ matrix.platform }}
 
       - name: Upload tarball
-        run: gh release upload ${{ github.event.release.tag_name }} dist/*.tar.gz
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: tarball-${{ matrix.platform }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+  release-notes:
+    name: release-notes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup mise
+        uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
+        with:
+          version: 2026.2.17
+          install-tools: false
+        env:
+          MISE_TOOL: github:convco/convco@0.6.2
+
+      - name: Generate release notes
+        run: convco changelog ${{ github.ref_name }} --max-versions 1 -o release-notes.md
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-notes
+          path: release-notes.md
+          if-no-files-found: error
+          retention-days: 1
+
+  release:
+    name: release
+    needs:
+      - build
+      - release-notes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download tarballs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: tarball-*
+          path: dist
+          merge-multiple: true
+
+      - name: Download release notes
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: release-notes
+
+      - name: Create draft release
+        run: gh release create ${{ github.ref_name }} dist/*.tar.gz --repo ${{ github.repository }} --draft --notes-file release-notes.md --verify-tag
         env:
           GH_TOKEN: ${{ github.token }}
