@@ -24,6 +24,15 @@
             "command": "mise run //packages/...:check >&2 || return 2"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.claude/hooks/gha-lint.sh"
+          }
+        ]
       }
     ]
   }
