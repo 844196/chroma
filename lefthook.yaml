@@ -2,6 +2,7 @@ pre-commit:
   jobs:
     - run: mise run //packages/...:check
     - run: mise run //packages/...:test
+    - run: mise run //:gha:lint
 commit-msg:
   jobs:
     - name: Validate commit message
