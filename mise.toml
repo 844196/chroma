@@ -1,3 +1,5 @@
+min_version = "2026.2.17"
+
 experimental_monorepo_root = true
 monorepo.config_roots = ["packages/*"]
 
