@@ -1,4 +1,6 @@
-# クライアント詳細アーキテクチャ
+# クライアントパッケージ詳細
+
+共通のレイヤー構成・依存ルール・ディレクトリ構造は [docs/architecture.md](architecture.md) を参照。
 
 ## CLIフロー
 
@@ -6,32 +8,10 @@
 $ chroma [URL] [-p PROFILE] [-c CONFIG] [-H HOST]
   │
   ▼
-Cliffy コマンドパース (main.ts)
-  │ 環境変数フォールバック: CHROMA_PROFILE, CHROMA_CONFIG, CHROMA_HOST
-  │
+引数パース (環境変数フォールバックあり)
   ▼
-Layer 合成
-  │ LaunchChromeCommand.layer
-  │   ← LaunchChromeUseCase.layer
-  │   ← CwdProfileResolver.layer
-  │   ← HomeDir (homedir())
-  │   ← ConfigLive({ path: parsedOpts.config })
-  │   ← ChromeClientLive({ socketPath: parsedOpts.host })
-  │   ← BunContext.layer
-  │
-  ▼
-LaunchChromeCommand.run(profile, url, cwd)
-  │
-  ▼
-LaunchChromeUseCase.invoke(profileName, url, cwd)
-  │ 1. profileName が None → CwdProfileResolver.resolve(cwd) で自動解決
-  │ 2. Option.orElse で結合
-  │ 3. ChromeClient.launch({ profileName, url }) を RPC 呼び出し
-  │
-  ▼
-ChromeClient (RPC)
-  │ NDJSON + HTTP + Unix socket → サーバー
-  │
+Layer合成 → ユースケース実行
+  │ プロファイル解決 → RPC呼び出し
   ▼
 結果を受け取りプロセス終了
 ```
@@ -40,65 +20,20 @@ ChromeClient (RPC)
 
 `CwdProfileResolver` は設定ファイルの `paths` フィールドを使い、カレントディレクトリから最長一致でプロファイルを自動解決します。
 
-### 解決例
-
-設定ファイル:
-```json
-{
-  "paths": {
-    "~/work": "work-profile",
-    "~/work/special": "special-profile"
-  }
-}
-```
-
-展開・ソート後:
-```
-['/home/user/work/special/', 'special-profile']   // 長さ優先
-['/home/user/work/', 'work-profile']
-```
-
-| CWD | 結果 |
-|-----|------|
-| `/home/user/work/special/project` | `Some('special-profile')` |
-| `/home/user/work/other` | `Some('work-profile')` |
-| `/home/user/docs` | `None()` |
-
-詳細は実装とテストコードを参照してください。
+詳細な解決例は `CwdProfileResolver` の実装とテストコードを参照してください。
 
 ## RPCクライアント接続
 
-### 通信スタック
+NDJSON over HTTP over Unix domain socket でサーバーと通信します。プロトコルの詳細は [docs/server.md](server.md#プロトコル詳細) を参照してください。
 
-```
-RpcClient.make(ChromeRpcGroup)
-  │ RPC メッセージ構築
-  ▼
-RpcSerialization.layerNdjson
-  │ NDJSON エンコード/デコード
-  ▼
-RpcClient.layerProtocolHttp({ url: 'http://unused/rpc' })
-  │ HTTP プロトコルアダプタ
-  ▼
-FetchHttpClient + Bun fetch
-  │ { unix: socketPath } オプションで Unix socket に接続
-  ▼
-Unix domain socket
-  │
-  ▼
-@chroma/server (chromad)
-```
+## 環境変数
 
-### 接続構築 (`ChromeClientLive`)
+### クライアント固有
 
-`ChromeClientLive` は以下の手順で RPC クライアントを構築します。
+| 変数 | デフォルト | 用途 |
+|------|----------|------|
+| `CHROMA_PROFILE` | — | Chromeプロファイル名（`-p` オプションのフォールバック） |
+| `CHROMA_CONFIG` | — | 設定ファイルパス（`-c` オプションのフォールバック） |
+| `CHROMA_HOST` | — | Unixソケットパス（`-H` オプションのフォールバック） |
 
-1. ソケットパス解決（引数 or 環境変数からの自動解決）
-2. Bun fetch に Unix socket サポートを追加（`{ unix: socketPath }` オプション）
-3. RPC クライアントの Layer 合成
-
-注意点:
-- HTTP プロトコルアダプタが URL を要求するため `http://unused/rpc` を指定するが、実際の接続先は Bun fetch の `{ unix: socketPath }` で Unix socket にリダイレクトされる
-- Bun 固有の機能であり、Node.js では別途 `http.Agent` が必要
-
-詳細は実装コードを参照してください。
+共通環境変数（`XDG_CONFIG_HOME`, `CHROMA_RUNTIME_DIR`, `XDG_RUNTIME_DIR`）および設定ファイルパス・ソケットパスの解決順序は [docs/shared.md](shared.md#インフラストラクチャ) を参照。
