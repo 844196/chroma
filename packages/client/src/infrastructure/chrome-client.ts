@@ -5,6 +5,13 @@ import { RpcClient, RpcSerialization } from '@effect/rpc'
 import { Effect, Layer, Option } from 'effect'
 import { ChromeClient } from '../domain/chrome-client.ts'
 
+/**
+ * RPCクライアントのLayer。ソケットパス解決 → Bun fetchにUnix socketサポートを追加 → RPC Layer合成の順で構築する。
+ *
+ * `RpcClient.layerProtocolHttp` がURLを要求するため `http://unused/rpc` を指定しているが、
+ * 実際の接続先はBun fetchの `{ unix: socketPath }` オプションでUnix socketにリダイレクトされる。
+ * これはBun固有の機能であり、Node.jsでは別途 `http.Agent` が必要。
+ */
 export const ChromeClientLive = (opts: { socketPath?: string | undefined }) =>
   Layer.unwrapEffect(
     Effect.gen(function* () {

@@ -46,11 +46,17 @@ export const ConfigLive = (opts: { path?: string | undefined } = {}) =>
     }),
   )
 
+/**
+ * 設定ファイルの読み込み失敗
+ */
 export class ConfigFileReadError extends Schema.TaggedError<ConfigFileReadError>()('ConfigFileReadError', {
   path: Schema.String,
   cause: Schema.Defect,
 }) {}
 
+/**
+ * 設定ファイルのパース失敗
+ */
 export class ConfigFileParseError extends Schema.TaggedError<ConfigFileParseError>()('ConfigFileParseError', {
   cause: Schema.instanceOf(ParseError),
 }) {}
